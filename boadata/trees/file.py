@@ -26,6 +26,8 @@ class PathNode(DataNode):
 
 
 class FileNode(PathNode):
+    node_type = "File"
+
     def has_subtree(self):
         return self._get_generator() is not None
 
@@ -46,6 +48,8 @@ class FileNode(PathNode):
 
 
 class DirectoryNode(PathNode):
+    node_type = "Directory"
+
     def load_children(self):
         items = os.listdir(self.path)
         items = [os.path.join(self.path, item) for item in items]

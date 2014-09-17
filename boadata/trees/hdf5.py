@@ -3,6 +3,7 @@ import h5py
 from file import register_tree_generator
 import os
 import pandas as pd
+import numpy as np
 
 def create_hdf_node(h5_object):
     if isinstance(h5_object, h5py.Group):
@@ -35,14 +36,15 @@ class FileNode(Hdf5Node):
         self.path = path
         self.h5_object = h5py.File(self.path)
 
+    node_type = "HDF5 file"
+
     @property
     def title(self):
         return os.path.basename(self.path) + "(HDF5)"
 
 
 class GroupNode(Hdf5Node):
-    pass
-
+    node_type = "HDF5 group"
 
 class DatasetObject(DataObject):
     def __init__(self, h5_dataset, node=None):
@@ -56,10 +58,12 @@ class DatasetObject(DataObject):
     # TODO: select correctly pandas types in dynamic "conversions"
 
     def as_numpy_array(self):
-        return self.h5_dataset
+        return np.array(self.h5_dataset)
 
 
 class DatasetNode(Hdf5Node):
+    node_type = "HDF5 dataset"
+
     def create_data_object(self):
         return DatasetObject(self.h5_object, self)
 

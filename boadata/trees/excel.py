@@ -29,6 +29,8 @@ class ExcelSheetNode(DataNode):
         self.xls = xls
         self.sheet_name = sheet_name
 
+    node_type = "Excel sheet"
+
     @property
     def title(self):
         return self.sheet_name
@@ -42,6 +44,8 @@ class ExcelFile(DataNode):
         super(ExcelFile, self).__init__(parent)
         self.path = path
         self.xls = None # Load it lazily
+
+    node_type = "Excel"
 
     def load_children(self):
         if not self.xls:

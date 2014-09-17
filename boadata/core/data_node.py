@@ -13,6 +13,8 @@ class DataNode(object):
         self._children = []        
         self._data_object = None
 
+    node_type = "Unknown"
+
     @property
     def icon(self):
         return None
@@ -43,7 +45,7 @@ class DataNode(object):
 
     @property
     def title(self):
-        return str(self)    
+        return unicode(self)    
 
     @property
     def full_title(self):
