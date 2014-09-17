@@ -27,13 +27,22 @@ class PathNode(DataNode):
 
 class FileNode(PathNode):
     def has_subtree(self):
-        return self.mime_type[0] and self.mime_type[0] in tree_generators 
+        return self._get_generator() is not None
+
+    def _get_generator(self):
+        mime = self.mime_type[0]
+        if mime in tree_generators:
+            return tree_generators[self.mime_type[0]]
+        else:
+            ext = os.path.splitext(self.path)[1]
+            return tree_generators.get(ext, None)
 
     def subtree(self):
-        if not self.has_subtree():
+        gen = self._get_generator()
+        if not gen:
             return None
         else:
-            return tree_generators[self.mime_type[0]](self.path)
+            return gen(self.path)
 
 
 class DirectoryNode(PathNode):
