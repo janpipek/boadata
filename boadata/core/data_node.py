@@ -3,6 +3,10 @@ from collections import OrderedDict
 import StringIO
 
 class DataNode(object):
+    """
+
+    DataNode can also be a DataObject.
+    """
     def __init__(self, parent=None):
         self.parent = parent
         self.children_loaded = False
@@ -43,6 +47,14 @@ class DataNode(object):
             for descendant in child.descendants:
                 yield descendant
 
+    #TODO: enumerate descendants with indices
+
+    def subtree(self):
+        return None
+
+    def has_subtree(self):
+        return self.subtree() is not None
+
     @property
     def children(self):
         """Lazy access to children."""
@@ -53,16 +65,21 @@ class DataNode(object):
         return self._children
 
     def add_child(self, child):
-        child.parent = self # Force here?
+        child.parent = self   # Force here?
         self._children.append(child)
 
     def load_children(self):
         pass
 
-    def dump(self, stream=sys.stdout, indent="  "):
-        stream.write(self.title + "\n")
-        for child in self.children:
-            io = StringIO.StringIO()            
-            child.dump(io, indent)
-            for line in io.getvalue().splitlines():
-                stream.write(indent + line + "\n")
+    def dump(self, stream=sys.stdout, indent=u"  ", subtree=False, in_depth=0, children_only=False):
+        if not children_only:
+            stream.write(in_depth * indent)
+            stream.write(self.title)
+        if self.has_subtree() and subtree:
+            stream.write(":")
+            self.subtree().dump(stream, indent, subtree, in_depth, children_only=True)
+        else:
+            stream.write("\n")
+        for child in self.children:    
+            child.dump(stream, indent, subtree, in_depth+1)
+        
