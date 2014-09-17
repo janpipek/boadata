@@ -20,6 +20,9 @@ class DataObject(object):
             raise "Conversion not supported."
         return getattr(self, attr)()
 
+    def converts_to(self, format):
+        return format in conversions
+
     @property
     def shape(self):
         return None

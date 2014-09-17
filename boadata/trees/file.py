@@ -18,7 +18,7 @@ class PathNode(DataNode):
     
     @property
     def title(self):
-        return os.path.basename(self.path)        
+        return os.path.basename(self.path).decode('utf-8')        
 
     @property
     def mime_type(self):
