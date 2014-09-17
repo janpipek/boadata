@@ -1,4 +1,7 @@
 class DataObject(object):
+    def __init__(self, node=None):
+        self.node = node
+
     @property
     def title(self):
         return str(self)
@@ -18,6 +21,5 @@ class DataObject(object):
         return getattr(self, attr)()
 
     @property
-    def data_object(self):
-        return self
-
+    def shape(self):
+        return None

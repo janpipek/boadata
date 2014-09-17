@@ -11,6 +11,7 @@ class DataNode(object):
         self.parent = parent
         self.children_loaded = False
         self._children = []        
+        self._data_object = None
 
     @property
     def icon(self):
@@ -19,6 +20,18 @@ class DataNode(object):
     @property
     def data_object(self):
         return None
+
+    def has_object(self):
+        return (self._data_object is not None) or hasattr(self, "create_data_object")
+
+    @property
+    def data_object(self):
+        if self._data_object is None:
+            if hasattr(self, "create_data_object"):
+                self._data_object = self.create_data_object()
+        return self._data_object
+
+    # TODO data_object setter
 
     @property
     def properties(self):
@@ -71,15 +84,19 @@ class DataNode(object):
     def load_children(self):
         pass
 
-    def dump(self, stream=sys.stdout, indent=u"  ", subtree=False, in_depth=0, children_only=False):
+    def dump(self, stream=sys.stdout, indent=u"  ", subtree=False, in_depth=0, children_only=False, data_object_info=False):
         if not children_only:
             stream.write(in_depth * indent)
             stream.write(self.title)
+            # stream.write(str(self.has_object()))
+            if data_object_info and self.has_object():
+                # stream.write("!")
+                stream.write(" (" + " x ".join(str(i) for i in self.data_object.shape) + ")")
         if self.has_subtree() and subtree:
             stream.write(":")
-            self.subtree().dump(stream, indent, subtree, in_depth, children_only=True)
+            self.subtree().dump(stream, indent, subtree, in_depth, children_only=True, data_object_info=data_object_info)
         else:
             stream.write("\n")
         for child in self.children:    
-            child.dump(stream, indent, subtree, in_depth+1)
+            child.dump(stream, indent, subtree, in_depth+1, data_object_info=data_object_info)
         

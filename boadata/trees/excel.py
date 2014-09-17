@@ -3,9 +3,26 @@ from file import register_tree_generator
 import pandas as pd
 
 
-class ExcelSheet(DataNode, DataObject):
+class ExcelSheetObject(DataObject):
+    def __init__(self, xls, sheet_name, node=None):
+        super(ExcelSheetObject, self).__init__(node)
+        self.xls = xls
+        self.sheet_name = sheet_name
+
+    def as_pandas_frame(self):
+        try:
+            return self.xls.parse(self.sheet_name)
+        except:
+            return pd.DataFrame()
+
+    @property
+    def shape(self):
+        df = self.as_pandas_frame()
+        return df.shape
+
+class ExcelSheetNode(DataNode):
     def __init__(self, xls, sheet_name, parent=None):
-        super(ExcelSheet, self).__init__(parent)
+        super(ExcelSheetNode, self).__init__(parent)
         self.xls = xls
         self.sheet_name = sheet_name
 
@@ -13,8 +30,8 @@ class ExcelSheet(DataNode, DataObject):
     def title(self):
         return self.sheet_name
 
-    def as_pandas_frame(self):
-        return self.xls.parse(self.sheet_name)
+    def create_data_object(self):
+        return ExcelSheetObject(self.xls, self.sheet_name, self)
 
 
 class ExcelFile(DataNode):
@@ -27,7 +44,7 @@ class ExcelFile(DataNode):
         if not self.xls:
             self.xls = pd.ExcelFile(self.path)
         for sheet_name in self.xls.sheet_names:
-            self.add_child(ExcelSheet(self.xls, sheet_name, self))
+            self.add_child(ExcelSheetNode(self.xls, sheet_name, self))
 
 
 register_tree_generator("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", ExcelFile)
