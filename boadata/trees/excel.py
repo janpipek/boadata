@@ -1,7 +1,7 @@
 from ..core import DataNode, DataObject
 from file import register_tree_generator
 import pandas as pd
-
+import numpy as np
 
 class ExcelSheetObject(DataObject):
     def __init__(self, xls, sheet_name, node=None):
@@ -14,6 +14,9 @@ class ExcelSheetObject(DataObject):
             return self.xls.parse(self.sheet_name)
         except:
             return pd.DataFrame()
+
+    def as_numpy_array(self):
+        return np.array(self.as_pandas_frame())
 
     @property
     def shape(self):
