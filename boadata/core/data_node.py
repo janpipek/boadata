@@ -29,6 +29,21 @@ class DataNode(object):
         return str(self)    
 
     @property
+    def full_title(self):
+        if self.parent:
+            return self.parent.full_title + "/" + self.title
+        else:
+            return self.title
+
+    @property
+    def descendants(self):
+        """Recursive iterator of all descendants."""
+        for child in self.children:
+            yield child
+            for descendant in child.descendants:
+                yield descendant
+
+    @property
     def children(self):
         """Lazy access to children."""
         # TODO: Add option to disable caching
