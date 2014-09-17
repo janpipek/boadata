@@ -1,24 +1,24 @@
 from ..core import DataNode
 import os
+import mimetypes
 
-class FileNode(DataNode):
+class PathNode(DataNode):
     def __init__(self, path, parent=None):
-        super(FileNode, self).__init__(parent)
+        super(PathNode, self).__init__(parent)
         self.path = path
-
+    
     @property
     def title(self):
-        return os.path.basename(self.path)
-
-class DirectoryNode(DataNode):
-    def __init__(self, path, parent=None):
-        super(DirectoryNode, self).__init__(parent)
-        self.path = path
+        return os.path.basename(self.path)        
 
     @property
-    def title(self):
-        return os.path.basename(self.path) + "/"
+    def mime_type(self):
+        return mimetypes.guess_type(self.path)   
 
+class FileNode(PathNode):
+    pass
+
+class DirectoryNode(PathNode):
     def load_children(self):
         items = os.listdir(self.path)
         items = [os.path.join(self.path, item) for item in items]
