@@ -1,2 +1,4 @@
 class DataObject(object):
-    pass
+    @property
+    def title(self):
+        return str(self)

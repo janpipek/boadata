@@ -1,2 +1,2 @@
 from data_object import DataObject
-from data_tree import DataTree, DataBranch, DataLeaf
+from data_node import DataNode
