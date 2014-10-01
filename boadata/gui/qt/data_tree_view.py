@@ -13,9 +13,6 @@ class DataTreeView(QtGui.QTreeView):
         self.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(self.openMenu)
 
-    def doubleClicked(self, index):
-        pass
-
     def openMenu(self, position):
         '''Build menu from available views.'''
         
@@ -39,7 +36,6 @@ class DataTreeView(QtGui.QTreeView):
                 data_object = data_node.data_object
                 for view in registered_views:
                     if view.accepts(data_object):
-                        # pass
                         menu.addAction(view.title, ViewAction(view, data_object, self.main_window))
             if not menu.isEmpty():
                 menu.exec_(self.viewport().mapToGlobal(position))

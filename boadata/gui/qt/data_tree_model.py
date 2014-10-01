@@ -68,8 +68,10 @@ class DataTreeItem(object):
         for node_child in data_node.children:
             self.childItems.append(DataTreeItem(node_child, self))
         if data_node.has_subtree():
-            for tree_child in data_node.subtree().children:
-                self.childItems.append(DataTreeItem(tree_child, self))
+            subtree = data_node.subtree()
+            if subtree:
+                for tree_child in subtree.children:
+                    self.childItems.append(DataTreeItem(tree_child, self))
 
     def data(self, column):
         if column == 0:

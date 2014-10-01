@@ -9,33 +9,28 @@ class PropertyView(View):
         self.props = data_object.properties
 
     def create_table(self, props):
-        if props:
-            table = QTableWidget()
+        table = QTableWidget()
+        table.setColumnCount(2)
+        table.setRowCount(len(props.items()))
 
-            for m, item in enumerate(props.items()):
-                key, value = item
-                table.setItem(m, 0, QTableWidgetItem(key))
-                table.setItem(m, 1, QTableWidgetItem(value))
+        for m, item in enumerate(props.items()):
+            key, value = item
+            print item
+            table.setItem(m, 0, QTableWidgetItem(unicode(key)))
+            table.setItem(m, 1, QTableWidgetItem(unicode(value)))
 
-            table.resizeColumnsToContents()
-            table.resizeRowsToContents()
-            return table
-        else:
-            return QLabel("No properties.")
+        table.resizeColumnsToContents()
+        table.resizeRowsToContents()
+        return table
 
     @classmethod
     def accepts(cls, data_object):
         '''Accepts all data objects.'''
-        return True
+        return data_object.properties
 
     @property
     def widget(self):
-        if hasattr(self.props, "keys"):
-            props = self.props
-            tabs = True
-        else:
-            tabs = False
-        self.table = self.create_table(self.props)
+        self.table = self.create_table(self.props.default)
         return self.table
 
 register_view(PropertyView)

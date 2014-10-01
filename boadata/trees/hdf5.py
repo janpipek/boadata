@@ -1,4 +1,4 @@
-from ..core import DataNode, DataObject
+from ..core import DataNode, DataObject, DataProperties
 import h5py
 from file import register_tree_generator
 import os
@@ -34,7 +34,7 @@ class FileNode(Hdf5Node):
     def __init__(self, path, parent=None):
         super(FileNode, self).__init__(parent)
         self.path = path
-        self.h5_object = h5py.File(self.path)
+        self.h5_object = h5py.File(self.path, "r")
 
     node_type = "HDF5 file"
 
@@ -55,11 +55,16 @@ class DatasetObject(DataObject):
     def shape(self):
         return self.h5_dataset.shape
 
-    # TODO: select correctly pandas types in dynamic "conversions"
+    @property
+    def ndim(self):
+        return len(self.h5_dataset.shape)
+
+    @property
+    def properties(self):
+        return DataProperties(self.h5_dataset.attrs)
 
     def as_numpy_array(self):
         return np.array(self.h5_dataset)
-
 
 class DatasetNode(Hdf5Node):
     node_type = "HDF5 dataset"

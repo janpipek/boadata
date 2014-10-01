@@ -1,3 +1,5 @@
+from data_properties import DataProperties
+
 class DataObject(object):
     def __init__(self, node=None):
         self.node = node
@@ -8,7 +10,7 @@ class DataObject(object):
 
     @property
     def properties(self):
-        return {}
+        return DataProperties()
 
     @property
     def conversions(self):
@@ -25,7 +27,7 @@ class DataObject(object):
         return getattr(self, attr)()
 
     def converts_to(self, format):
-        return format in conversions
+        return format in self.conversions
 
     @property
     def shape(self):

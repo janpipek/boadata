@@ -44,7 +44,11 @@ class FileNode(PathNode):
         if not gen:
             return None
         else:
-            return gen(self.path)
+            try:
+                return gen(self.path)
+            except Exception as ex:
+                print ex
+                return None
 
 
 class DirectoryNode(PathNode):
