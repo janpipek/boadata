@@ -17,24 +17,16 @@ class DataTreeView(QtGui.QTreeView):
         pass
 
     def openMenu(self, position):
-        # def show_table():
-        #     window = QtGui.QMainWindow(self)
-        #     table = pg.TableWidget(window)
-        #     data = data_object.to("numpy_array")
-        #     if len(data.shape) == 1:
-        #         data = data.reshape(data.shape[0], 1)
-        #     table.setData(data)
-        #     table.update()
-        #     window.setCentralWidget(table)
-        #     window.show()
-        #     window.update()
+        '''Build menu from available views.'''
+        
+        class ViewAction(object):
+            def __init__(self, view, data_object, main_window):
+                self.view = view
+                self.data_object = data_object
+                self.main_window = main_window
 
-        # def show_graph():
-        #     if len(data_object.shape) == 1:
-        #         pg.plot(data_object.to("numpy_array"))
-        #     if len(data_object.shape) == 2 and data_object.shape[1] == 2:
-        #         data = data_object.to("numpy_array")
-        #         pg.plot(data[:,0], data[:,1])
+            def __call__(self):
+                self.main_window.show_view(self.view, self.data_object)
 
         def show_view(view):
             self.parent.show_view(view, data_object)
@@ -47,7 +39,8 @@ class DataTreeView(QtGui.QTreeView):
                 data_object = data_node.data_object
                 for view in registered_views:
                     if view.accepts(data_object):
-                        menu.addAction(view.title, lambda: self.main_window.show_view(view, data_object))
+                        # pass
+                        menu.addAction(view.title, ViewAction(view, data_object, self.main_window))
             if not menu.isEmpty():
                 menu.exec_(self.viewport().mapToGlobal(position))
 
