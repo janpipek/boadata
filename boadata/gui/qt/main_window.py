@@ -1,4 +1,4 @@
-from PyQt4.QtGui import QMainWindow, QMdiArea, QDockWidget
+from PyQt4.QtGui import QMainWindow, QMdiArea, QDockWidget, QMdiSubWindow
 from PyQt4 import QtCore
 from data_tree_view import DataTreeView
 
@@ -12,14 +12,24 @@ class MainWindow(QMainWindow):
         self.mdiArea.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
         self.mdiArea.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
         self.setCentralWidget(self.mdiArea)
-
         self.create_menus()
+        self.setWindowTitle("Boa data")
 
     def create_menus(self):
         pass
 
     def show_tree(self, model):
-        widget = DataTreeView(model)
+        widget = DataTreeView(model, main_window=self)
         self.tree_dock = QDockWidget("Data tree", self)
         self.tree_dock.setWidget(widget)
         self.addDockWidget(QtCore.Qt.LeftDockWidgetArea, self.tree_dock)
+
+    def show_view(self, view, data_object):
+        widget = view(data_object).widget
+
+        # Not working yet
+        sw = QMdiSubWindow()
+        sw.setWidget(widget)
+        sw.setAttribute(QtCore.Qt.WA_DeleteOnClose)
+        self.mdiArea.addSubWindow(sw)
+        widget.setFocus()
