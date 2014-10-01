@@ -81,7 +81,8 @@ class DataTreeItem(object):
             return node_type
         elif self.data_node.has_object():
             if column == 2:
-                return " x ".join(unicode(dim) for dim in self.data_node.data_object.shape)
+                if self.data_node.data_object.shape:
+                    return " x ".join(unicode(dim) for dim in self.data_node.data_object.shape)
         return ""
 
     def row(self):

@@ -1,4 +1,5 @@
 from PyQt4 import QtCore, QtGui
+from views import PropertyView
 import pyqtgraph as pg
 
 class DataTreeView(QtGui.QTreeView):
@@ -31,6 +32,10 @@ class DataTreeView(QtGui.QTreeView):
                 data = data_object.to("numpy_array")
                 pg.plot(data[:,0], data[:,1])
 
+        def show_properties():
+            pw = PropertyView(data_object)
+            pw.show()
+
         menu = QtGui.QMenu()
         # menu.addAction("Hah")
         indexes = self.selectedIndexes()
@@ -38,13 +43,14 @@ class DataTreeView(QtGui.QTreeView):
             data_node = indexes[0].internalPointer().data_node
             if data_node.has_object():
                 data_object = data_node.data_object
-                print data_object
-                if len(data_object.shape) < 3:
-                    menu.addAction("Show table", show_table)
-                if len(data_object.shape) == 1:
-                    menu.addAction("Show graph", show_graph)
-                if len(data_object.shape) == 2 and data_object.shape[1] == 2:
-                    menu.addAction("Show graph", show_graph)
+                if data_object.shape:
+                    if len(data_object.shape) < 3:
+                        menu.addAction("Data table", show_table)
+                    if len(data_object.shape) == 1:
+                        menu.addAction("Graph", show_graph)
+                    if len(data_object.shape) == 2 and data_object.shape[1] == 2:
+                        menu.addAction("Graph", show_graph)
+                menu.addAction("Properties", show_properties)
             menu.exec_(self.viewport().mapToGlobal(position))
 
 

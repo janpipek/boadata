@@ -7,6 +7,10 @@ class DataObject(object):
         return str(self)
 
     @property
+    def properties(self):
+        return {}
+
+    @property
     def conversions(self):
         '''Available object conversions.
 
