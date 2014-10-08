@@ -39,7 +39,7 @@ class ExcelSheetNode(DataNode):
         return ExcelSheetObject(self.xls, self.sheet_name, self)
 
 
-class ExcelFile(DataNode):
+class ExcelFile(DataNode, DataTree):
     def __init__(self, path, parent=None):
         super(ExcelFile, self).__init__(parent)
         self.path = path

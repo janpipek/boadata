@@ -11,10 +11,20 @@ class DataTreeView(QtGui.QTreeView):
         self.main_window = main_window
         self.setModel(model)
         self.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-        self.customContextMenuRequested.connect(self.openMenu)
+        self.customContextMenuRequested.connect(self.openContextMenu)
+        self.createMainMenu()
 
-    def openMenu(self, position):
-        '''Build menu from available views.'''
+    def createMainMenu(self):
+        node = self.model().data_node
+        actions = node.actions
+        if actions:
+            self.menu = self.main_window.menuBar().addMenu(node.menu_title)
+            for action in actions:
+                self.menu.addAction(action)
+
+
+    def openContextMenu(self, position):
+        '''Build context menu from available views of a node.'''
         
         class ViewAction(object):
             def __init__(self, view, data_object, main_window):

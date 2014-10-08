@@ -5,7 +5,6 @@ import StringIO
 class DataNode(object):
     """
 
-    DataNode can also be a DataObject.
     """
     def __init__(self, parent=None):
         self.parent = parent
@@ -102,3 +101,19 @@ class DataNode(object):
         for child in self.children:    
             child.dump(stream, indent, subtree, in_depth+1, data_object_info=data_object_info)
         
+class DataTree(DataNode):
+    '''A node that can be top-level in the tree view.
+    '''
+
+    @property
+    def menu_title(self):
+        '''Title of the menu displayed in main menu bar.
+
+        Override if not equal to title.
+        '''
+        return self.title
+
+    @property
+    def menu_actions(self):
+        '''Qt actions that should be put into the menu in main menu bar.'''
+        return []

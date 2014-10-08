@@ -1,4 +1,4 @@
-from ..core import DataNode
+from ..core import DataNode, DataTree
 import os
 import mimetypes
 from collections import OrderedDict
@@ -51,7 +51,7 @@ class FileNode(PathNode):
                 return None
 
 
-class DirectoryNode(PathNode):
+class DirectoryNode(PathNode, DataTree):
     node_type = "Directory"
 
     def load_children(self):

@@ -30,7 +30,7 @@ class Hdf5Node(DataNode):
         return self.h5_object.name.rsplit("/", 1)[1]
 
 
-class FileNode(Hdf5Node):
+class FileNode(Hdf5Node, DataTree):
     def __init__(self, path, parent=None):
         super(FileNode, self).__init__(parent)
         self.path = path
