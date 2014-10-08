@@ -1,4 +1,4 @@
-from PyQt4.QtGui import QMainWindow, QMdiArea, QDockWidget, QMdiSubWindow
+from PyQt4.QtGui import QMainWindow, QMdiArea, QDockWidget, QMdiSubWindow, QAction, qApp
 from PyQt4 import QtCore
 from data_tree_view import DataTreeView
 
@@ -17,7 +17,15 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("Boa data")
 
     def create_menus(self):
-        pass
+        exitAction = QAction('&Exit', self)        
+        # exitAction = QtGui.QAction(QtGui.QIcon('exit.png'), '&Exit', self)        
+        exitAction.setShortcut('Ctrl+Q')
+        exitAction.setStatusTip('Exit application')
+        exitAction.triggered.connect(qApp.quit)
+
+        menubar = self.menuBar()
+        fileMenu = menubar.addMenu('&File')
+        fileMenu.addAction(exitAction)
 
     def show_tree(self, model):
         widget = DataTreeView(model, main_window=self)
