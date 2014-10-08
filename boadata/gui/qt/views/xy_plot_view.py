@@ -1,5 +1,6 @@
 from view import View, register_view
 import numpy as np
+from PyQt4 import QtGui
 
 backends = []
 
@@ -7,23 +8,39 @@ backends = []
 try:
     import pyqtgraph as pg
 
-    class PyQtGraphBackend:
+    class PyQtGraphBackend(object):
         @classmethod
         def create_plot_widget(cls, x, y):
             pw = pg.PlotWidget()
             pw.plot(x, y)
             return pw
     backends.append(PyQtGraphBackend)
-except:
-    pass
+except Exception as ex:
+    print "Warning: could not import pyqtgraph:"
+    print ex
+
 
 # Try import matplotlib backend
 try:
+    import matplotlib
     from matplotlib.figure import Figure
     from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 
-except:
-    pass
+    class MatplotlibBackend(object):
+        @classmethod
+        def create_plot_widget(cls, x, y):
+            fig = Figure()
+            axes = fig.add_subplot(111)
+            axes.plot(x, y)
+            canvas = FigureCanvas(fig)
+            canvas.setSizePolicy(QtGui.QSizePolicy.Expanding,
+               QtGui.QSizePolicy.Expanding)
+            canvas.updateGeometry()
+            return canvas
+    backends.append(MatplotlibBackend)
+except Exception as ex:
+    print "Warning: could not import matplotlib:"
+    print ex
 
 
 class XYPlotView(View):
@@ -31,7 +48,7 @@ class XYPlotView(View):
 
     def __init__(self, data_object):
         super(XYPlotView, self).__init__(data_object)
-        self.backend = backends[0]
+        self.backend = backends[1]
 
     @classmethod
     def accepts(cls, data_object):
