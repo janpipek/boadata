@@ -1,4 +1,4 @@
-from ..core import DataNode, DataObject
+from ..core import DataNode, DataObject, DataTree
 from file import register_tree_generator
 import pandas as pd
 import numpy as np
@@ -22,6 +22,7 @@ class ExcelSheetObject(DataObject):
     def shape(self):
         df = self.as_pandas_frame()
         return df.shape
+        
 
 class ExcelSheetNode(DataNode):
     def __init__(self, xls, sheet_name, parent=None):
@@ -39,7 +40,7 @@ class ExcelSheetNode(DataNode):
         return ExcelSheetObject(self.xls, self.sheet_name, self)
 
 
-class ExcelFile(DataNode, DataTree):
+class ExcelFile(DataTree):
     def __init__(self, path, parent=None):
         super(ExcelFile, self).__init__(parent)
         self.path = path

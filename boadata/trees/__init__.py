@@ -3,5 +3,5 @@ import hdf5
 
 try:
     import excel
-except:
+except ImportError:
     print "Excel could not be loaded."

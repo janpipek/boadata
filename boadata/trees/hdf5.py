@@ -1,4 +1,4 @@
-from ..core import DataNode, DataObject, DataProperties
+from ..core import DataNode, DataObject, DataProperties, DataTree
 import h5py
 from file import register_tree_generator
 import os
