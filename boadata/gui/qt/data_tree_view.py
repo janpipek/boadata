@@ -16,7 +16,7 @@ class DataTreeView(QtGui.QTreeView):
 
     def createMainMenu(self):
         node = self.model().data_node
-        actions = node.actions
+        actions = node.menu_actions
         if actions:
             self.menu = self.main_window.menuBar().addMenu(node.menu_title)
             for action in actions:
