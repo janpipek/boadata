@@ -22,6 +22,14 @@ class ExcelSheetObject(DataObject):
     def shape(self):
         df = self.as_pandas_frame()
         return df.shape
+
+    @property
+    def ndim(self):
+        return 2
+
+    @property
+    def title(self):
+        return self.sheet_name
         
 
 class ExcelSheetNode(DataNode):
