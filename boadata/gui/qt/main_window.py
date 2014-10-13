@@ -1,6 +1,8 @@
-from PyQt4.QtGui import QMainWindow, QMdiArea, QDockWidget, QMdiSubWindow, QAction, qApp
+from PyQt4.QtGui import QMainWindow, QMdiArea, QDockWidget, QMdiSubWindow, QAction, qApp, QFileDialog
 from PyQt4 import QtCore
 from data_tree_view import DataTreeView
+from ...trees.file import DirectoryNode
+from data_tree_model import DataTreeModel
 
 # Inspired by https://github.com/Werkov/PyQt4/blob/master/examples/mainwindows/mdi/mdi.py
 
@@ -24,8 +26,35 @@ class MainWindow(QMainWindow):
         exitAction.triggered.connect(qApp.quit)
 
         menubar = self.menuBar()
+
         fileMenu = menubar.addMenu('&File')
+        openMenu = fileMenu.addMenu('&Open')
+
+        openFileAction = QAction('&File', self)
+        openFileAction.triggered.connect(self.openFile)
+
+        openDirAction = QAction('&Directory', self)
+        openDirAction.triggered.connect(self.openDirDialog)
+
+        openMenu.addAction(openFileAction)
+        openMenu.addAction(openDirAction)
+
         fileMenu.addAction(exitAction)
+
+    def openFile(self):
+        pass
+
+    def openDirDialog(self):
+        dialog = QFileDialog(self)
+        dialog.setFileMode(QFileDialog.DirectoryOnly)
+        if (dialog.exec_()):
+            directory = unicode(dialog.selectedFiles()[0])
+            self.openDir(directory)
+
+    def openDir(self, path):
+        node = DirectoryNode(path)
+        model = DataTreeModel(node)
+        self.show_tree(model)
 
     def show_tree(self, model):
         widget = DataTreeView(model, main_window=self)
