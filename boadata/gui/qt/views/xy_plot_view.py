@@ -59,7 +59,7 @@ class XYPlotView(View):
             if data_object.ndim == 1:
                 return True
             if data_object.ndim == 2:
-                if 2 in data_object.shape[0]:
+                if 2 in data_object.shape:
                     return True
         return False
 
