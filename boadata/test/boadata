@@ -3,17 +3,24 @@ import sys
 sys.path += [ "../.."]
 from PyQt4 import QtCore, QtGui
 from boadata.trees.file import DirectoryNode
+from boadata.trees.sql import DatabaseTree
 from boadata.gui.qt import MainWindow, DataTreeModel
 
 if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)
+    
     if len(sys.argv) > 1:
         path = sys.argv[1]
+        if path.startswith("mysql://"):
+            node = DatabaseTree(path)
+        else:
+            node = DirectoryNode(path)
+        model = DataTreeModel(node) 
     else:
-        path = "~"
-    branch = DirectoryNode(path) 
-    model = DataTreeModel(branch)
+        model = None
+
     mw = MainWindow()
-    mw.show_tree(model)
+    if model:
+        mw.show_tree(model)
     mw.show()
     sys.exit(app.exec_())
