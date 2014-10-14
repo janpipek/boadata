@@ -32,3 +32,7 @@ class DataObject(object):
     @property
     def shape(self):
         return None
+
+    @property
+    def ndim(self):
+        return None

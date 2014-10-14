@@ -1,11 +1,10 @@
 from PyQt4 import QtCore, QtGui
-# from views import PropertyView
-# import pyqtgraph as pg
 from views import registered_views
-
 from views import PropertyView
 
 class DataTreeView(QtGui.QTreeView):
+    '''A customized tree view widget for data tree model.'''
+
     def __init__(self, model, parent=None, main_window=None):
         super(DataTreeView, self).__init__(parent)
         self.main_window = main_window
@@ -15,6 +14,10 @@ class DataTreeView(QtGui.QTreeView):
         self.createMainMenu()
 
     def createMainMenu(self):
+        '''Add a menu to main menu bar if the model offers it.
+
+        The node has to implement menu_actions property for that.
+        '''
         node = self.model().data_node
         actions = node.menu_actions
         if actions:
@@ -22,9 +25,9 @@ class DataTreeView(QtGui.QTreeView):
             for action in actions:
                 self.menu.addAction(action)
 
-
     def openContextMenu(self, position):
-        '''Build context menu from available views of a node.'''
+        '''Build context menu from available views of a node.
+        '''
         
         class ViewAction(object):
             def __init__(self, view, data_object, main_window):
