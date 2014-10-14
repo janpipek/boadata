@@ -33,7 +33,17 @@ class DataTreeView(QtGui.QTreeView):
                 self.main_window = main_window
 
             def __call__(self):
-                self.main_window.show_view(self.view, self.data_object)
+                try:
+                    self.main_window.show_view(self.view, self.data_object)
+                except Exception as exc:
+                    import traceback
+                    message_box = QtGui.QMessageBox()
+                    message_box.setWindowTitle("Error initializing " + self.view.title)
+                    message_box.setText(str(exc))
+                    message_box.setDetailedText(traceback.format_exc())
+                    message_box.setIcon(QtGui.QMessageBox.Warning)
+                    message_box.exec_()
+
 
         def show_view(view):
             self.parent.show_view(view, data_object)
