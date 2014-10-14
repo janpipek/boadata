@@ -10,6 +10,8 @@ class TableView(View):
         '''Default variant.'''
         if data_object.converts_to("xy"):
             return True
+        if data_object.converts_to("pandas_frame"):
+            return True
         if data_object.converts_to("numpy_array"):
             if data_object.ndim <= 2:
                 return True
@@ -19,6 +21,8 @@ class TableView(View):
     def widget(self):
         if self.data_object.converts_to("xy"):
             data = np.array(self.data_object.to("xy"))
+        if self.data_object.converts_to("pandas_frame"):
+            data = np.array(self.data_object.to("pandas_frame"))            
         if self.data_object.converts_to("numpy_array"):
             data = self.data_object.to("numpy_array")
             if data.ndim == 1:

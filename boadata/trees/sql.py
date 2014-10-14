@@ -1,8 +1,20 @@
 from ..core import DataNode, DataObject, DataProperties, DataTree
 import sqlalchemy
+import pandas as pd
 
 class TableObject(DataObject):
-    pass
+    def __init__(self, node=None):
+        super(TableObject, self).__init__(node=node)
+        self.table_name = node.table_name
+        self.engine = node.parent.engine
+
+    def as_pandas_frame(self):
+        query = "SELECT * FROM %s LIMIT 1000" % self.table_name
+        return pd.read_sql_query(query, self.engine)            
+
+    @property
+    def ndim(self):
+        return 2
 
 class TableNode(DataNode):
     def __init__(self, table_name, parent=None):
@@ -12,6 +24,9 @@ class TableNode(DataNode):
     @property
     def title(self):
         return self.table_name
+
+    def create_data_object(self):
+        return TableObject(self)
 
     node_type = "SQL Table"
 
