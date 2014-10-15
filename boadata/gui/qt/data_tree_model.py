@@ -60,6 +60,10 @@ class DataTreeModel(QtCore.QAbstractItemModel):
             return ["Name", "Type", "Shape"][section]
         return None     
 
+    def reload(self):
+        self.rootItem.reload_items()
+        self.modelReset.emit()
+
     @property
     def title(self):
         return self.data_node.title
@@ -68,14 +72,7 @@ class DataTreeItem(object):
     def __init__(self, data_node, parent=None, subtrees=True):
         self.parent = parent
         self.data_node = data_node
-        self.childItems = []
-        for node_child in data_node.children:
-            self.childItems.append(DataTreeItem(node_child, self))
-        if data_node.has_subtree():
-            subtree = data_node.subtree()
-            if subtree:
-                for tree_child in subtree.children:
-                    self.childItems.append(DataTreeItem(tree_child, self))
+        self.reload_items()       
 
     def data(self, column):
         if column == 0:
@@ -103,4 +100,15 @@ class DataTreeItem(object):
         return self.childItems[row]
 
     def columnCount(self):
-        return 3
+        return 1
+        # return 3
+
+    def reload_items(self):
+        self.childItems = []
+        for node_child in self.data_node.children:
+            self.childItems.append(DataTreeItem(node_child, self))
+        if self.data_node.has_subtree():
+            subtree = self.data_node.subtree()
+            if subtree:
+                for tree_child in subtree.children:
+                    self.childItems.append(DataTreeItem(tree_child, self))

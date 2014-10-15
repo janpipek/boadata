@@ -85,6 +85,11 @@ class DataNode(object):
     def load_children(self):
         pass
 
+    def reload_children(self):
+        '''Forces children reloading.'''
+        self._children = []
+        self.children_loaded = False
+
     def dump(self, stream=sys.stdout, indent=u"  ", subtree=False, in_depth=0, children_only=False, data_object_info=False):
         if not children_only:
             stream.write(in_depth * indent)
