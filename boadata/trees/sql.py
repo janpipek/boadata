@@ -2,6 +2,7 @@ from ..core import DataNode, DataObject, DataProperties, DataTree
 import sqlalchemy
 import pandas as pd
 
+
 class TableObject(DataObject):
     def __init__(self, node=None):
         super(TableObject, self).__init__(node=node)
@@ -16,6 +17,11 @@ class TableObject(DataObject):
     def ndim(self):
         return 2
 
+    @property
+    def title(self):
+        return self.table_name
+
+
 class TableNode(DataNode):
     def __init__(self, table_name, parent=None):
         super(TableNode, self).__init__(parent)
@@ -29,6 +35,7 @@ class TableNode(DataNode):
         return TableObject(self)
 
     node_type = "SQL Table"
+
 
 class DatabaseTree(DataTree):
     def __init__(self, constr, parent=None):
