@@ -16,10 +16,20 @@ class DataTreeModel(QtCore.QAbstractItemModel):
     def data(self, index, role):
         if not index.isValid():
             return None
-        if role != QtCore.Qt.DisplayRole:
-            return None
         item = index.internalPointer()
-        return item.data(index.column())            
+        if role == QtCore.Qt.DisplayRole:   
+            return item.data(index.column())    
+        elif role == QtCore.Qt.DecorationRole:
+            if item.data_node.icon:
+                return item.data_node.icon
+            else:
+                if item.data_node.children:
+                    return QtGui.QIcon.fromTheme("folder")
+                elif item.data_node.has_subtree():
+                    return QtGui.QIcon.fromTheme("package-x-generic")
+                else:
+                    return None # TODO: provide default
+        return None        
 
     def rowCount(self, parent):
         if parent.column() > 0:
