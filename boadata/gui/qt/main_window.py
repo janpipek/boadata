@@ -1,7 +1,7 @@
 from PyQt4.QtGui import QMainWindow, QMdiArea, QDockWidget, QMdiSubWindow, QAction, qApp, QFileDialog
 from PyQt4 import QtCore
 from data_tree_view import DataTreeView
-from ...trees.file import DirectoryNode
+from ...trees.file import DirectoryTree
 from data_tree_model import DataTreeModel
 
 # Inspired by https://github.com/Werkov/PyQt4/blob/master/examples/mainwindows/mdi/mdi.py
@@ -52,13 +52,13 @@ class MainWindow(QMainWindow):
             self.openDir(directory)
 
     def openDir(self, path):
-        node = DirectoryNode(path)
+        node = DirectoryTree(path)
         model = DataTreeModel(node)
         self.show_tree(model)
 
     def show_tree(self, model):
         widget = DataTreeView(model, main_window=self)
-        self.tree_dock = QDockWidget("Data tree", self)
+        self.tree_dock = QDockWidget(model.title, self)
         self.tree_dock.setWidget(widget)
         self.addDockWidget(QtCore.Qt.LeftDockWidgetArea, self.tree_dock)
 

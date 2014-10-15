@@ -51,7 +51,7 @@ class FileNode(PathNode):
                 return None
 
 
-class DirectoryNode(PathNode, DataTree):
+class DirectoryNode(PathNode):
     node_type = "Directory"
 
     def load_children(self):
@@ -63,3 +63,9 @@ class DirectoryNode(PathNode, DataTree):
             self.add_child(DirectoryNode(d, self))
         for f in files:
             self.add_child(FileNode(f, self))
+
+
+class DirectoryTree(DirectoryNode, DataTree):
+    @property
+    def title(self):
+        return "File Browser"

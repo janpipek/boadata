@@ -2,7 +2,7 @@
 import sys
 sys.path += [ "../.."]
 from PyQt4 import QtCore, QtGui
-from boadata.trees.file import DirectoryNode
+from boadata.trees.file import DirectoryTree
 from boadata.trees.sql import DatabaseTree
 from boadata.gui.qt import MainWindow, DataTreeModel
 
@@ -14,7 +14,7 @@ if __name__ == '__main__':
         if path.startswith("mysql://"):
             node = DatabaseTree(path)
         else:
-            node = DirectoryNode(path)
+            node = DirectoryTree(path)
         model = DataTreeModel(node) 
     else:
         model = None

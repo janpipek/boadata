@@ -58,7 +58,11 @@ class DataTreeModel(QtCore.QAbstractItemModel):
     def headerData(self, section, orientation, role):
         if orientation == QtCore.Qt.Horizontal and role == QtCore.Qt.DisplayRole:
             return ["Name", "Type", "Shape"][section]
-        return None        
+        return None     
+
+    @property
+    def title(self):
+        return self.data_node.title
 
 class DataTreeItem(object):
     def __init__(self, data_node, parent=None, subtrees=True):
