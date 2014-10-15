@@ -6,7 +6,7 @@ from boadata.trees.file import DirectoryTree
 from boadata.trees.sql import DatabaseTree
 from boadata.gui.qt import MainWindow, DataTreeModel
 
-if __name__ == '__main__':
+def run_app():
     app = QtGui.QApplication(sys.argv)
     
     if len(sys.argv) > 1:
@@ -24,3 +24,6 @@ if __name__ == '__main__':
         mw.show_tree(model)
     mw.show()
     sys.exit(app.exec_())
+
+if __name__ == '__main__':
+    run_app()
