@@ -7,6 +7,7 @@ import blinker
 class DataNode(object):
     '''A branch/leaf in a data tree.
     '''
+    
     def __init__(self, parent=None):
         self.parent = parent
         self.children_loaded = False
@@ -15,8 +16,8 @@ class DataNode(object):
 
     node_type = "Unknown"
 
+    # Signals
     child_added = blinker.Signal("child_added")
-
     child_removed = blinker.Signal("child_removed")
 
     @property
@@ -37,7 +38,8 @@ class DataNode(object):
                 self._data_object = self.create_data_object()
         return self._data_object
 
-    # TODO data_object setter
+    # TODO: data_object setter
+    # TODO: signal data_object changed
 
     @property
     def properties(self):
@@ -72,11 +74,12 @@ class DataNode(object):
         return None
 
     def has_subtree(self):
+        '''Whether the node can serve as a root of another tree.'''
         return self.subtree() is not None
 
     @property
     def children(self):
-        """Lazy access to children."""
+        '''Lazy access to children.'''
         # TODO: Add option to disable caching
         if not self.children_loaded:
             self.load_children()
