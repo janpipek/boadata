@@ -1,6 +1,8 @@
 import sys
 from collections import OrderedDict
 import StringIO
+import blinker
+
 
 class DataNode(object):
     '''A branch/leaf in a data tree.
@@ -12,6 +14,10 @@ class DataNode(object):
         self._data_object = None
 
     node_type = "Unknown"
+
+    child_added = blinker.Signal("child_added")
+
+    child_removed = blinker.Signal("child_removed")
 
     @property
     def icon(self):
@@ -77,9 +83,16 @@ class DataNode(object):
             self.children_loaded = True
         return self._children
 
-    def add_child(self, child):
-        child.parent = self   # Force here?
+    def add_child(self, child, send_signal=True):
+        child.parent = self
         self._children.append(child)
+        if send_signal:
+            self.child_added.send(self, child=child)
+
+    def remove_child(self, child, send_signal=True):
+        self._children.remove(child)
+        if send_signal:
+            self.child_removed.send(self, child=child)
 
     def load_children(self):
         pass
@@ -104,7 +117,8 @@ class DataNode(object):
             stream.write("\n")
         for child in self.children:    
             child.dump(stream, indent, subtree, in_depth+1, data_object_info=data_object_info)
-        
+
+      
 class DataTree(DataNode):
     '''A node that can be top-level in the tree view.
     '''
