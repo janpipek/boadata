@@ -3,9 +3,8 @@ from collections import OrderedDict
 import StringIO
 
 class DataNode(object):
-    """
-
-    """
+    '''A branch/leaf in a data tree.
+    '''
     def __init__(self, parent=None):
         self.parent = parent
         self.children_loaded = False

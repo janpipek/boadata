@@ -46,6 +46,7 @@ class FileNode(Hdf5Node, DataTree):
 class GroupNode(Hdf5Node):
     node_type = "HDF5 group"
 
+
 class DatasetObject(DataObject):
     def __init__(self, h5_dataset, node=None):
         super(DatasetObject, self).__init__(node)
@@ -65,6 +66,7 @@ class DatasetObject(DataObject):
 
     def as_numpy_array(self):
         return np.array(self.h5_dataset)
+
 
 class DatasetNode(Hdf5Node):
     node_type = "HDF5 dataset"

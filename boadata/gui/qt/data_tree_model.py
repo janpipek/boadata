@@ -1,7 +1,6 @@
 from PyQt4 import QtCore, QtGui
 
 class DataTreeModel(QtCore.QAbstractItemModel):
-    # index(), parent(), rowCount(), columnCount(), and data()
     def __init__(self, data_node, parent=None):
         super(DataTreeModel, self).__init__(parent)
         self.data_node = data_node
