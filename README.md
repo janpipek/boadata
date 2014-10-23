@@ -12,6 +12,9 @@ Requirements
 * blinker
 * h5py
 * sqlalchemy
+* pyqtgraph
+
+None of these but PyQt4 should be required in the future.
 
 Status
 -----
