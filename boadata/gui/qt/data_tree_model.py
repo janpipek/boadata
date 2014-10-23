@@ -1,10 +1,10 @@
 from PyQt4 import QtCore, QtGui
 
 class DataTreeModel(QtCore.QAbstractItemModel):
-    # index(), parent(), rowCount(), columnCount(), and data()
     def __init__(self, data_node, parent=None):
         super(DataTreeModel, self).__init__(parent)
         self.data_node = data_node
+        data_node.changed.connect(self.on_node_changed, sender=data_node)
         self.rootItem = DataTreeItem(self.data_node)
 
     def columnCount(self, parent):
@@ -16,10 +16,20 @@ class DataTreeModel(QtCore.QAbstractItemModel):
     def data(self, index, role):
         if not index.isValid():
             return None
-        if role != QtCore.Qt.DisplayRole:
-            return None
         item = index.internalPointer()
-        return item.data(index.column())            
+        if role == QtCore.Qt.DisplayRole:   
+            return item.data(index.column())    
+        elif role == QtCore.Qt.DecorationRole:
+            if item.data_node.icon:
+                return item.data_node.icon
+            else:
+                if item.data_node.children:
+                    return QtGui.QIcon.fromTheme("folder")
+                elif item.data_node.has_subtree():
+                    return QtGui.QIcon.fromTheme("package-x-generic")
+                else:
+                    return None # TODO: provide default
+        return None        
 
     def rowCount(self, parent):
         if parent.column() > 0:
@@ -59,6 +69,9 @@ class DataTreeModel(QtCore.QAbstractItemModel):
         if orientation == QtCore.Qt.Horizontal and role == QtCore.Qt.DisplayRole:
             return ["Name", "Type", "Shape"][section]
         return None     
+
+    def on_node_changed(self, sender):
+        self.reload()
 
     def reload(self):
         self.rootItem.reload_items()

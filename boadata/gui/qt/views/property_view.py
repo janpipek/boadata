@@ -15,7 +15,6 @@ class PropertyView(View):
 
         for m, item in enumerate(props.items()):
             key, value = item
-            print item
             table.setItem(m, 0, QTableWidgetItem(unicode(key)))
             table.setItem(m, 1, QTableWidgetItem(unicode(value)))
 

@@ -1,11 +1,13 @@
 import sys
 from collections import OrderedDict
 import StringIO
+import blinker
+
 
 class DataNode(object):
-    """
-
-    """
+    '''A branch/leaf in a data tree.
+    '''
+    
     def __init__(self, parent=None):
         self.parent = parent
         self.children_loaded = False
@@ -13,6 +15,11 @@ class DataNode(object):
         self._data_object = None
 
     node_type = "Unknown"
+
+    # Signals
+    child_added = blinker.Signal("child_added")
+    child_removed = blinker.Signal("child_removed")
+    changed = blinker.Signal("changed")
 
     @property
     def icon(self):
@@ -32,7 +39,8 @@ class DataNode(object):
                 self._data_object = self.create_data_object()
         return self._data_object
 
-    # TODO data_object setter
+    # TODO: data_object setter
+    # TODO: signal data_object changed
 
     @property
     def properties(self):
@@ -67,20 +75,31 @@ class DataNode(object):
         return None
 
     def has_subtree(self):
+        '''Whether the node can serve as a root of another tree.'''
         return self.subtree() is not None
 
     @property
     def children(self):
-        """Lazy access to children."""
+        '''Lazy access to children.'''
         # TODO: Add option to disable caching
         if not self.children_loaded:
             self.load_children()
             self.children_loaded = True
         return self._children
 
-    def add_child(self, child):
-        child.parent = self   # Force here?
+    def add_child(self, child, send_signal=True):
+        child.parent = self
+        child.changed.connect(lambda _: self.changed.send(self), sender=child)
         self._children.append(child)
+        if send_signal:
+            self.child_added.send(self, child=child)
+            self.changed.send(self)
+
+    def remove_child(self, child, send_signal=True):
+        self._children.remove(child)
+        if send_signal:
+            self.child_removed.send(self, child=child)
+            self.changed.send(self)
 
     def load_children(self):
         pass
@@ -89,6 +108,7 @@ class DataNode(object):
         '''Forces children reloading.'''
         self._children = []
         self.children_loaded = False
+        self.changed.send(self)
 
     def dump(self, stream=sys.stdout, indent=u"  ", subtree=False, in_depth=0, children_only=False, data_object_info=False):
         if not children_only:
@@ -105,7 +125,8 @@ class DataNode(object):
             stream.write("\n")
         for child in self.children:    
             child.dump(stream, indent, subtree, in_depth+1, data_object_info=data_object_info)
-        
+
+      
 class DataTree(DataNode):
     '''A node that can be top-level in the tree view.
     '''
