@@ -4,8 +4,8 @@ class DataTreeModel(QtCore.QAbstractItemModel):
     def __init__(self, data_node, parent=None):
         super(DataTreeModel, self).__init__(parent)
         self.data_node = data_node
-        data_node.changed.connect(self.on_node_changed, sender=data_node)
         self.rootItem = DataTreeItem(self.data_node)
+        data_node.changed.connect(self.on_node_changed, sender=data_node)
 
     def columnCount(self, parent):
         if parent.isValid():
