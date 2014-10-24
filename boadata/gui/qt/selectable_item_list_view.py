@@ -1,6 +1,7 @@
 from PyQt4 import QtCore, QtGui
 
 class SelectableItemListView(QtGui.QListView):
+    '''A list widget built on top of the SelectableItemList objects.'''
     def __init__(self, item_list, parent=None):
         super(SelectableItemListView, self).__init__(parent)
         self.item_list = item_list

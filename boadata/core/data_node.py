@@ -142,4 +142,5 @@ class DataTree(DataNode):
     @property
     def menu_actions(self):
         '''Qt actions that should be put into the menu in main menu bar.'''
+        # TODO: Move elsewhere?
         return []

@@ -1,3 +1,5 @@
+'''Classes for data abstraction used in boadata.'''
+
 from data_types import SelectableMixin, DictionaryNotifierMixin
 from data_properties import DataProperties
 from data_object import DataObject

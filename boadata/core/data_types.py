@@ -4,6 +4,10 @@ class SelectableMixin(object):
     '''Mixin for containers that makes items selectable.
 
     For dict's, the item represents key.
+    When an item is selected or deselected, blinker signals are called.
+
+    TODO: There is a leak when selected objects are removed.
+    TODO: Make signals optional.
     '''
     def __init__(self, *args, **kwargs):
         super(SelectableMixin, self).__init__(*args, **kwargs)
@@ -13,6 +17,10 @@ class SelectableMixin(object):
     item_deselected = blinker.Signal("item_deselected")  
 
     def is_selected(self, item):
+        '''Check whether an item is selected.
+
+        :raises KeyError: if item is not in the container at all.
+        '''
         if not item in self:
             raise KeyError('"%s" not in container.')
         else:
@@ -46,6 +54,7 @@ class SelectableMixin(object):
             return False
 
     def select_all(self):
+        '''Select all items at once.'''
         for item in self:
             self.select(item)
 
@@ -54,6 +63,8 @@ class SelectableMixin(object):
             self.deselect(item)
 
 class DictionaryNotifierMixin(object):
+    '''Dictionary with this mixin notifies if an item is added or removed.'''
+    # TODO: Signals for item change?
     item_added = blinker.Signal()
     item_removed = blinker.Signal()
 
