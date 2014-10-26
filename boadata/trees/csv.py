@@ -8,6 +8,12 @@ class CsvFile(DataObject):
         super(CsvFile, self).__init__(node)
         self.path = path
 
+    ndim = 2
+
+    @property
+    def shape(self):
+        return self.as_numpy_array().shape
+
     def as_pandas_frame(self):
         return pd.read_csv(self.path)
 
