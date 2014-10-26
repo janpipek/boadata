@@ -1,6 +1,6 @@
 from view import View, register_view
 import numpy as np
-from PyQt4 import QtGui
+from PyQt4 import QtGui, QtCore
 
 backends = []
 
@@ -24,19 +24,46 @@ except Exception as ex:
 try:
     import matplotlib
     from matplotlib.figure import Figure
-    from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
+    from matplotlib.backend_bases import key_press_handler
+    from matplotlib.backends.backend_qt4agg import (
+        FigureCanvasQTAgg as FigureCanvas,
+        NavigationToolbar2QT as NavigationToolbar)
 
     class MatplotlibBackend(object):
         @classmethod
         def create_plot_widget(cls, x, y):
+            # Inspiration:
+            # http://matplotlib.org/examples/user_interfaces/embedding_in_qt4_wtoolbar.html
             fig = Figure()
-            axes = fig.add_subplot(111)
-            axes.plot(x, y)
+            
+            widget = QtGui.QWidget()
+            layout = QtGui.QVBoxLayout()
+            widget.setLayout(layout)
+
+            # The canvas widget
             canvas = FigureCanvas(fig)
             canvas.setSizePolicy(QtGui.QSizePolicy.Expanding,
                QtGui.QSizePolicy.Expanding)
+            canvas.setFocusPolicy(QtCore.Qt.StrongFocus)
             canvas.updateGeometry()
-            return canvas
+
+            # The toolbar
+            mpl_toolbar = NavigationToolbar(canvas, widget)
+
+            def on_key_press(event):
+                key_press_handler(event, canvas, mpl_toolbar)
+            
+            # Draw the plot itself
+            axes = fig.add_subplot(111)
+            canvas.mpl_connect('key_press_event', on_key_press)
+            axes.plot(x, y)
+            # fig.tight_layout()
+
+            # Lay it out
+            layout.addWidget(canvas)
+            layout.addWidget(mpl_toolbar)
+            return widget
+            # return canvas
     backends.append(MatplotlibBackend)
 except Exception as ex:
     print "Warning: could not import matplotlib:"
