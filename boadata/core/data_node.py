@@ -25,10 +25,6 @@ class DataNode(object):
     def icon(self):
         return None
 
-    @property
-    def data_object(self):
-        return None
-
     def has_object(self):
         return (self._data_object is not None) or hasattr(self, "create_data_object")
 

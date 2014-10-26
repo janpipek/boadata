@@ -10,6 +10,8 @@ object_generators = {}
 def register_tree_generator(mime_type, func):
     tree_generators[mime_type] = func
 
+def register_object_generator(mime_type, func):
+    object_generators[mime_type] = func
 
 class PathNode(DataNode):
     def __init__(self, path, parent=None):
@@ -29,18 +31,36 @@ class FileNode(PathNode):
     node_type = "File"
 
     def has_subtree(self):
-        return self._get_generator() is not None
+        return self._get_subtree_generator() is not None
 
-    def _get_generator(self):
+    def has_object(self):
+        return self._get_object_generator() is not None
+
+    def _get_subtree_generator(self):
         mime = self.mime_type[0]
         if mime in tree_generators:
-            return tree_generators[self.mime_type[0]]
+            return tree_generators[mime]
         else:
             ext = os.path.splitext(self.path)[1]
             return tree_generators.get(ext, None)
 
+    def _get_object_generator(self):
+        mime = self.mime_type[0]
+        if mime in object_generators:
+            return object_generators[mime]
+        else:
+            ext = os.path.splitext(self.path)[1]
+            return object_generators.get(ext, None)
+
+    def create_data_object(self):
+        gen = self._get_object_generator()
+        if not gen:
+            return None
+        else:
+            return gen(self.path)
+
     def subtree(self):
-        gen = self._get_generator()
+        gen = self._get_subtree_generator()
         if not gen:
             return None
         else:
