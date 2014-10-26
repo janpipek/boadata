@@ -10,3 +10,8 @@ try:
     import sql
 except ImportError:
     print "SQL could not be loaded."
+
+try:
+    import csv
+except ImportError:
+    print "CSV could not be loaded."
