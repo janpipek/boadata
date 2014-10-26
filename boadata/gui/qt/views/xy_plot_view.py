@@ -76,6 +76,9 @@ class XYPlotView(View):
                 if data.shape[0] == 2:
                     x = data[0]
                     y = data[1]
+                elif data.shape[1] == 2:
+                    x = data[:,0]
+                    y = data[:,1]
                 else:
                     raise Exception("Invalid 2D matrix to plot")
             else:
