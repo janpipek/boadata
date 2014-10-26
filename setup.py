@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='boadata',
-    version='0.2.1',
+    version='0.2.2',
     packages=find_packages(),
     license='MIT',
     description='(B)rowser (O)f (A)rbitrary Data - a Python GUI browser of data.',

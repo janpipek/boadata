@@ -13,6 +13,7 @@ Requirements
 * h5py
 * sqlalchemy
 * pyqtgraph
+* matplotlib (optional)
 
 None of these but PyQt4 should be required in the future.
 
@@ -24,6 +25,7 @@ Supported formats and sources
 ----------
 * File system tree
 * HDF5
+* CSV (basic)
 * XLS (very basic)
 * SQL based on SqlAlchemy (very basic)
 
