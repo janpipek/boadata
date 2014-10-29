@@ -2,6 +2,7 @@ from ..core import DataNode, DataTree
 import os
 import mimetypes
 from collections import OrderedDict
+import logging
 
 tree_generators = {}
 
@@ -67,7 +68,7 @@ class FileNode(PathNode):
             try:
                 return gen(self.path)
             except Exception as ex:
-                print ex
+                log.error(unicode(ex))
                 return None
 
 

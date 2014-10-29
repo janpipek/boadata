@@ -15,10 +15,8 @@ try:
             pw.plot(x, y)
             return pw
     backends.append(PyQtGraphBackend)
-except Exception as ex:
-    print "Warning: could not import pyqtgraph:"
-    print ex
-
+except ImportError as ex:
+    logging.warning("Could not import pyqtgraph.")
 
 # Try import matplotlib backend
 try:
@@ -65,9 +63,8 @@ try:
             return widget
             # return canvas
     backends.append(MatplotlibBackend)
-except Exception as ex:
-    print "Warning: could not import matplotlib:"
-    print ex
+except ImportError as ex:
+    logging.warning("Could not import matplotlib.")
 
 
 class XYPlotView(View):

@@ -4,6 +4,7 @@ from file import register_tree_generator
 import os
 import pandas as pd
 import numpy as np
+import logging
 
 def create_hdf_node(h5_object):
     if isinstance(h5_object, h5py.Group):
@@ -11,7 +12,7 @@ def create_hdf_node(h5_object):
     elif isinstance(h5_object, h5py.Dataset):
         return DatasetNode(h5_object)
     else:
-        print "Warning: unknown hdf5 item type - %s" % type(h5_object)
+        logging.warning("Warning: unknown hdf5 item type - %s" % type(h5_object))
 
 
 class Hdf5Node(DataNode):

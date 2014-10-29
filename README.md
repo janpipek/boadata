@@ -17,6 +17,8 @@ Requirements
 
 None of these but PyQt4 should be required in the future.
 
+* Python 2.7 (Python 3 planned)
+
 Status
 -----
 * in (slow) development
