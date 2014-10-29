@@ -2,6 +2,14 @@ from view import View, register_view
 import pyqtgraph as pg
 import numpy as np
 from collections import OrderedDict
+import logging
+
+try:
+    from pandas.sandbox.qtpandas import DataFrameWidget
+    logging.info("pandas.sandbox.qtpandas.DataFrameWidget will be used for tables")
+except ImportError:
+    DataFrameWidget = None
+    logging.info("Use pandas > 0.15 to get better widget for DataFrame")
 
 class TableView(View):
     title = "Table"
@@ -20,14 +28,19 @@ class TableView(View):
 
     @property
     def widget(self):
-        if self.data_object.converts_to("xy"):
-            data = np.array(self.data_object.to("xy"))
-        elif self.data_object.converts_to("pandas_frame"):
-            data = []
+        if self.data_object.converts_to("pandas_frame"):
             df = self.data_object.to("pandas_frame")
+            if DataFrameWidget:
+                widget = DataFrameWidget(df)
+                return widget
+
+            data = []
             for index, row in df.iterrows():
                 data.append(row.to_dict())
             # np.array(self.data_object.to("pandas_frame"))            
+        elif self.data_object.converts_to("xy"):
+            data = np.array(self.data_object.to("xy"))
+
         elif self.data_object.converts_to("numpy_array"):
             data = self.data_object.to("numpy_array")
             if data.ndim == 1:
