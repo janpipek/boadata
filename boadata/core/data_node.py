@@ -6,6 +6,15 @@ import logging
 
 class DataNode(object):
     '''A branch/leaf in a data tree.
+
+    Signals:
+    --------
+    There are three blinker-based signals emitted by the data node:
+    * child_added(child)
+    * child_removed(child)
+    * changed
+
+    They are not emitted before children are loaded.
     '''
     
     def __init__(self, parent=None):
@@ -80,36 +89,53 @@ class DataNode(object):
         '''Lazy access to children.'''
         # TODO: Add option to disable caching
         if not self.children_loaded:
+            self._children = []
             self.load_children()
             self.children_loaded = True
+            self.changed.send(self)
         return self._children
 
-    def add_child(self, child, send_signal=True):
-        child.parent = self
-        child.changed.connect(lambda _: self.changed.send(self), sender=child)
-        self._children.append(child)
-        if send_signal:
-            self.child_added.send(self, child=child)
-            self.changed.send(self)
-        logging.debug("Child %s added to node %s." % (child.title, self.title))
+    def add_child(self, child):
+        if not child in self._children:
+            child.parent = self
+            self.changed.connect(self._on_changed, sender=child)
+            self._children.append(child)
+            if self.children_loaded:
+                self.child_added.send(self, child=child)
+                self._on_changed()
+            logging.debug("Child %s added to node %s." % (child.title, self.title))
 
-    def remove_child(self, child, send_signal=True):
-        self._children.remove(child)
-        if send_signal:
-            self.child_removed.send(self, child=child)
-            self.changed.send(self)
-        logging.debug("Child %s removed node %s." % (child.title, self.title))
+    def remove_child(self, child):
+        if child in self._children:
+            self._children.remove(child)
+            if self.children_loaded:
+                self.child_removed.send(self, child=child)
+                self._on_changed()
+            logging.debug("Child %s removed node %s." % (child.title, self.title))
 
     def load_children(self):
+        '''Initially load children.
+
+        This method is called when children are requested from a fresh node.
+
+        For leaf nodes, this method does not nothing.
+        For branch nodes, it has to be overriden.
+        '''
         pass
 
     def reload_children(self):
-        '''Forces children reloading.'''
+        '''Force children reloading.'''
         self._children = []
         self.children_loaded = False
         self.changed.send(self)
 
+    def _on_changed(self, *args):
+        '''Called after any change of this node or children.'''
+        print "CHANGE " + self.title
+        self.changed.send(self)
+
     def dump(self, stream=sys.stdout, indent=u"  ", subtree=False, in_depth=0, children_only=False, data_object_info=False):
+        '''Write a textual representation of the tree.'''
         if not children_only:
             stream.write(in_depth * indent)
             stream.write(self.title)
@@ -143,3 +169,17 @@ class DataTree(DataNode):
         '''Qt actions that should be put into the menu in main menu bar.'''
         # TODO: Move elsewhere?
         return []
+
+
+# Event logging
+@DataNode.child_added.connect
+def _log_child_added(sender, *args, **kwargs):
+    logging.debug("Event 'child_added' sent from node %s." % sender.title)
+
+@DataNode.child_removed.connect
+def _log_child_removed(sender, *args, **kwargs):
+    logging.debug("Event 'child_removed' sent from node %s." % sender.title)
+
+@DataNode.changed.connect
+def _log_changed(sender, *args, **kwargs):
+    logging.debug("Event 'changed' sent from node %s." % sender.title)
