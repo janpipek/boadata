@@ -23,6 +23,14 @@ class SelectableItemListView(QtGui.QListView):
         self.item_list.item_selected.connect(self.on_selected, sender=self.item_list)
         self.item_list.item_deselected.connect(self.on_deselected, sender=self.item_list)
 
+        self.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.customContextMenuRequested.connect(self.on_context_menu)
+
+    def on_context_menu(self, point):
+        context_menu = QtGui.QMenu("HAAH", self)
+        context_menu.addAction("Update list", self.item_list.update)
+        context_menu.exec_( self.mapToGlobal(point) )
+
     def select(self, key):
         item = self.items[key]
         item.setCheckState(QtCore.Qt.Checked)
@@ -31,7 +39,7 @@ class SelectableItemListView(QtGui.QListView):
         item = self.items[key]
         item.setCheckState(QtCore.Qt.Unchecked)
 
-    def createItem(self, key):
+    def createItem(self, key, order=None):
         item = QtGui.QStandardItem(self.item_list.item_title(key))
         item.setData(key)
         item.setCheckable(True)
