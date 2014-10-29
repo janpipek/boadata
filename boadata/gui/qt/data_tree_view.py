@@ -30,6 +30,7 @@ class DataTreeView(QtGui.QTreeView):
         '''
         
         class ViewAction(object):
+            '''A Qt action resulting in showing a view for the object.'''
             def __init__(self, view, data_object, main_window):
                 self.view = view
                 self.data_object = data_object
@@ -42,14 +43,10 @@ class DataTreeView(QtGui.QTreeView):
                     import traceback
                     message_box = QtGui.QMessageBox()
                     message_box.setWindowTitle("Error initializing " + self.view.title)
-                    message_box.setText(str(exc))
+                    message_box.setText(unicode(exc))
                     message_box.setDetailedText(traceback.format_exc())
                     message_box.setIcon(QtGui.QMessageBox.Warning)
                     message_box.exec_()
-
-
-        def show_view(view):
-            self.parent.show_view(view, data_object)
 
         menu = QtGui.QMenu()
         indexes = self.selectedIndexes()

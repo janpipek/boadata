@@ -3,6 +3,7 @@ from data_types import SelectableMixin, DictionaryNotifierMixin
 
 class SelectableItemList(SelectableMixin, DictionaryNotifierMixin, OrderedDict):
     '''An abstract selectable list with keys and values.'''
+    # TODO: Order does matter, but we also have to be able to insert items.
 
     def item_title(self, key):
         '''A title for an item, displayed by default.

@@ -130,8 +130,7 @@ class DataNode(object):
         self.changed.send(self)
 
     def _on_changed(self, *args):
-        '''Called after any change of this node or children.'''
-        print "CHANGE " + self.title
+        '''Called after any change of this node or its children.'''
         self.changed.send(self)
 
     def dump(self, stream=sys.stdout, indent=u"  ", subtree=False, in_depth=0, children_only=False, data_object_info=False):
