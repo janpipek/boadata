@@ -39,7 +39,7 @@ class SelectableItemListView(QtGui.QListView):
         self.model.appendRow(item)
 
     def on_added(self, sender, key):
-        self.createItem(self, key)
+        self.createItem(key)
 
     def on_removed(self, sender, key):
         item = self.items[key]
