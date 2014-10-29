@@ -2,7 +2,7 @@ import sys
 from collections import OrderedDict
 import StringIO
 import blinker
-
+import logging
 
 class DataNode(object):
     '''A branch/leaf in a data tree.
@@ -33,6 +33,7 @@ class DataNode(object):
         if self._data_object is None:
             if hasattr(self, "create_data_object"):
                 self._data_object = self.create_data_object()
+                logging.debug("Data object created from node %s." % self.title)
         return self._data_object
 
     # TODO: data_object setter
@@ -90,12 +91,14 @@ class DataNode(object):
         if send_signal:
             self.child_added.send(self, child=child)
             self.changed.send(self)
+        logging.debug("Child %s added to node %s." % (child.title, self.title))
 
     def remove_child(self, child, send_signal=True):
         self._children.remove(child)
         if send_signal:
             self.child_removed.send(self, child=child)
             self.changed.send(self)
+        logging.debug("Child %s removed node %s." % (child.title, self.title))
 
     def load_children(self):
         pass

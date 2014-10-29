@@ -1,3 +1,5 @@
+import logging
+
 registered_views = []
 
 class View(object):
@@ -5,6 +7,7 @@ class View(object):
 
     def __init__(self, data_object):
         self.data_object = data_object
+        logging.info("View %s created for object %s." % (self.title, data_object.title))
 
     @classmethod
     def supported_types(cls):
