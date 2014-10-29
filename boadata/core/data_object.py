@@ -12,6 +12,9 @@ class DataObject(object):
     def properties(self):
         return DataProperties()
 
+    # TODO: Give this some meaning
+    read_only = True
+
     @property
     def conversions(self):
         '''Available object conversions.
