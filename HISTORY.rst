@@ -1,3 +1,7 @@
+0.2.4 (2014-10-30)
+------------------
+* Make less dependent on optional packages
+
 0.2.3 (2014-10-29)
 ------------------
 * Various bug fixes

@@ -4,7 +4,7 @@ import itertools
 
 options = dict(
     name='boadata',
-    version='0.2.3',
+    version='0.2.4',
     packages=find_packages(),
     license='MIT',
     description='(B)rowser (O)f (A)rbitrary Data - a Python GUI browser of data.',
@@ -16,7 +16,7 @@ options = dict(
     extras_require = {
         'sql' : ['sqlalchemy'],
         'pyqtgraph' : ['pyqtgraph'],
-        'matplotlib' : ['matplotlib']
+        'matplotlib' : ['matplotlib'],
         'hdf5' : ['h5py']
     },
     entry_points = {
