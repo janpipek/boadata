@@ -4,7 +4,10 @@ import re
 sys.path += [ "../.."]
 from PyQt4 import QtCore, QtGui
 from boadata.trees.file import DirectoryTree
-from boadata.trees.sql import DatabaseTree
+try:
+    from boadata.trees.sql import DatabaseTree
+except:
+    pass
 from boadata.gui.qt import MainWindow, DataTreeModel
 
 def run_app():
@@ -12,6 +15,7 @@ def run_app():
     
     if len(sys.argv) > 1:
         path = sys.argv[1]
+        # TODO: Implement tree-opening protocols
         if re.search("sql.*://", path):
             node = DatabaseTree(path)
         else:

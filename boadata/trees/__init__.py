@@ -1,6 +1,10 @@
 import file
-import hdf5
 import logging
+
+try:
+    import hdf5
+except:
+    logging.warning("HDF5 could not be loaded.")
 
 try:
     import excel

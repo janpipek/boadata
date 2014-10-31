@@ -1,6 +1,7 @@
 from view import View, register_view
 import numpy as np
 from PyQt4 import QtGui, QtCore
+import logging
 
 backends = []
 
