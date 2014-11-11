@@ -3,6 +3,7 @@ from boadata.core.data_types import SelectableItemList
 from PyQt4 import QtGui
 
 import unittest
+import _core
 
 class SelectableItemListViewTest(unittest.TestCase):
     def test_create_from_empty_list(self):
