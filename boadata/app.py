@@ -1,14 +1,16 @@
 #!/usr/bin/env python
+import os
 import sys
 import re
 sys.path += [ "../.."]
 from PyQt4 import QtCore, QtGui
-from boadata.trees.file import DirectoryTree
+from .trees.file import DirectoryTree, FileNode
+from .trees.generic import GenericTree
 try:
-    from boadata.trees.sql import DatabaseTree
+    from .trees.sql import DatabaseTree
 except ImportError:
     pass
-from boadata.gui.qt import MainWindow, DataTreeModel
+from .gui.qt import MainWindow, DataTreeModel
 
 
 def run_app():
@@ -20,7 +22,18 @@ def run_app():
         if re.search("sql.*://", path):
             node = DatabaseTree(path)
         else:
-            node = DirectoryTree(path)
+            if os.path.isdir(path):
+                node = DirectoryTree(path)
+            elif os.path.isfile(path):
+                file_node = FileNode(path)
+                if file_node.has_subtree():
+                    node = file_node.subtree()
+                else:
+                    node = GenericTree()
+                    node.title = "Open Files"
+                    node.add_child(file_node)
+            else:
+                raise Exception("Cannot open path %s" % path)
         model = DataTreeModel(node) 
     else:
         model = None
