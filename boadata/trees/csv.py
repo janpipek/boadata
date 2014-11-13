@@ -3,6 +3,7 @@ from file import register_object_generator
 import pandas as pd
 import numpy as np
 
+
 class CsvFile(DataObject):
     def __init__(self, path, node=None):
         super(CsvFile, self).__init__(node)

@@ -1,6 +1,6 @@
 from PyQt4 import QtCore, QtGui
 from views import registered_views
-from views import PropertyView
+
 
 class DataTreeView(QtGui.QTreeView):
     '''A customized tree view widget for data tree model.'''
@@ -28,7 +28,7 @@ class DataTreeView(QtGui.QTreeView):
     def openContextMenu(self, position):
         '''Build context menu from available views of a node.
         '''
-        
+
         class ViewAction(object):
             '''A Qt action resulting in showing a view for the object.'''
             def __init__(self, view, data_object, main_window):
@@ -42,7 +42,8 @@ class DataTreeView(QtGui.QTreeView):
                 except Exception as exc:
                     import traceback
                     message_box = QtGui.QMessageBox()
-                    message_box.setWindowTitle("Error initializing " + self.view.title)
+                    message_box.setWindowTitle("Error initializing "
+                                               + self.view.title)
                     message_box.setText(unicode(exc))
                     message_box.setDetailedText(traceback.format_exc())
                     message_box.setIcon(QtGui.QMessageBox.Warning)
@@ -56,9 +57,7 @@ class DataTreeView(QtGui.QTreeView):
                 data_object = data_node.data_object
                 for view in registered_views:
                     if view.accepts(data_object):
-                        menu.addAction(view.title, ViewAction(view, data_object, self.main_window))
+                        menu.addAction(view.title, ViewAction(view, data_object,
+                                                              self.main_window))
             if not menu.isEmpty():
                 menu.exec_(self.viewport().mapToGlobal(position))
-
-
-

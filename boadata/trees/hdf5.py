@@ -6,6 +6,7 @@ import pandas as pd
 import numpy as np
 import logging
 
+
 def create_hdf_node(h5_object):
     if isinstance(h5_object, h5py.Group):
         return GroupNode(h5_object)

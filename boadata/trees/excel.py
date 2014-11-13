@@ -3,6 +3,7 @@ from file import register_tree_generator
 import pandas as pd
 import numpy as np
 
+
 class ExcelSheetObject(DataObject):
     def __init__(self, xls, sheet_name, node=None):
         super(ExcelSheetObject, self).__init__(node)

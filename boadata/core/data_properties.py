@@ -1,5 +1,6 @@
 from collections import OrderedDict
 
+
 class DataProperties(object):
     '''Data object properties.
 

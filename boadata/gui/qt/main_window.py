@@ -6,6 +6,7 @@ from data_tree_model import DataTreeModel
 
 # Inspired by https://github.com/Werkov/PyQt4/blob/master/examples/mainwindows/mdi/mdi.py
 
+
 class MainWindow(QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
@@ -19,27 +20,27 @@ class MainWindow(QMainWindow):
         self.setWindowTitle("Boa data")
 
     def create_menus(self):
-        exitAction = QAction('&Exit', self)        
+        exit_action = QAction('&Exit', self)
         # exitAction = QtGui.QAction(QtGui.QIcon('exit.png'), '&Exit', self)        
-        exitAction.setShortcut('Ctrl+Q')
-        exitAction.setStatusTip('Exit application')
-        exitAction.triggered.connect(qApp.quit)
+        exit_action.setShortcut('Ctrl+Q')
+        exit_action.setStatusTip('Exit application')
+        exit_action.triggered.connect(qApp.quit)
 
         menubar = self.menuBar()
 
-        fileMenu = menubar.addMenu('&File')
-        openMenu = fileMenu.addMenu('&Open')
+        file_menu = menubar.addMenu('&File')
+        open_menu = file_menu.addMenu('&Open')
 
-        openFileAction = QAction('&File', self)
-        openFileAction.triggered.connect(self.openFile)
+        open_file_action = QAction('&File', self)
+        open_file_action.triggered.connect(self.openFile)
 
-        openDirAction = QAction('&Directory', self)
-        openDirAction.triggered.connect(self.openDirDialog)
+        open_dir_action = QAction('&Directory', self)
+        open_dir_action.triggered.connect(self.openDirDialog)
 
-        openMenu.addAction(openFileAction)
-        openMenu.addAction(openDirAction)
+        open_menu.addAction(open_file_action)
+        open_menu.addAction(open_dir_action)
 
-        fileMenu.addAction(exitAction)
+        file_menu.addAction(exit_action)
 
     def openFile(self):
         pass
@@ -47,7 +48,7 @@ class MainWindow(QMainWindow):
     def openDirDialog(self):
         dialog = QFileDialog(self)
         dialog.setFileMode(QFileDialog.DirectoryOnly)
-        if (dialog.exec_()):
+        if dialog.exec_():
             directory = unicode(dialog.selectedFiles()[0])
             self.openDir(directory)
 

@@ -8,11 +8,14 @@ tree_generators = {}
 
 object_generators = {}
 
+
 def register_tree_generator(mime_type, func):
     tree_generators[mime_type] = func
 
+
 def register_object_generator(mime_type, func):
     object_generators[mime_type] = func
+
 
 class PathNode(DataNode):
     def __init__(self, path, parent=None):
@@ -68,7 +71,7 @@ class FileNode(PathNode):
             try:
                 return gen(self.path)
             except Exception as ex:
-                log.error(unicode(ex))
+                logging.error(unicode(ex))
                 return None
 
 

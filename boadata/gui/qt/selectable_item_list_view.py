@@ -1,5 +1,6 @@
 from PyQt4 import QtCore, QtGui
 
+
 class SelectableItemListView(QtGui.QListView):
     '''A list widget built on top of the SelectableItemList objects.'''
     def __init__(self, item_list, parent=None):
@@ -27,7 +28,7 @@ class SelectableItemListView(QtGui.QListView):
         self.customContextMenuRequested.connect(self.on_context_menu)
 
     def on_context_menu(self, point):
-        context_menu = QtGui.QMenu("HAAH", self)
+        context_menu = QtGui.QMenu("Test", self)
         context_menu.addAction("Update list", self.item_list.update)
         context_menu.exec_( self.mapToGlobal(point) )
 

@@ -1,5 +1,6 @@
 from PyQt4 import QtCore, QtGui
 
+
 class DataTreeModel(QtCore.QAbstractItemModel):
     def __init__(self, data_node, parent=None):
         super(DataTreeModel, self).__init__(parent)
@@ -17,8 +18,8 @@ class DataTreeModel(QtCore.QAbstractItemModel):
         if not index.isValid():
             return None
         item = index.internalPointer()
-        if role == QtCore.Qt.DisplayRole:   
-            return item.data(index.column())    
+        if role == QtCore.Qt.DisplayRole:
+            return item.data(index.column())
         elif role == QtCore.Qt.DecorationRole:
             if item.data_node.icon:
                 return item.data_node.icon
@@ -28,8 +29,8 @@ class DataTreeModel(QtCore.QAbstractItemModel):
                 elif item.data_node.has_subtree():
                     return QtGui.QIcon.fromTheme("package-x-generic")
                 else:
-                    return None # TODO: provide default
-        return None        
+                    return None    # TODO: provide default
+        return None
 
     def rowCount(self, parent):
         if parent.column() > 0:
@@ -66,9 +67,10 @@ class DataTreeModel(QtCore.QAbstractItemModel):
         return self.createIndex(parentItem.row(), 0, parentItem)
 
     def headerData(self, section, orientation, role):
-        if orientation == QtCore.Qt.Horizontal and role == QtCore.Qt.DisplayRole:
+        if (orientation == QtCore.Qt.Horizontal
+            and role == QtCore.Qt.DisplayRole):
             return ["Name", "Type", "Shape"][section]
-        return None     
+        return None
 
     def on_node_changed(self, sender):
         self.reload()
@@ -81,11 +83,12 @@ class DataTreeModel(QtCore.QAbstractItemModel):
     def title(self):
         return self.data_node.title
 
+
 class DataTreeItem(object):
     def __init__(self, data_node, parent=None, subtrees=True):
         self.parent = parent
         self.data_node = data_node
-        self.reload_items()       
+        self.reload_items()
 
     def data(self, column):
         if column == 0:
@@ -104,7 +107,7 @@ class DataTreeItem(object):
     def row(self):
         if self.parent:
             return self.parent.childItems.index(self)
-        return 0        
+        return 0
 
     def childCount(self):
         return len(self.childItems)

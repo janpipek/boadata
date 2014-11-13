@@ -6,9 +6,10 @@ from PyQt4 import QtCore, QtGui
 from boadata.trees.file import DirectoryTree
 try:
     from boadata.trees.sql import DatabaseTree
-except:
+except ImportError:
     pass
 from boadata.gui.qt import MainWindow, DataTreeModel
+
 
 def run_app():
     app = QtGui.QApplication(sys.argv)

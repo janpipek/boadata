@@ -4,6 +4,7 @@ import StringIO
 import blinker
 import logging
 
+
 class DataNode(object):
     '''A branch/leaf in a data tree.
 
