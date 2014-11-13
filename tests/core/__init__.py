@@ -1,1 +1,1 @@
-import data_types
+from data_types import *

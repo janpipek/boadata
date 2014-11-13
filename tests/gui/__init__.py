@@ -1,3 +1,3 @@
 import _core
 
-import selectable_item_list_view_test
+from test_selectable_item_list_view import TestSelectableItemListViewTest

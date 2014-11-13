@@ -1,2 +1,2 @@
-import core
-import gui
+from core import *
+from gui import *

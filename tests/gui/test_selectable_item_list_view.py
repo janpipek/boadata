@@ -5,7 +5,8 @@ from PyQt4 import QtGui
 import unittest
 import _core
 
-class SelectableItemListViewTest(unittest.TestCase):
+
+class TestSelectableItemListViewTest(unittest.TestCase):
     def test_create_from_empty_list(self):
         item_list = SelectableItemList()
         view = SelectableItemListView(item_list)
