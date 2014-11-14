@@ -4,7 +4,7 @@ import itertools
 
 options = dict(
     name='boadata',
-    version='0.2.4',
+    version='0.2.5',
     packages=find_packages(),
     license='MIT',
     description='(B)rowser (O)f (A)rbitrary Data - a Python GUI browser of data.',
@@ -12,7 +12,7 @@ options = dict(
     author='Jan Pipek',
     author_email='jan.pipek@gmail.com',
     url='https://github.com/janpipek/boadata',
-    install_requires = [ 'numpy', 'pandas', 'blinker' ],
+    install_requires = ['numpy', 'pandas', 'blinker'],
     extras_require = {
         'sql' : ['sqlalchemy'],
         'pyqtgraph' : ['pyqtgraph'],

@@ -14,6 +14,7 @@ Requirements
 * sqlalchemy (optional)
 * pyqtgraph (optional)
 * matplotlib (optional)
+* xlrd (optional, for reading Excel files)
 
 None of these but PyQt4 should be required in the future.
 But honestly, a full distribution is highly recommended.
