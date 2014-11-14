@@ -2,6 +2,7 @@ from ..core import DataNode, DataObject, DataTree
 from file import register_tree_generator
 import pandas as pd
 import numpy as np
+import xlrd
 
 
 class ExcelSheetObject(DataObject):

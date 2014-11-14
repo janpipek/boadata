@@ -1,3 +1,7 @@
+0.2.5 (2014-11-14)
+------------------
+* Open files from command line
+
 0.2.4 (2014-10-30)
 ------------------
 * Make less dependent on optional packages
