@@ -151,6 +151,16 @@ class DataNode(object):
         for child in self.children:    
             child.dump(stream, indent, subtree, in_depth+1, data_object_info=data_object_info)
 
+    def _repr_html_(self):
+        '''Simple HTML representation to be used e.g. in IPython.'''
+        s = self.title
+        if self.children:
+            s += "<ul>"
+            for child in self.children:
+                s += "<li>%s</li>" % child._repr_html_()
+            s += "</ul>"
+        return s
+
       
 class DataTree(DataNode):
     '''A node that can be top-level in the tree view.
