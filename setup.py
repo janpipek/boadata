@@ -4,7 +4,7 @@ import itertools
 
 options = dict(
     name='boadata',
-    version='0.2.5',
+    version='0.2.6',
     packages=find_packages(),
     license='MIT',
     description='(B)rowser (O)f (A)rbitrary Data - a Python GUI browser of data.',

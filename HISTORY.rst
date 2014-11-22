@@ -1,3 +1,7 @@
+0.2.6 (2014-11-22)
+------------------
+* HTML representation for IPython
+
 0.2.5 (2014-11-14)
 ------------------
 * Open files from command line
