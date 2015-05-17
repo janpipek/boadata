@@ -5,6 +5,7 @@ import os
 import pandas as pd
 import numpy as np
 import logging
+from collections import OrderedDict
 
 
 def create_hdf_node(h5_object):
@@ -53,6 +54,7 @@ class DatasetObject(DataObject):
     def __init__(self, h5_dataset, node=None):
         super(DatasetObject, self).__init__(node)
         self.h5_dataset = h5_dataset
+        self._properties = None
 
     @property
     def shape(self):
@@ -64,7 +66,15 @@ class DatasetObject(DataObject):
 
     @property
     def properties(self):
-        return DataProperties(self.h5_dataset.attrs)
+        if not self._properties:
+            dimensions = OrderedDict()
+            dimensions["Dimensions"] = " x ".join((str(d) for d in self.shape))
+            dimensions["Data type"] = str(self.h5_dataset.dtype)
+
+            self._properties = DataProperties()
+            self._properties.add(dimensions, "Dimensions")
+            self._properties.add(self.h5_dataset.attrs, "HDF5 Attributes")
+        return self._properties
 
     def as_numpy_array(self):
         return np.array(self.h5_dataset)
