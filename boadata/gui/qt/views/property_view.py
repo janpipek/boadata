@@ -1,5 +1,6 @@
-from PyQt4.QtGui import QTableWidget, QTableWidgetItem, QLabel
+from PyQt4.QtGui import QTableWidget, QTableWidgetItem, QLabel, QTabWidget
 from view import View, register_view
+
 
 class PropertyView(View):
     title = "Properties"
@@ -29,7 +30,13 @@ class PropertyView(View):
 
     @property
     def widget(self):
-        self.table = self.create_table(self.props.default)
-        return self.table
+        self.tabbed_widget = QTabWidget()
+        if self.props.default:
+            self.tabbed_widget.addTab(self.create_table(self.props.default), "Default")
+        for key, value in self.props.named.items():
+            self.tabbed_widget.addTab(self.create_table(value), key)
+        return self.tabbed_widget
+
 
 register_view(PropertyView)
+
