@@ -1,6 +1,6 @@
 from PyQt4 import QtCore, QtGui
-from views import registered_views
-
+from .views import registered_views
+from six import text_type
 
 class DataTreeView(QtGui.QTreeView):
     '''A customized tree view widget for data tree model.'''
@@ -44,7 +44,7 @@ class DataTreeView(QtGui.QTreeView):
                     message_box = QtGui.QMessageBox()
                     message_box.setWindowTitle("Error initializing "
                                                + self.view.title)
-                    message_box.setText(unicode(exc))
+                    message_box.setText(text_type(exc))
                     message_box.setDetailedText(traceback.format_exc())
                     message_box.setIcon(QtGui.QMessageBox.Warning)
                     message_box.exec_()

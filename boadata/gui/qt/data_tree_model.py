@@ -1,5 +1,5 @@
 from PyQt4 import QtCore, QtGui
-
+from six import text_type
 
 class DataTreeModel(QtCore.QAbstractItemModel):
     def __init__(self, data_node, parent=None):
@@ -92,7 +92,7 @@ class DataTreeItem(object):
 
     def data(self, column):
         if column == 0:
-            return QtCore.QString(self.data_node.title)
+            return self.data_node.title
         elif column == 1:
             node_type = self.data_node.node_type
             if self.data_node.has_subtree():
@@ -101,7 +101,7 @@ class DataTreeItem(object):
         elif self.data_node.has_object():
             if column == 2:
                 if self.data_node.data_object.shape:
-                    return " x ".join(unicode(dim) for dim in self.data_node.data_object.shape)
+                    return " x ".join(text_type(dim) for dim in self.data_node.data_object.shape)
         return ""
 
     def row(self):

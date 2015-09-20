@@ -1,5 +1,5 @@
 from ..core import DataObject
-from file import register_object_generator
+from .file import register_object_generator
 import pandas as pd
 import numpy as np
 

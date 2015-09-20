@@ -1,4 +1,4 @@
-from data_properties import DataProperties
+from .data_properties import DataProperties
 
 
 class DataObject(object):
@@ -34,7 +34,7 @@ class DataObject(object):
         '''
         attr = 'as_' + conversion
         if not hasattr(self, attr):
-            raise "Conversion not supported."
+            raise RuntimeError("Conversion not supported.")
         return getattr(self, attr)()
 
     def converts_to(self, format):

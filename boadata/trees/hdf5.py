@@ -1,11 +1,12 @@
 from ..core import DataNode, DataObject, DataProperties, DataTree
 import h5py
-from file import register_tree_generator
+from .file import register_tree_generator
 import os
 import pandas as pd
 import numpy as np
 import logging
 from collections import OrderedDict
+import odo
 
 
 def create_hdf_node(h5_object):
@@ -52,6 +53,12 @@ class GroupNode(Hdf5Node):
 
 class DatasetObject(DataObject):
     def __init__(self, h5_dataset, node=None):
+        """
+
+        :type h5_dataset: h5py.Dataset
+        :param node:
+        :return:
+        """
         super(DatasetObject, self).__init__(node)
         self.h5_dataset = h5_dataset
         self._properties = None
@@ -77,7 +84,21 @@ class DatasetObject(DataObject):
         return self._properties
 
     def as_numpy_array(self):
-        return np.array(self.h5_dataset)
+        if self.h5_dataset.attrs["CLASS"] == "TABLE":
+            return None
+        else:
+            return np.array(self.h5_dataset)
+
+    def as_pandas_frame(self):
+        if self.h5_dataset.attrs["CLASS"] == "TABLE":
+            odo_url = "%s::%s" % (self.h5_dataset.file.filename, self.h5_dataset.name)
+            return odo.odo(odo_url, pd.DataFrame)
+        else:
+            return None
+
+    @property
+    def title(self):
+        return self.h5_dataset.name
 
 
 class DatasetNode(Hdf5Node):

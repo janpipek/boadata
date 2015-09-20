@@ -1,8 +1,8 @@
 import sys
 from collections import OrderedDict
-import StringIO
 import blinker
 import logging
+from six import text_type
 
 
 class DataNode(object):
@@ -59,7 +59,7 @@ class DataNode(object):
 
     @property
     def title(self):
-        return unicode(self)    
+        return text_type(self)
 
     @property
     def full_title(self):

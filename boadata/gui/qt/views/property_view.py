@@ -1,5 +1,6 @@
 from PyQt4.QtGui import QTableWidget, QTableWidgetItem, QLabel, QTabWidget
-from view import View, register_view
+from .view import View, register_view
+from six import text_type
 
 
 class PropertyView(View):
@@ -16,8 +17,8 @@ class PropertyView(View):
 
         for m, item in enumerate(props.items()):
             key, value = item
-            table.setItem(m, 0, QTableWidgetItem(unicode(key)))
-            table.setItem(m, 1, QTableWidgetItem(unicode(value)))
+            table.setItem(m, 0, QTableWidgetItem(text_type(key)))
+            table.setItem(m, 1, QTableWidgetItem(text_type(value)))
 
         table.resizeColumnsToContents()
         table.resizeRowsToContents()

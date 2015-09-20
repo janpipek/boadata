@@ -1,5 +1,6 @@
 from ..core.data_node import DataTree
 
+
 class GenericTree(DataTree):
     '''A tree that accepts adding nodes of any type.'''
     def __init__(self, parent=None):

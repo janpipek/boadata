@@ -1,22 +1,23 @@
-import file
+from . import file
 import logging
 
 try:
-    import hdf5
-except:
-    logging.warning("HDF5 could not be loaded.")
+    from . import hdf5
+except ImportError as e:
+    logging.warning("HDF5 could not be loaded: {}".format(e))
 
 try:
-    import excel
-except ImportError:
-    logging.warning("Excel could not be loaded.")
+    from . import excel
+except ImportError as e:
+    logging.warning("Excel could not be loaded: {}".format(e))
 
 try:
-    import sql
-except ImportError:
-    logging.warning("SQL could not be loaded.")
+    from . import sql
+except ImportError as e:
+    logging.warning("SQL could not be loaded: {}".format(e))
 
 try:
-    import csv
-except ImportError:
-    logging.warning("CSV could not be loaded.")
+    from . import csv
+except ImportError as e:
+    logging.warning("CSV could not be loaded: {}".format(e))
+

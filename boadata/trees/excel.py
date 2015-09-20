@@ -1,8 +1,8 @@
 from ..core import DataNode, DataObject, DataTree
-from file import register_tree_generator
+from .file import register_tree_generator
 import pandas as pd
 import numpy as np
-import xlrd  # This is used by pandas to import excels
+import xlrd  # This is used by pandas to import excel
 
 
 class ExcelSheetObject(DataObject):

@@ -1,7 +1,7 @@
 from ..core import DataNode, DataTree
 import os
 import mimetypes
-from collections import OrderedDict
+from six import text_type
 import logging
 
 tree_generators = {}
@@ -24,7 +24,7 @@ class PathNode(DataNode):
     
     @property
     def title(self):
-        return unicode(os.path.basename(self.path))
+        return text_type(os.path.basename(self.path))
 
     @property
     def mime_type(self):
@@ -71,7 +71,7 @@ class FileNode(PathNode):
             try:
                 return gen(self.path)
             except Exception as ex:
-                logging.error(unicode(ex))
+                logging.error(text_type(ex))
                 return None
 
 

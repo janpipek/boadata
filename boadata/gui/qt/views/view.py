@@ -2,6 +2,7 @@ import logging
 
 registered_views = []
 
+
 class View(object):
     title = "Unknown view"
 

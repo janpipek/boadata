@@ -1,8 +1,8 @@
 from PyQt4.QtGui import QMainWindow, QMdiArea, QDockWidget, QMdiSubWindow, QAction, qApp, QFileDialog
 from PyQt4 import QtCore
-from data_tree_view import DataTreeView
+from .data_tree_view import DataTreeView
 from ...trees.file import DirectoryTree
-from data_tree_model import DataTreeModel
+from .data_tree_model import DataTreeModel
 
 # Inspired by https://github.com/Werkov/PyQt4/blob/master/examples/mainwindows/mdi/mdi.py
 
@@ -49,7 +49,7 @@ class MainWindow(QMainWindow):
         dialog = QFileDialog(self)
         dialog.setFileMode(QFileDialog.DirectoryOnly)
         if dialog.exec_():
-            directory = unicode(dialog.selectedFiles()[0])
+            directory = dialog.selectedFiles()[0]
             self.openDir(directory)
 
     def openDir(self, path):

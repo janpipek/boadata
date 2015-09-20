@@ -1,7 +1,6 @@
-from view import View, register_view
+from .view import View, register_view
 import pyqtgraph as pg
 import numpy as np
-from collections import OrderedDict
 import logging
 
 try:
