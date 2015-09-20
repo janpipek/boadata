@@ -3,6 +3,8 @@ import os
 import sys
 import re
 sys.path += [ "../.."]
+from .gui import qt   # Force sip API
+
 from PyQt4 import QtCore, QtGui
 from .trees.file import DirectoryTree, FileNode
 from .trees.generic import GenericTree
