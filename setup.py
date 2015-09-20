@@ -1,18 +1,19 @@
 #!/usr/bin/env python
 from setuptools import setup, find_packages
 import itertools
+from boadata import __version__
 
 options = dict(
     name='boadata',
-    version='0.2.6',
+    version=__version__,
     packages=find_packages(),
     license='MIT',
     description='(B)rowser (O)f (A)rbitrary Data - a Python GUI browser of data.',
-    long_description=open('README.md').read(),
+    long_description=open('README.txt').read(),
     author='Jan Pipek',
     author_email='jan.pipek@gmail.com',
     url='https://github.com/janpipek/boadata',
-    install_requires = ['numpy', 'pandas', 'blinker'],
+    install_requires = ['numpy', 'pandas', 'blinker', 'six'],
     extras_require = {
         'sql' : ['sqlalchemy'],
         'pyqtgraph' : ['pyqtgraph'],
@@ -21,7 +22,7 @@ options = dict(
     },
     entry_points = {
         'console_scripts' : [
-            'boadata = boadata:run_app'
+            'boadata = boadata.app:run_app'
         ]
     }
 )

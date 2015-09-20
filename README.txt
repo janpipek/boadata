@@ -11,6 +11,7 @@ Requirements
 ------------
 * PyQt4
 * pandas
+* six
 * blinker
 * h5py (optional)
 * sqlalchemy (optional)
@@ -21,7 +22,7 @@ Requirements
 None of these but PyQt4 should be required in the future.
 But honestly, a full distribution is highly recommended.
 
-* Python 2.7 (Python 3 planned)
+* Python 2.7 / 3.4
 
 Status
 ------

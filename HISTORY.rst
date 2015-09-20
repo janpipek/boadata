@@ -1,3 +1,7 @@
+0.2.7 (2015-09-20)
+------------------
+* Python 3 support (though many file readings are broken)
+
 0.2.6 (2014-11-22)
 ------------------
 * HTML representation for IPython

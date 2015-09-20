@@ -1,1 +1,1 @@
-from .app import run_app
+__version__ = str('0.2.7')
