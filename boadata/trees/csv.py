@@ -21,6 +21,13 @@ class CsvFile(DataObject):
     def as_numpy_array(self):
         return np.array(self.as_pandas_frame())
 
+    def as_text(self):
+        with open(self.path) as f:
+            return f.read()
+
+    def __repr__(self):
+        return "CsvFile('{0}')".format(self.path)
+
     @property
     def title(self):
         return self.path
