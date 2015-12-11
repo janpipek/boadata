@@ -3,12 +3,6 @@ import pyqtgraph as pg
 import numpy as np
 import logging
 
-try:
-    from pandas.sandbox.qtpandas import DataFrameWidget
-    logging.info("pandas.sandbox.qtpandas.DataFrameWidget will be used for tables")
-except ImportError:
-    DataFrameWidget = None
-    logging.info("Use pandas > 0.15 to get better widget for DataFrame")
 
 class TableView(View):
     title = "Table"
@@ -29,14 +23,14 @@ class TableView(View):
     def widget(self):
         if self.data_object.converts_to("pandas_frame"):
             df = self.data_object.to("pandas_frame")
-            if DataFrameWidget:
-                widget = DataFrameWidget(df)
-                return widget
-
+            # if DataFrameWidget:
+            #     widget = DataFrameWidget(df)
+            #     return widget
+            #
             data = []
             for index, row in df.iterrows():
                 data.append(row.to_dict())
-            # np.array(self.data_object.to("pandas_frame"))            
+            data = data[:1000]
         elif self.data_object.converts_to("xy"):
             data = np.array(self.data_object.to("xy"))
 
