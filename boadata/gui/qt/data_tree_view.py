@@ -1,6 +1,7 @@
 from PyQt4 import QtCore, QtGui
 from .views import registered_views
 from six import text_type
+import logging
 
 class DataTreeView(QtGui.QTreeView):
     '''A customized tree view widget for data tree model.'''
@@ -56,8 +57,11 @@ class DataTreeView(QtGui.QTreeView):
             if data_node.has_object():
                 data_object = data_node.data_object
                 for view in registered_views:
-                    if view.accepts(data_object):
-                        menu.addAction(view.title, ViewAction(view, data_object,
-                                                              self.main_window))
+                    try:
+                        if view.accepts(data_object):
+                            menu.addAction(view.title, ViewAction(view, data_object,
+                                                                  self.main_window))
+                    except Exception as exc:
+                        logging.warning("Cannot check acceptance for the combination {0} and {1}".format(view, data_object))
             if not menu.isEmpty():
                 menu.exec_(self.viewport().mapToGlobal(position))

@@ -20,7 +20,11 @@ class View(object):
         for type in cls.supported_types():
             if type in data_object.conversions:
                 return True
-        return False
+        return
+
+    def __repr__(self):
+        return self.__class__.__name__
+
 
 def register_view(view):
     registered_views.append(view)
