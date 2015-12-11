@@ -16,7 +16,17 @@ class CsvFile(DataObject):
         return self.as_numpy_array().shape
 
     def as_pandas_frame(self):
-        return pd.read_csv(self.path)
+        kwargs = {}
+
+        # Heuristics to enable Geant4 scoring files
+        with open(self.path) as f:
+            for line in f:
+                if line.startswith("#"):
+                    kwargs["skiprows"] = kwargs.get("skiprows", 0) + 1
+                    kwargs["header"] = None
+                else:
+                    break
+        return pd.read_csv(self.path, **kwargs)
 
     def as_numpy_array(self):
         return np.array(self.as_pandas_frame())
@@ -31,5 +41,6 @@ class CsvFile(DataObject):
     @property
     def title(self):
         return self.path
+
 
 register_object_generator(".csv", CsvFile)
