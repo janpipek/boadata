@@ -1,3 +1,9 @@
+0.2.8 (2015-12-13)
+------------------
+* Various bug fixes
+* Simple bokeh plot
+* Better CSV import
+
 0.2.7 (2015-09-20)
 ------------------
 * Python 3 support (though many file readings are broken)

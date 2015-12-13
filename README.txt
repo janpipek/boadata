@@ -18,15 +18,18 @@ Requirements
 * pyqtgraph (optional)
 * matplotlib (optional)
 * xlrd (optional, for reading Excel files)
+* bokeh (optional)
 
 None of these but PyQt4 should be required in the future.
 But honestly, a full distribution is highly recommended.
 
-* Python 2.7 / 3.4
+* Python 2.7 / 3.4+
 
 Status
 ------
 * in (slow) development
+* version 0.2.8 is the last in 0.2 series
+* version 0.3 will see a major API redesign
 
 Supported formats and sources
 -----------------------------
@@ -40,4 +43,6 @@ Supported views
 ---------
 * Table
 * Line plot
+* Properties
+* Text view
 
