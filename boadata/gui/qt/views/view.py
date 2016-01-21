@@ -25,6 +25,8 @@ class View(object):
     def __repr__(self):
         return self.__class__.__name__
 
+    def create_widget(self):
+        raise NotImplementedError("You have to implement create_widget.")
 
 def register_view(view):
     registered_views.append(view)

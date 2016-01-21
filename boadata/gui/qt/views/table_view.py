@@ -19,8 +19,7 @@ class TableView(View):
                 return True
         return False
 
-    @property
-    def widget(self):
+    def create_widget(self):
         if self.data_object.converts_to("pandas_frame"):
             df = self.data_object.to("pandas_frame")
             # if DataFrameWidget:

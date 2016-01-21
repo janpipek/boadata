@@ -29,8 +29,7 @@ class PropertyView(View):
         '''Accepts all data objects.'''
         return data_object.properties
 
-    @property
-    def widget(self):
+    def create_widget(self):
         self.tabbed_widget = QTabWidget()
         if self.props.default:
             self.tabbed_widget.addTab(self.create_table(self.props.default), "Default")

@@ -64,7 +64,7 @@ class MainWindow(QMainWindow):
         self.addDockWidget(QtCore.Qt.LeftDockWidgetArea, self.tree_dock)
 
     def show_view(self, view, data_object):
-        widget = view(data_object).widget
+        widget = view(data_object).create_widget()
 
         # Not working yet
         sw = QMdiSubWindow()

@@ -30,11 +30,15 @@ try:
 
     class MatplotlibBackend(object):
         @classmethod
-        def create_plot_widget(cls, x, y):
+        def create_widget(cls):
+            """
+
+            :rtype tuple(QWidget, Figure)
+            """
             # Inspiration:
             # http://matplotlib.org/examples/user_interfaces/embedding_in_qt4_wtoolbar.html
             fig = Figure()
-            
+
             widget = QtGui.QWidget()
             layout = QtGui.QVBoxLayout()
             widget.setLayout(layout)
@@ -51,18 +55,20 @@ try:
 
             def on_key_press(event):
                 key_press_handler(event, canvas, mpl_toolbar)
-            
-            # Draw the plot itself
-            axes = fig.add_subplot(111)
             canvas.mpl_connect('key_press_event', on_key_press)
-            axes.plot(x, y)
-            # fig.tight_layout()
 
             # Lay it out
             layout.addWidget(canvas)
             layout.addWidget(mpl_toolbar)
+            return widget, fig
+
+        @classmethod
+        def create_plot_widget(cls, x, y):
+            widget, fig = cls.create_widget()
+            axes = fig.add_subplot(111)
+            axes.plot(x, y)
             return widget
-            # return canvas
+
     backends.append(MatplotlibBackend)
 except ImportError as ex:
     logging.warning("Could not import matplotlib.")
@@ -88,8 +94,7 @@ class XYPlotView(View):
                     return True
         return False
 
-    @property
-    def widget(self):
+    def create_widget(self):
         if self.data_object.converts_to("xy"):
             x, y = self.data_object.to("xy")
         if self.data_object.converts_to("numpy_array"):
