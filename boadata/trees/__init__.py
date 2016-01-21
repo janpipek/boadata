@@ -21,3 +21,8 @@ try:
 except ImportError as e:
     logging.warning("CSV could not be loaded: {}".format(e))
 
+
+try:
+    from . import field_table
+except ImportError as e:
+    logging.warning("Field table could not be loaded: {}".format(e))
