@@ -28,5 +28,7 @@ class View(object):
     def create_widget(self):
         raise NotImplementedError("You have to implement create_widget.")
 
+
 def register_view(view):
+    """Add a view class to the list of offered ones."""
     registered_views.append(view)

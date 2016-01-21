@@ -64,15 +64,13 @@ class MainWindow(QMainWindow):
         self.addDockWidget(QtCore.Qt.LeftDockWidgetArea, self.tree_dock)
 
     def show_view(self, view, data_object):
-        widget = view(data_object).create_widget()
-
-        # Not working yet
         sw = QMdiSubWindow()
+        widget = view(data_object).create_widget()
         sw.setWidget(widget)
         sw.setAttribute(QtCore.Qt.WA_DeleteOnClose)
         sw.setWindowTitle(data_object.title + "(" + view.title + ")")
         
         self.mdiArea.addSubWindow(sw)
         sw.show()
-        sw.widget().show()
-        widget.setFocus()
+        # sw.widget().show()
+        # widget.setFocus()

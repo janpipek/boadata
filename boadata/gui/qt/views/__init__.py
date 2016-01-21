@@ -1,7 +1,8 @@
 from .view import View, registered_views
 from .property_view import PropertyView
-from .xy_plot_view import XYPlotView
+# from .xy_plot_view import XYPlotView
 from .text_view import TextView
+from .field_view import FieldView
 
 from . import bokeh_views
 
