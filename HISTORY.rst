@@ -1,3 +1,8 @@
+0.2.9 (2016-01-22)
+------------------
+* Simple quiver field view
+* Read vector fields from CSV-like files
+
 0.2.8 (2015-12-13)
 ------------------
 * Various bug fixes

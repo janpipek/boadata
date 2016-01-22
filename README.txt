@@ -28,7 +28,7 @@ But honestly, a full distribution is highly recommended.
 Status
 ------
 * in (slow) development
-* version 0.2.8 is the last in 0.2 series
+* version 0.2.9 is (perhaps) the last in 0.2 series
 * version 0.3 will see a major API redesign
 
 Supported formats and sources
@@ -38,6 +38,7 @@ Supported formats and sources
 * CSV (basic)
 * XLS (very basic)
 * SQL based on SqlAlchemy (very basic)
+* TSV-like field data
 
 Supported views
 ---------
@@ -45,4 +46,5 @@ Supported views
 * Line plot
 * Properties
 * Text view
+* Field view (very basic)
 
