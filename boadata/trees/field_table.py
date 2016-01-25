@@ -8,6 +8,7 @@ class FieldTableFile(DataObject):
     def __init__(self, path, node=None):
         super(FieldTableFile, self).__init__(node)
         self.path = path
+        self.reduce_factor = 1
 
     @property
     def ndim(self):
@@ -23,7 +24,10 @@ class FieldTableFile(DataObject):
 
     def as_field(self):
         data = pd.read_table(self.path, names=["x", "y", "z", "Bx", "By", "Bz"], index_col=False, delim_whitespace=True, skiprows=2)
-        return Field(data)
+        field = Field(data)
+        if self.reduce_factor > 1:
+            field = field.simple_reduce(self.reduce_factor)
+        return field
 
     def __repr__(self):
         return "FieldTableFile('{0}')".format(self.path)
