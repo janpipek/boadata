@@ -1,5 +1,3 @@
-[![Latest Version](https://pypip.in/version/boadata/badge.svg)](https://pypi.python.org/pypi/boadata/)
-
 boadata
 =======
 
