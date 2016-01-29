@@ -1,7 +1,7 @@
 from .data_properties import DataProperties
 
 
-class DataObject(object):
+ class DataObject(object):
     '''A basic object that contains data representable by boadata.
 
     Typically, some of the nodes have data objects,

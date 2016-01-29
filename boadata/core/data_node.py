@@ -1,5 +1,4 @@
 import sys
-from collections import OrderedDict
 import blinker
 import logging
 from six import text_type
@@ -36,22 +35,7 @@ class DataNode(object):
         return None
 
     def has_object(self):
-        return (self._data_object is not None) or hasattr(self, "create_data_object")
-
-    @property
-    def data_object(self):
-        if self._data_object is None:
-            if hasattr(self, "create_data_object"):
-                self._data_object = self.create_data_object()
-                logging.debug("Data object created from node %s." % self.title)
-        return self._data_object
-
-    # TODO: data_object setter
-    # TODO: signal data_object changed
-
-    @property
-    def properties(self):
-        return OrderedDict()
+        return False
 
     @property
     def children(self):
@@ -75,8 +59,6 @@ class DataNode(object):
             yield child
             for descendant in child.descendants:
                 yield descendant
-
-    #TODO: enumerate descendants with indices
 
     def subtree(self):
         return None
@@ -160,25 +142,6 @@ class DataNode(object):
                 s += "<li>%s</li>" % child._repr_html_()
             s += "</ul>"
         return s
-
-      
-class DataTree(DataNode):
-    '''A node that can be top-level in the tree view.
-    '''
-
-    @property
-    def menu_title(self):
-        '''Title of the menu displayed in main menu bar.
-
-        Override if not equal to title.
-        '''
-        return self.title
-
-    @property
-    def menu_actions(self):
-        '''Qt actions that should be put into the menu in main menu bar.'''
-        # TODO: Move elsewhere?
-        return []
 
 
 # Event logging
