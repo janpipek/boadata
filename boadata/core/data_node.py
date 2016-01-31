@@ -46,7 +46,6 @@ class DataNode(object):
         if not self.uri:
             return None
         for type_ in DataObject.registered_types.values():
-            print(type_)
             if type_.accepts_uri(self.uri):
                 return type_
 
