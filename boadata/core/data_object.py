@@ -41,15 +41,18 @@ class DataObject(object):
         new_type = DataObject.registered_types[new_type_name]
         if not new_type:
             raise RuntimeError("Data type {0} does not exist.".format(new_type_name))
-        new_real_type = new_type
+        new_real_type = new_type.real_type
         if not new_real_type:
             raise RuntimeError("One of the types for odo conversion is not defined.")
-        new_inner_data = odo.convert(self.inner_data, new_real_type)
+        # print(type(self.inner_data), new_real_type)
+        if isinstance(self.inner_data, new_real_type):
+            new_inner_data = self.inner_data    # Clone?
+        else:
+            new_inner_data = odo.convert(self.inner_data, new_real_type)
         return new_type(inner_data=new_inner_data, source=self)
 
     @classmethod
-    def _is_odo_convertible(self, new_type_name):
-        new_type = DataObject.registered_types[new_type_name]
+    def _is_odo_convertible(self, new_type):
         return bool(odo.convert.path(self.real_type, new_type.real_type))
 
     @classmethod
@@ -73,7 +76,7 @@ class DataObject(object):
                     return type_.from_uri(uri, **kwargs)
         else:
             inner_data = odo.odo(uri, cls.real_type)
-            return cls(inner_data=inner_data, **kwargs)
+            return cls(inner_data=inner_data, uri=uri, **kwargs)
 
     # @staticmethod
     # def from_object(object_):
@@ -88,6 +91,11 @@ class DataObject(object):
         :type new_type_name: str
         :rtype: bool
         """
+        new_type = DataObject.registered_types[new_type_name]
+        if isinstance(self, new_type):
+            return True
+        if isinstance(self.inner_data, new_type.real_type):
+            return True
         return self.__class__._is_odo_convertible(new_type_name)
 
     def convert(self, new_type_name, **kwargs):
@@ -103,9 +111,12 @@ class DataObject(object):
         return self._odo_convert(new_type_name, **kwargs)
 
 
-    # @property
-    # def title(self):
-    #     return str(self)
+    @property
+    def title(self):
+        return repr(self)
+
+    def __repr__(self):
+        return "{0}(\"{1}\")".format(self.__class__.__name__, self.uri)
 
     # @property
     # def properties(self):
