@@ -2,6 +2,7 @@ import sys
 import blinker
 import logging
 from six import text_type
+from .data_object import DataObject
 
 
 class DataNode(object):
@@ -35,7 +36,31 @@ class DataNode(object):
         return None
 
     def has_object(self):
-        return False
+        return bool(self._get_object_constructor())
+
+    def _get_object_constructor(self):
+        """
+
+        :rtype: None | type
+        """
+        if not self.uri:
+            return None
+        for type_ in DataObject.registered_types.values():
+            print(type_)
+            if type_.accepts_uri(self.uri):
+                return type_
+
+    @property
+    def data_object(self):
+        constructor = self._get_object_constructor()
+        if constructor:
+            return constructor.from_uri(self.uri)
+        else:
+            return None
+
+    @property
+    def uri(self):
+        return None
 
     @property
     def children(self):

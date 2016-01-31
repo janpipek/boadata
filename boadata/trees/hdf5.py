@@ -1,15 +1,15 @@
-from ..core import DataNode, DataObject, DataProperties, DataTree
+from boadata.core import DataNode, DataTree
+from .file import FileNode
 import h5py
-from .file import register_tree_generator
-import os
-import pandas as pd
-import numpy as np
 import logging
-from collections import OrderedDict
-import odo
+import os
 
 
 def create_hdf_node(h5_object):
+    """
+    :type h5_object: h5py.highlevel.HLObject
+    :rtype Hdf5Node
+    """
     if isinstance(h5_object, h5py.Group):
         return GroupNode(h5_object)
     elif isinstance(h5_object, h5py.Dataset):
@@ -20,6 +20,10 @@ def create_hdf_node(h5_object):
 
 class Hdf5Node(DataNode):
     def __init__(self, h5_object, parent=None):
+        """
+
+        :type h5_object: h5py.Group | h5py.Dataset
+        """
         super(Hdf5Node, self).__init__(parent)
         self.h5_object = h5_object
 
@@ -34,9 +38,9 @@ class Hdf5Node(DataNode):
         return self.h5_object.name.rsplit("/", 1)[1]
 
 
-class FileNode(Hdf5Node, DataTree):
+class Hdf5FileNode(Hdf5Node, DataTree):
     def __init__(self, path, parent=None):
-        super(FileNode, self).__init__(parent)
+        super(Hdf5FileNode, self).__init__(parent)
         self.path = path
         self.h5_object = h5py.File(self.path, "r")
 
@@ -51,66 +55,16 @@ class GroupNode(Hdf5Node):
     node_type = "HDF5 group"
 
 
-class DatasetObject(DataObject):
-    def __init__(self, h5_dataset, node=None):
-        """
-
-        :type h5_dataset: h5py.Dataset
-        :param node:
-        :return:
-        """
-        super(DatasetObject, self).__init__(node)
-        self.h5_dataset = h5_dataset
-        self._properties = None
-
-    @property
-    def shape(self):
-        return self.h5_dataset.shape
-
-    @property
-    def ndim(self):
-        return len(self.h5_dataset.shape)
-
-    @property
-    def properties(self):
-        if not self._properties:
-            dimensions = OrderedDict()
-            dimensions["Dimensions"] = " x ".join((str(d) for d in self.shape))
-            dimensions["Data type"] = str(self.h5_dataset.dtype)
-
-            self._properties = DataProperties()
-            self._properties.add(dimensions, "Dimensions")
-            self._properties.add(self.h5_dataset.attrs, "HDF5 Attributes")
-        return self._properties
-
-    def as_numpy_array(self):
-        if self.h5_dataset.attrs["CLASS"] == "TABLE":
-            return None
-        else:
-            return np.array(self.h5_dataset)
-
-    def as_pandas_frame(self):
-        if self.h5_dataset.attrs["CLASS"] == "TABLE":
-            odo_url = "%s::%s" % (self.h5_dataset.file.filename, self.h5_dataset.name)
-            return odo.odo(odo_url, pd.DataFrame)
-        else:
-            return None
-
-    @property
-    def title(self):
-        return self.h5_dataset.name
-
-
 class DatasetNode(Hdf5Node):
     node_type = "HDF5 dataset"
-
-    def create_data_object(self):
-        return DatasetObject(self.h5_object, self)
 
     def load_children(self):
         pass
 
+    @property
+    def uri(self):
+        return "{0}::{1}".format(self.h5_object.file.filename, self.h5_object.name)
 
 
-register_tree_generator(".hdf5", FileNode)
-register_tree_generator(".h5", FileNode)
+FileNode.register_tree_generator(".hdf5", Hdf5FileNode)
+FileNode.register_tree_generator(".h5", Hdf5FileNode)

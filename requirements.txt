@@ -2,3 +2,4 @@ pandas
 numpy
 blinker
 six
+odo

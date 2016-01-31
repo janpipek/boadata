@@ -4,18 +4,6 @@ import mimetypes
 from six import text_type
 import logging
 
-tree_generators = {}
-
-object_generators = {}
-
-
-def register_tree_generator(mime_type, func):
-    tree_generators[mime_type] = func
-
-
-def register_object_generator(mime_type, func):
-    object_generators[mime_type] = func
-
 
 class PathNode(DataNode):
     def __init__(self, path, parent=None):
@@ -28,40 +16,32 @@ class PathNode(DataNode):
 
     @property
     def mime_type(self):
-        return mimetypes.guess_type(self.path)   
+        return mimetypes.guess_type(self.path)
+
+    @property
+    def uri(self):
+        return self.path
 
 
 class FileNode(PathNode):
     node_type = "File"
 
+    tree_generators = {}
+
+    @staticmethod
+    def register_tree_generator(mime_type, func):
+        FileNode.tree_generators[mime_type] = func
+
     def has_subtree(self):
         return self._get_subtree_generator() is not None
 
-    def has_object(self):
-        return self._get_object_generator() is not None
-
     def _get_subtree_generator(self):
         mime = self.mime_type[0]
-        if mime in tree_generators:
-            return tree_generators[mime]
+        if mime in FileNode.tree_generators:
+            return FileNode.tree_generators[mime]
         else:
             ext = os.path.splitext(self.path)[1]
-            return tree_generators.get(ext, None)
-
-    def _get_object_generator(self):
-        mime = self.mime_type[0]
-        if mime in object_generators:
-            return object_generators[mime]
-        else:
-            ext = os.path.splitext(self.path)[1]
-            return object_generators.get(ext, None)
-
-    def create_data_object(self):
-        gen = self._get_object_generator()
-        if not gen:
-            return None
-        else:
-            return gen(self.path)
+            return FileNode.tree_generators.get(ext, None)
 
     def subtree(self):
         gen = self._get_subtree_generator()
