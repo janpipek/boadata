@@ -1,24 +1,25 @@
 from PyQt4.QtGui import QTextEdit
-from .view import View, register_view
-from six import text_type
+from .view import View
 
 
+@View.register_view
 class TextView(View):
-    title = "Contents"
+    title = "Text"
+
+    @classmethod
+    def accepts(cls, data_object):
+        """
+
+        :type data_object: boadata.core.DataObject
+        :rtype bool
+        """
+        return data_object.is_convertible_to("text")
 
     def __init__(self, data_object):
         super(TextView, self).__init__(data_object)
 
-    @classmethod
-    def accepts(cls, data_object):
-        '''Accepts all data objects.'''
-        return data_object.converts_to("text")
-
     def create_widget(self):
         self.text_widget = QTextEdit()
-        self.text_widget.setText(self.data_object.as_text())
+        do = self.data_object.convert("text")
+        self.text_widget.setText(do.inner_data)
         return self.text_widget
-
-
-register_view(TextView)
-

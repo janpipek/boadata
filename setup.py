@@ -25,6 +25,7 @@ options = dict(
             'boadata = boadata.commands.boadata:run_app',
             'boadescribe = boadata.commands.boadescribe:run_app',
             'boatable = boadata.commands.boatable:run_app',
+            'boaview = boadata.commands.boaview:run_app',
         ]
     }
 )

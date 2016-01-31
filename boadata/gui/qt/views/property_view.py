@@ -1,8 +1,9 @@
 from PyQt4.QtGui import QTableWidget, QTableWidgetItem, QLabel, QTabWidget
-from .view import View, register_view
+from .view import View
 from six import text_type
 
 
+@View.register_view
 class PropertyView(View):
     title = "Properties"
 
@@ -27,7 +28,8 @@ class PropertyView(View):
     @classmethod
     def accepts(cls, data_object):
         '''Accepts all data objects.'''
-        return data_object.properties
+        return False
+        # return data_object.properties
 
     def create_widget(self):
         self.tabbed_widget = QTabWidget()
@@ -37,6 +39,4 @@ class PropertyView(View):
             self.tabbed_widget.addTab(self.create_table(value), key)
         return self.tabbed_widget
 
-
-register_view(PropertyView)
 

@@ -1,8 +1,9 @@
 from PyQt4.QtGui import QMainWindow, QMdiArea, QDockWidget, QMdiSubWindow, QAction, qApp, QFileDialog
 from PyQt4 import QtCore
 from .data_tree_view import DataTreeView
-from ...trees.file import DirectoryTree
+from boadata.trees.file import DirectoryTree
 from .data_tree_model import DataTreeModel
+from .data_object_window import DataObjectWindow
 
 # Inspired by https://github.com/Werkov/PyQt4/blob/master/examples/mainwindows/mdi/mdi.py
 
@@ -72,5 +73,11 @@ class MainWindow(QMainWindow):
         
         self.mdiArea.addSubWindow(sw)
         sw.show()
+
+    def show_object(self, data_object):
+        sw = DataObjectWindow(data_object=data_object, parent=self)
+        self.mdiArea.addSubWindow(sw)
+        sw.show()
+
         # sw.widget().show()
         # widget.setFocus()

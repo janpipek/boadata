@@ -1,7 +1,8 @@
 from PyQt4 import QtCore, QtGui
-from .views import registered_views
+# from .views import registered_views
 from six import text_type
 import logging
+
 
 class DataTreeView(QtGui.QTreeView):
     '''A customized tree view widget for data tree model.'''
@@ -11,8 +12,9 @@ class DataTreeView(QtGui.QTreeView):
         self.main_window = main_window
         self.setModel(model)
         self.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-        self.customContextMenuRequested.connect(self.openContextMenu)
+        # self.customContextMenuRequested.connect(self.openContextMenu)
         self.createMainMenu()
+        self.doubleClicked.connect(self.on_double_click)
 
     def createMainMenu(self):
         '''Add a menu to main menu bar if the model offers it.
@@ -25,6 +27,11 @@ class DataTreeView(QtGui.QTreeView):
             self.menu = self.main_window.menuBar().addMenu(node.menu_title)
             for action in actions:
                 self.menu.addAction(action)
+
+    def on_double_click(self, index):
+        data_node = index.internalPointer().data_node
+        if data_node.has_object():
+            self.main_window.show_object(data_node.data_object)
 
     def openContextMenu(self, position):
         '''Build context menu from available views of a node.
