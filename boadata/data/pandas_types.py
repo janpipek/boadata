@@ -1,12 +1,12 @@
 from boadata.core import DataObject
-import numpy as np
+import pandas as pd
 
 
 @DataObject.register_type
-class NumpyArray(DataObject):
-    real_type = np.ndarray
+class PandasDataFrame(DataObject):
+    type_name = "pandas_data_frame"
 
-    name = "numpy_array"
+    real_type = pd.DataFrame
 
     @property
     def shape(self):
@@ -14,4 +14,4 @@ class NumpyArray(DataObject):
 
     @property
     def ndim(self):
-        return self.inner_data.ndim
+        return 2

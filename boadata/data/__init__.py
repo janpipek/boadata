@@ -1,10 +1,6 @@
 """Module containing all data objects understood by boadata."""
 
-try: from .pandas_data_frame import PandasDataFrame
-except: pass
-
-try: from .numpy_array import NumpyArray
-except: pass
-
-
-
+from .pandas_types import PandasDataFrame
+from .numpy_types import NumpyArray
+from .hdf5_types import Hdf5Dataset, Hdf5Table
+from .csv_types import CSVFile

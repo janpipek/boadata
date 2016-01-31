@@ -1,18 +1,19 @@
 from boadata.core import DataObject
 import pandas as pd
-import odo
 
 
 @DataObject.register_type
-class PandasDataFrame(DataObject):
-    name = "pandas_data_frame"
+class CSVFile(DataObject):
+    type_name = "csv"
 
     real_type = pd.DataFrame
+
+    ndim = 2
 
     @property
     def shape(self):
         return self.inner_data.shape
 
-    @property
-    def ndim(self):
-        return 2
+    @classmethod
+    def accepts_uri(cls, uri):
+        return uri[-4:] == ".csv"

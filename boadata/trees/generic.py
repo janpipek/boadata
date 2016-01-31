@@ -1,4 +1,4 @@
-from ..core.data_node import DataTree
+from boadata.core import DataTree
 
 
 class GenericTree(DataTree):
