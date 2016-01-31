@@ -14,12 +14,13 @@ class DataObject(object):
     Typically, some of the nodes have data objects,
     An object can have multiple representations (like numpy array, etc.)
     '''
-    def __init__(self, inner_data=None, source=None):
+    def __init__(self, inner_data=None, uri=None, source=None, **kwargs):
         if self.real_type and not isinstance(inner_data, self.real_type):
             raise RuntimeError("Invalid type of inner data.")
         self.inner_data = inner_data
+        self.uri = uri
         self.source = source
-        self.custom_conversions = []
+        # self.custom_conversions = []
 
     registered_types = OrderedDict()
 
@@ -60,7 +61,7 @@ class DataObject(object):
         return False
 
     @classmethod
-    def from_uri(cls, uri):
+    def from_uri(cls, uri, **kwargs):
         """"Create an object of this class from an URI.
 
         :param uri: URI in the odo sense
@@ -69,10 +70,10 @@ class DataObject(object):
         if cls == DataObject:
             for type_ in DataObject.registered_types.values():
                 if type_.accepts_uri(uri):
-                    return type_.from_uri(uri)
+                    return type_.from_uri(uri, **kwargs)
         else:
             inner_data = odo.odo(uri, cls.real_type)
-            return cls(inner_data=inner_data)
+            return cls(inner_data=inner_data, **kwargs)
 
     # @staticmethod
     # def from_object(object_):
@@ -120,8 +121,19 @@ class DataObject(object):
 
     @property
     def ndim(self):
-        """Dimensionality of the data
+        """Dimensionality of the data.
 
         :rtype: int
         """
         return 0
+
+    @property
+    def columns(self):
+        """Column names.
+
+        :rtype: list[str] | None
+        """
+        if hasattr(self.inner_data, "columns"):
+            return list(self.inner_data.columns.values)
+        else:
+            return None
