@@ -2,17 +2,16 @@
 import os
 import sys
 import re
-sys.path += [ "../.."]
-from .gui import qt   # Force sip API
+from boadata.gui import qt   # Force sip API
 
-from PyQt4 import QtCore, QtGui
-from .trees.file import DirectoryTree, FileNode
-from .trees.generic import GenericTree
+from PyQt4 import QtGui
+from boadata.trees.file import DirectoryTree, FileNode
+from boadata.trees.generic import GenericTree
 try:
-    from .trees.sql import DatabaseTree
+    from boadata.trees.sql import DatabaseTree
 except ImportError:
     pass
-from .gui.qt import MainWindow, DataTreeModel
+from boadata.gui.qt import MainWindow, DataTreeModel
 
 
 def run_app():

@@ -13,7 +13,7 @@ options = dict(
     author='Jan Pipek',
     author_email='jan.pipek@gmail.com',
     url='https://github.com/janpipek/boadata',
-    install_requires = ['numpy', 'pandas', 'blinker', 'six'],
+    install_requires = ['numpy', 'pandas', 'blinker', 'six', 'odo'],
     extras_require = {
         'sql' : ['sqlalchemy'],
         'pyqtgraph' : ['pyqtgraph'],
@@ -22,7 +22,8 @@ options = dict(
     },
     entry_points = {
         'console_scripts' : [
-            'boadata = boadata.app:run_app'
+            'boadata = boadata.commands.boadata:run_app',
+            'boadescribe = boadata.commands.boadescribe:run_app'
         ]
     }
 )
