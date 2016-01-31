@@ -1,6 +1,5 @@
 from boadata.core import DataObject
 import sys
-import odo
 
 
 def run_app():
