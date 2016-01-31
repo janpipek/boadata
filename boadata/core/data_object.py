@@ -37,8 +37,7 @@ class DataObject(object):
 
     # type_description = "Unknown type"
 
-    def _odo_convert(self, new_type_name, **kwargs):
-        new_type = DataObject.registered_types[new_type_name]
+    def _odo_convert(self, new_type, **kwargs):
         if not new_type:
             raise RuntimeError("Data type {0} does not exist.".format(new_type_name))
         new_real_type = new_type.real_type
@@ -48,6 +47,7 @@ class DataObject(object):
         if isinstance(self.inner_data, new_real_type):
             new_inner_data = self.inner_data    # Clone?
         else:
+            print("Converting {0} to {1}".format(type(self.inner_data), new_real_type))
             new_inner_data = odo.convert(self.inner_data, new_real_type, **kwargs)
         return new_type(inner_data=new_inner_data, source=self)
 
@@ -109,9 +109,10 @@ class DataObject(object):
 
         Auto-conversion returns the same object.
         """
-        if new_type_name == self.type_name:
+        new_type = DataObject.registered_types[new_type_name]
+        if isinstance(self, new_type):
             return self
-        return self._odo_convert(new_type_name, **kwargs)
+        return self._odo_convert(new_type, **kwargs)
 
 
     @property
