@@ -1,5 +1,5 @@
-from ..core import DataNode, DataObject, DataTree
-from .file import register_tree_generator
+from boadata.core import DataNode, DataObject, DataTree
+from .file import FileNode
 import pandas as pd
 import numpy as np
 import xlrd  # This is used by pandas to import excel
@@ -65,5 +65,5 @@ class ExcelFile(DataTree):
             self.add_child(ExcelSheetNode(self.xls, sheet_name, self))
 
 
-register_tree_generator("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", ExcelFile)
-register_tree_generator("application/vnd.ms-excel", ExcelFile)
+FileNode.register_tree_generator("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", ExcelFile)
+FileNode.register_tree_generator("application/vnd.ms-excel", ExcelFile)

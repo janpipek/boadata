@@ -1,5 +1,6 @@
+# TODO: As object
+
 from ..core import DataObject
-from .file import register_object_generator
 import pandas as pd
 import numpy as np
 from ..core.data_types import Field

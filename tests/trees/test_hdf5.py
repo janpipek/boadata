@@ -3,7 +3,7 @@ from h5py import File, Group
 import tempfile
 import os
 import numpy as np
-from boadata.trees.hdf5 import DatasetNode, FileNode, GroupNode
+from boadata.trees.hdf5 import DatasetNode, Hdf5FileNode, GroupNode
 
 
 class TestHdf5Tree(unittest.TestCase):
@@ -12,7 +12,7 @@ class TestHdf5Tree(unittest.TestCase):
             _, fname = tempfile.mkstemp(".h5")
             with File(fname, "w") as h5f:
                 pass
-            h5node = FileNode(fname)
+            h5node = Hdf5FileNode(fname)
             self.assertFalse(h5node.children)
         finally:
             os.remove(fname)
@@ -21,7 +21,7 @@ class TestHdf5Tree(unittest.TestCase):
         try:
             dirpath = tempfile.mkdtemp()
             fpath = os.path.join(dirpath, "non-existent.h5")
-            self.assertRaises(IOError, lambda: FileNode(fpath))
+            self.assertRaises(IOError, lambda: Hdf5FileNode(fpath))
         finally:
             os.removedirs(dirpath)
         pass
@@ -41,7 +41,7 @@ class TestHdf5Tree(unittest.TestCase):
                 dataset = h5f.create_dataset("ddd", data=np.random.rand(3, 3))
                 group_dataset = group.create_dataset("ggg-ddd", data=np.random.rand(3, 3, 3))
                 h5f.create_group("ggg2")
-            h5node = FileNode(fname)
+            h5node = Hdf5FileNode(fname)
 
             self.assertEqual(3, len(h5node.children))
             self.assertItemsEqual(("ggg", "ddd", "ggg2"), (c.title for c in h5node.children))
@@ -50,7 +50,7 @@ class TestHdf5Tree(unittest.TestCase):
             self.assertEqual(h5node, groupnode.parent)
             assert isinstance(groupnode, GroupNode)
             assert not isinstance(groupnode, DatasetNode)
-            assert not isinstance(groupnode, FileNode)
+            assert not isinstance(groupnode, Hdf5FileNode)
             self.assertEqual(1, len(groupnode.children))
             childnode = groupnode.children[0]
             self.assertEqual("ggg-ddd", childnode.title)
