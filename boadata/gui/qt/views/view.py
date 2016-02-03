@@ -6,7 +6,19 @@ class View(object):
 
     @classmethod
     def accepts(cls, data_object):
-        return None
+        """
+
+        This is the default implementation.
+
+        :type data_object: boadata.core.DataObject
+        :return:
+        """
+        for type_ in cls.supported_types:
+            if data_object.is_convertible_to(type_):
+                return True
+        return False
+
+    supported_types = []
 
     def __init__(self, data_object):
         self.data_object = data_object

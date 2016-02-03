@@ -20,6 +20,7 @@ class TextView(View):
 
     def create_widget(self):
         self.text_widget = QTextEdit()
+        self.text_widget.setReadOnly(True)
         do = self.data_object.convert("text")
         self.text_widget.setText(do.inner_data)
         return self.text_widget
