@@ -7,11 +7,7 @@ from PyQt4 import QtGui
 
 def run_app():
     uri = sys.argv[1]
-    try:
-        do = DataObject.from_uri(uri)
-    except:
-        print("URI not understood.")
-        exit(-1)
+    do = DataObject.from_uri(uri)
 
     app = QtGui.QApplication(sys.argv)
     window = DataObjectWindow(data_object=do)

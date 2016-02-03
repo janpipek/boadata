@@ -1,5 +1,6 @@
 import blinker
 
+
 class SelectableMixin(object):
     '''Mixin for containers that makes items selectable.
 
@@ -61,6 +62,7 @@ class SelectableMixin(object):
     def deselect_all(self):
         for item in self:
             self.deselect(item)
+
 
 class DictionaryNotifierMixin(object):
     '''Dictionary with this mixin notifies if an item is added or removed.'''

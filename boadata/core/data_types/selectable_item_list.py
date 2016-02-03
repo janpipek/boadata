@@ -1,6 +1,7 @@
 from collections import OrderedDict
 from .data_types import SelectableMixin, DictionaryNotifierMixin
 
+
 class SelectableItemList(SelectableMixin, DictionaryNotifierMixin, OrderedDict):
     '''An abstract selectable list with keys and values.'''
     # TODO: Order does matter, but we also have to be able to insert items.

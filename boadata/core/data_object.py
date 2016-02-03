@@ -13,6 +13,8 @@ class DataObject(object):
 
     Typically, some of the nodes have data objects,
     An object can have multiple representations (like numpy array, etc.)
+
+    It is necessary to keep all arguments keyword (enforceable in Python 3)
     '''
     def __init__(self, inner_data=None, uri=None, source=None, **kwargs):
         if self.real_type and not isinstance(inner_data, self.real_type):
@@ -77,6 +79,7 @@ class DataObject(object):
             for type_ in DataObject.registered_types.values():
                 if type_.accepts_uri(uri):
                     return type_.from_uri(uri, **kwargs)
+            raise BaseException("Cannot interpret " + uri + ".")
         else:
             inner_data = odo.odo(uri, cls.real_type)
             return cls(inner_data=inner_data, uri=uri, **kwargs)
