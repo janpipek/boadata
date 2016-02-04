@@ -1,5 +1,6 @@
 from boadata.core import DataObject
 import pandas as pd
+import odo
 
 
 @DataObject.register_type
@@ -30,3 +31,15 @@ class CSVFile(DataObject):
     @classmethod
     def accepts_uri(cls, uri):
         return uri[-4:] == ".csv"
+
+    @classmethod
+    def from_uri(cls, uri, index_col=False, **kwargs):
+        resource = odo.resource(uri)
+        if hasattr(resource, "dialect"):
+            kwargs.update(resource.dialect)
+        print(kwargs)
+        try:
+            data = odo.odo(uri, pd.DataFrame, index_col=index_col, **kwargs)
+        except:
+            data = pd.read_csv(uri, index_col=index_col, **kwargs)
+        return cls(inner_data=data, uri=uri, **kwargs)
