@@ -81,7 +81,7 @@ class DataObject(object):
                     return type_.from_uri(uri, **kwargs)
             raise BaseException("Cannot interpret " + uri + ".")
         else:
-            inner_data = odo.odo(uri, cls.real_type)
+            inner_data = odo.odo(uri, cls.real_type, **kwargs)
             return cls(inner_data=inner_data, uri=uri, **kwargs)
 
     # @staticmethod
@@ -135,7 +135,8 @@ class DataObject(object):
 
         :rtype: tuple(int)
         """
-        return ()
+        if hasattr(self.inner_data, "shape"):
+            return tuple(self.inner_data.shape)
 
     @property
     def ndim(self):
