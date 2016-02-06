@@ -14,7 +14,7 @@ class DataObject(object):
     Typically, some of the nodes have data objects,
     An object can have multiple representations (like numpy array, etc.)
 
-    It is necessary to keep all arguments keyword (enforceable in Python 3)
+    It is necessary to keep all arguments keyword (enforceable in Python 3).
     '''
     def __init__(self, inner_data=None, uri=None, source=None, **kwargs):
         if self.real_type and not isinstance(inner_data, self.real_type):
@@ -74,6 +74,11 @@ class DataObject(object):
 
         :param uri: URI in the odo sense
         :type uri: str
+        
+        This method can be (but needn't be) overridden in daughter classes.
+        By default, it uses odo to import the data. When called as
+        DataObject.from_uri, it first tries to find an appropriate class
+        by checking all registered types.
         """
         if cls == DataObject:
             for type_ in DataObject.registered_types.values():
@@ -111,6 +116,7 @@ class DataObject(object):
         :rtype DataObject
 
         Auto-conversion returns the same object.
+        Default implementation is based on odo.
         """
         new_type = DataObject.registered_types[new_type_name]
         if isinstance(self, new_type):
@@ -134,23 +140,33 @@ class DataObject(object):
         """Shape of the data.
 
         :rtype: tuple(int)
+        
+        Example: Shape of the 4x3 matrix is (4, 3)
         """
         if hasattr(self.inner_data, "shape"):
             return tuple(self.inner_data.shape)
+        return (,)
 
     @property
     def ndim(self):
         """Dimensionality of the data.
 
         :rtype: int
+        
+        Example: A 4x3 matrix has dimensionality 2.
         """
-        return 0
+        if hasattr(self.inner_data, "ndim"):
+            return int(self.inner_data.ndim)
+        else:
+            return len(self.shape)
 
     @property
     def columns(self):
         """Column names.
 
         :rtype: list[str] | None
+        
+        Default variant understands pandas DataFrames
         """
         if hasattr(self.inner_data, "columns"):
             return list(self.inner_data.columns.values)
