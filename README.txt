@@ -8,18 +8,18 @@ to browse and plot various data sources in one simple environment.
 Requirements
 ------------
 * PyQt4
+* odo
 * pandas
+* numpy
 * six
 * blinker
 * h5py (optional)
 * sqlalchemy (optional)
-* pyqtgraph (optional)
+* pyqtgraph (optional - table support)
 * matplotlib (optional)
 * xlrd (optional, for reading Excel files)
 * bokeh (optional)
-
-None of these but PyQt4 should be required in the future.
-But honestly, a full distribution is highly recommended.
+* pandas_profiling (optional - dataframe summaries)
 
 * Python 2.7 / 3.4+
 
@@ -37,6 +37,7 @@ Supported formats and sources
 * XLS (very basic)
 * SQL based on SqlAlchemy (very basic)
 * TSV-like field data
+* In principle many odo sources.
 
 Supported views
 ---------
