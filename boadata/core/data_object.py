@@ -145,7 +145,7 @@ class DataObject(object):
         """
         if hasattr(self.inner_data, "shape"):
             return tuple(self.inner_data.shape)
-        return (,)
+        return ()
 
     @property
     def ndim(self):
