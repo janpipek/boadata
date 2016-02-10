@@ -66,20 +66,16 @@ class DataObject(object):
             inner_data = odo.odo(uri, cls.real_type, **kwargs)
             return cls(inner_data=inner_data, uri=uri, **kwargs)
 
-    # @staticmethod
-    # def from_object(object_):
-    #     for type_ in DataObject.registered_types.values():
-    #         if isinstance(object_, type_.real_type):
-    #             return  type_(inner_data=object_)
-    #     return None
-
     def is_convertible_to(self, new_type_name):
         """
 
-        :type new_type_name: str
+        :type new_type_name: str | type
         :rtype: bool
         """
-        new_type = DataObject.registered_types[new_type_name]
+        if isinstance(new_type_name, type):
+            new_type = new_type_name
+        else:
+            new_type = DataObject.registered_types[new_type_name]
         if isinstance(self, new_type):
             return True
         if not (self.__class__, new_type) in DataConversion.registered_conversions:
@@ -90,6 +86,10 @@ class DataObject(object):
     @classmethod
     def is_convertible_from(cls, data_object):
         return data_object.is_convertible_to(cls)
+
+    @property
+    def allowed_conversions(self):
+        return [ key for (key, conversion) in DataConversion.registered_conversions.items() if key[0] == self.type_name and conversion.applies(self, key[1])]
 
     def convert(self, new_type_name, **kwargs):
         """Convert to another boadata-supported type.
@@ -105,9 +105,8 @@ class DataObject(object):
         new_type = DataObject.registered_types[new_type_name]
         if isinstance(self, new_type):
             return self
-        conversion = DataConversion.registered_conversions[(self.__class__, new_type)]
-        conversion.convert(new_type, **kwargs)
-
+        conversion = DataConversion.registered_conversions[(self.__class__.type_name, new_type_name)]
+        return conversion.convert(self, new_type, **kwargs)
 
     @property
     def title(self):
