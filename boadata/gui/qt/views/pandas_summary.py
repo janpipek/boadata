@@ -9,7 +9,7 @@ import os
 class PandasSummaryView(View):
     title = "Data summary"
 
-    supported_types = ["pandas_data_frame"]
+    supported_types = ("pandas_data_frame",)
 
     def create_widget(self):
         do = self.data_object.convert("pandas_data_frame").inner_data

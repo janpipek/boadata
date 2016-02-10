@@ -6,14 +6,7 @@ from .view import View
 class TextView(View):
     title = "Text"
 
-    @classmethod
-    def accepts(cls, data_object):
-        """
-
-        :type data_object: boadata.core.DataObject
-        :rtype bool
-        """
-        return data_object.is_convertible_to("text")
+    supported_types = ("text",)
 
     def __init__(self, data_object):
         super(TextView, self).__init__(data_object)

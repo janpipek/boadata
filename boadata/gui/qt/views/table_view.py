@@ -6,9 +6,7 @@ import pyqtgraph as pg
 class TableView(View):
     title = "Table"
 
-    @classmethod
-    def accepts(cls, data_object):
-        return data_object.is_convertible_to("pandas_data_frame")
+    supported_types = ("pandas_data_frame",)
 
     def create_widget(self):
         df = self.data_object.convert("pandas_data_frame").inner_data
