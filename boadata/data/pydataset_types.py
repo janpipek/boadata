@@ -1,10 +1,14 @@
 import pydataset
 import pandas as pd
 from boadata.core import DataObject
+from boadata.core.data_conversion import IdentityConversion
 
 
 @DataObject.register_type
+@IdentityConversion.enable_to("pandas_data_frame")
 class PyDataSet(DataObject):
+    type_name = "pydataset"
+
     real_type = pd.DataFrame
 
     @classmethod
@@ -13,11 +17,6 @@ class PyDataSet(DataObject):
             return True
         else:
             return False
-
-    def is_convertible_to(self, new_type_name):    # TODO: Fix this!!!!
-        if "field" in new_type_name:
-            return False
-        return super(PyDataSet, self).is_convertible_to(new_type_name)
 
     @classmethod
     def from_uri(cls, uri, **kwargs):

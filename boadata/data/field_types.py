@@ -1,4 +1,5 @@
 from boadata.core import DataObject
+from boadata.core.data_conversion import DataConversion
 import pandas as pd
 import numpy as np
 
@@ -89,35 +90,19 @@ class FieldTableFile(DataObject):
     def __init__(self, **kwargs):
         super(FieldTableFile, self).__init__(**kwargs)
 
-    def is_convertible_to(self, new_type_name):
-        if new_type_name == "text":
-            return True
-        if new_type_name == "vector_field_map":
-            return True
-        if new_type_name == "pandas_data_frame":
-            return True
-        else:
-            return super(FieldTableFile, self).is_convertible_to(new_type_name)
-
     def _read_pandas(self):
         return pd.read_table(self.uri, names=["x", "y", "z", "Bx", "By", "Bz"], index_col=False, delim_whitespace=True, skiprows=2)
 
-    def convert(self, new_type_name, **kwargs):
-        if new_type_name == "text":
-            constructor = DataObject.registered_types[new_type_name]
-            return constructor.from_uri(self.uri, source=self, **kwargs)
-        elif new_type_name == "vector_field_map":
-            data = self._read_pandas()
-            field = VectorFieldMap(inner_data=data, source=self)
-            # if self.reduce_factor > 1:
-            #     field = field.simple_reduce(self.reduce_factor)
-            return field
-        elif new_type_name == "pandas_data_frame":
-            from .pandas_types import PandasDataFrame
-            data = pd.read_table(self.uri, names=["x", "y", "z", "Bx", "By", "Bz"], index_col=False, delim_whitespace=True, skiprows=2)
-            return PandasDataFrame(inner_data=data, source=self)
-        else:
-            return super(FieldTableFile, self).convert(new_type_name, **kwargs)
+    @DataConversion.register("field_table", "pandas_data_frame")
+    def to_pandas_data_frame(self, **kwargs):
+        data = self._read_pandas()
+        constructor = DataObject.registered_types["pandas_data_frame"]
+        return constructor(innner_data=data, source=self, uri=self.uri, **kwargs)
+
+    @DataConversion.register("field_table", "text")
+    def to_text(self, **kwargs):
+        constructor = DataObject.registered_types["text"]
+        return constructor.from_uri(self.uri, source=self, **kwargs)
 
     @classmethod
     def accepts_uri(cls, uri):

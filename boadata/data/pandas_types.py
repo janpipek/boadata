@@ -15,3 +15,14 @@ class PandasDataFrame(DataObject):
     @property
     def ndim(self):
         return 2
+
+
+@DataObject.register_type
+class PandasSeries(DataObject):
+    type_name = "pandas_series"
+
+    real_type = pd.Series
+
+    @property
+    def ndim(self):
+        return 1

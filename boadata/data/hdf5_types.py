@@ -1,4 +1,5 @@
 from boadata.core import DataObject
+from boadata.core.data_conversion import OdoConversion
 import h5py
 
 # @DataObject.register_type
@@ -10,6 +11,7 @@ import h5py
 
 
 @DataObject.register_type
+@OdoConversion.enable_to("numpy_array")
 class Hdf5Dataset(DataObject):
     real_type = h5py.Dataset
 
