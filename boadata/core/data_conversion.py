@@ -29,13 +29,13 @@ class DataConversion(object):
     #     """
     #     return OrderedDict()
 
-    def convert(self, origin, check=True, *args, **kwargs):
+    def convert(self, origin, check=True, **kwargs):
         if check and not self.applies(origin):
             raise RuntimeError("Cannot convert to " + self.type2.name)
-        return self._convert(origin, *args, **kwargs)
+        return self._convert(origin, **kwargs)
 
-    def _convert(self, origin, *args, **kwargs):
-        return self.method(origin, *args, **kwargs)
+    def _convert(self, origin, **kwargs):
+        return self.method(origin, **kwargs)
 
     @staticmethod
     def register(type1, type2):
@@ -53,8 +53,8 @@ class OdoConversion(DataConversion):
         if not bool(odo.convert.path(type1.real_type, type2.real_type)):
             raise RuntimeError("Odo cannot convert the types {0} and {1}.".format(type1.real_type.__name__, type2.real_type.__name__))
 
-    def _convert(self, origin, *args, **kwargs):
-        new_inner_data = odo.convert(origin.inner_data, self.type2.real_type, *args, **kwargs)
+    def _convert(self, origin, **kwargs):
+        new_inner_data = odo.convert(origin.inner_data, self.type2.real_type, **kwargs)
         return self.type2(inner_data=new_inner_data, source=origin)
 
     @staticmethod

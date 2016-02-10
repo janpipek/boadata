@@ -2,6 +2,7 @@
 from collections import OrderedDict
 import odo            # Make optional?
 import blinker
+from .data_conversion import DataConversion
 
 
 class DataObject(object):
@@ -22,7 +23,6 @@ class DataObject(object):
         self.inner_data = inner_data
         self.uri = uri
         self.source = source
-        # self.custom_conversions = []
 
     registered_types = OrderedDict()
 
@@ -36,29 +36,6 @@ class DataObject(object):
     real_type = None
 
     type_name = None
-
-    # type_description = "Unknown type"
-
-    def _odo_convert(self, new_type, **kwargs):
-        if not new_type:
-            raise RuntimeError("Data type {0} does not exist.".format(new_type_name))
-        new_real_type = new_type.real_type
-        if not new_real_type:
-            raise RuntimeError("One of the types for odo conversion is not defined.")
-        # print(type(self.inner_data), new_real_type)
-        if isinstance(self.inner_data, new_real_type):
-            new_inner_data = self.inner_data    # Clone?
-        else:
-            print("Converting {0} to {1}".format(type(self.inner_data), new_real_type))
-            new_inner_data = odo.convert(self.inner_data, new_real_type, **kwargs)
-        return new_type(inner_data=new_inner_data, source=self)
-
-    @classmethod
-    def _is_odo_convertible(self, new_type):
-        try:
-            return bool(odo.convert.path(self.real_type, new_type.real_type))
-        except:
-            return False
 
     @classmethod
     def accepts_uri(cls, uri):
@@ -105,9 +82,14 @@ class DataObject(object):
         new_type = DataObject.registered_types[new_type_name]
         if isinstance(self, new_type):
             return True
-        if isinstance(self.inner_data, new_type.real_type):
-            return True
-        return self.__class__._is_odo_convertible(new_type)
+        if not (self.__class__, new_type) in DataConversion.registered_conversions:
+            return False
+        conversion = DataConversion.registered_conversions[(self.__class__, new_type)]
+        return conversion.applies(self, new_type)
+
+    @classmethod
+    def is_convertible_from(cls, data_object):
+        return data_object.is_convertible_to(cls)
 
     def convert(self, new_type_name, **kwargs):
         """Convert to another boadata-supported type.
@@ -118,10 +100,13 @@ class DataObject(object):
         Auto-conversion returns the same object.
         Default implementation is based on odo.
         """
+        # TODO: check argument?
+
         new_type = DataObject.registered_types[new_type_name]
         if isinstance(self, new_type):
             return self
-        return self._odo_convert(new_type, **kwargs)
+        conversion = DataConversion.registered_conversions[(self.__class__, new_type)]
+        conversion.convert(new_type, **kwargs)
 
 
     @property
