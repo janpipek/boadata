@@ -22,7 +22,10 @@ class View(object):
 
     def __init__(self, data_object):
         self.data_object = data_object
-        logging.info("View %s created for object %s." % (self.title, data_object.title))
+        self.data_object.changed.connect(self.on_object_changed)
+
+    def on_object_changed(self, sender, *args, **kwargs):
+        pass    # Override
 
     def __repr__(self):
         return self.__class__.__name__
