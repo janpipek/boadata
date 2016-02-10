@@ -73,15 +73,15 @@ class DataObject(object):
         :rtype: bool
         """
         if isinstance(new_type_name, type):
-            new_type = new_type_name
+            new_type, new_type_name = new_type_name, new_type_name.type_name
         else:
             new_type = DataObject.registered_types[new_type_name]
         if isinstance(self, new_type):
             return True
-        if not (self.__class__, new_type) in DataConversion.registered_conversions:
+        if not (self.type_name, new_type_name) in DataConversion.registered_conversions:
             return False
-        conversion = DataConversion.registered_conversions[(self.__class__, new_type)]
-        return conversion.applies(self, new_type)
+        conversion = DataConversion.registered_conversions[(self.type_name, new_type_name)]
+        return conversion.applies(self)
 
     @classmethod
     def is_convertible_from(cls, data_object):

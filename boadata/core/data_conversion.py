@@ -21,18 +21,17 @@ class DataConversion(object):
     def _register(self):
         DataConversion.registered_conversions[(self.type_name1, self.type_name2)] = self
 
-    def applies(self, origin, target_type_name):
+    def applies(self, origin):
         # Unify arguments
-        if isinstance(target_type_name, type):
-            target_type_name = type.type_name
+        target_type_name = self.type_name2
 
-        print("Conversion check: ", origin.type_name, " to ", target_type_name)
+        # print("Conversion check: ", origin.type_name, " to ", target_type_name)
 
-        print("Checking against origin = ", self.type_name1)
+        # print("Checking against origin = ", self.type_name1)
         if origin.type_name != self.type_name1:
             return False
 
-        print("Checking against target = ", self.type_name2)
+        # print("Checking against target = ", self.type_name2)
         if target_type_name != self.type_name2:
             return False
 
@@ -50,7 +49,7 @@ class DataConversion(object):
     #     return OrderedDict()
 
     def convert(self, origin, check=True, **kwargs):
-        if check and not self.applies(origin, self.type_name2):
+        if check and not self.applies(origin):
             raise RuntimeError("Cannot convert to " + self.type_name2)
         return self._convert(origin, **kwargs)
 
