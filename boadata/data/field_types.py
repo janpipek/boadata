@@ -1,5 +1,5 @@
 from boadata.core import DataObject
-from boadata.core.data_conversion import DataConversion
+from boadata.core.data_conversion import DataConversion, IdentityConversion
 import pandas as pd
 import numpy as np
 
@@ -61,6 +61,8 @@ class AbstractFieldMap(DataObject):
 
 
 @DataObject.register_type
+@IdentityConversion.enable_from("pandas_data_frame")
+@IdentityConversion.enable_from("csv")
 class VectorFieldMap(AbstractFieldMap):
     """A vector variable that is defined for each point in a 3D mesh.
 
