@@ -12,9 +12,6 @@ class DataObject(object):
     :type real_type: type | None
     :type type_name: str
 
-    Typically, some of the nodes have data objects,
-    An object can have multiple representations (like numpy array, etc.)
-
     It is necessary to keep all arguments keyword (enforceable in Python 3).
     '''
     def __init__(self, inner_data=None, uri=None, source=None, **kwargs):
@@ -81,6 +78,7 @@ class DataObject(object):
         if not (self.type_name, new_type_name) in DataConversion.registered_conversions:
             return False
         conversion = DataConversion.registered_conversions[(self.type_name, new_type_name)]
+        # TODO: Perhaps take into account identity conversions? (based on odo)
         return conversion.applies(self)
 
     @classmethod
