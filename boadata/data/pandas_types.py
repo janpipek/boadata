@@ -29,7 +29,6 @@ class PandasDataFrame(DataObject):
         return klass(data, source=self)
 
 
-
 @DataObject.register_type
 class PandasSeries(DataObject):
     type_name = "pandas_series"
@@ -39,3 +38,15 @@ class PandasSeries(DataObject):
     @property
     def ndim(self):
         return 1
+
+    @DataConversion.register("pandas_series", "numpy_array")
+    def to_numpy_array(self, **kwargs):
+        data = self.inner_data.as_matrix()
+        klass = DataObject.registered_types["numpy_array"]
+        return klass(data, source=self)
+
+    @DataConversion.register("pandas_series", "csv")
+    def to_csv(self, path, **kwargs):
+        self.inner_data.to_csv(path)
+        klass = DataObject.registered_types["csv"]
+        return klass.from_uri(uri=path, source=self)

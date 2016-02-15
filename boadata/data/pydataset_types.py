@@ -1,11 +1,12 @@
 import pydataset
 import pandas as pd
 from boadata.core import DataObject
-from boadata.core.data_conversion import IdentityConversion
+from boadata.core.data_conversion import IdentityConversion, ChainConversion
 
 
 @DataObject.register_type
 @IdentityConversion.enable_to("pandas_data_frame")
+@ChainConversion.enable_to("csv", through="pandas_data_frame")
 class PyDataSet(DataObject):
     type_name = "pydataset"
 
