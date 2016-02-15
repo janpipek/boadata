@@ -16,7 +16,7 @@ def run_app():
     app = QtGui.QApplication(sys.argv)
 
     view = PlotView(data_object=do)
-    widget = view.create_widget()
+    widget = view.create_widget(*sys.argv[2:])
     widget.show()
     widget.setWindowTitle(do.uri)
 
