@@ -28,6 +28,9 @@ class PandasDataFrame(DataObject):
         klass = DataObject.registered_types["numpy_array"]
         return klass(data, source=self)
 
+    def __getitem__(self, item):
+        return PandasSeries(self.inner_data[item], source=self)
+
 
 @DataObject.register_type
 class PandasSeries(DataObject):
