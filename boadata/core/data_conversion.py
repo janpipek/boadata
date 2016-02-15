@@ -4,10 +4,15 @@ import odo
 
 class DataConversion(object):
     def __init__(self, type_name1, type_name2, method=None, condition=None):
+        self._type1 = None
+        self._type2 = None
+
         # Unify arguments
         if isinstance(type_name1, type):
+            self._type1 = type_name1
             type_name1 = type_name1.type_name
         if isinstance(type_name2, type):
+            self._type2 = type_name2
             type_name2 = type_name2.type_name
 
         self.type_name1 = type_name1
@@ -48,6 +53,20 @@ class DataConversion(object):
     #     """
     #     return OrderedDict()
 
+    @property
+    def type1(self):
+        from .data_object import DataObject
+        if not self._type1:
+            self._type1 = DataObject.registered_types[self.type_name1]
+        return self._type1
+
+    @property
+    def type2(self):
+        from .data_object import DataObject
+        if not self._type2:
+            self._type2 = DataObject.registered_types[self.type_name2]
+        return self._type2
+
     def convert(self, origin, check=True, **kwargs):
         if check and not self.applies(origin):
             raise RuntimeError("Cannot convert to " + self.type_name2)
@@ -87,17 +106,6 @@ class OdoConversion(DataConversion):
     """Conversion based on odo.convert."""
     def __init__(self, type_name1, type_name2, condition=None):
         super(OdoConversion, self).__init__(type_name1=type_name1, type_name2=type_name2, condition=condition)
-
-        from . import DataObject
-        if isinstance(type_name1, type):
-            self.type1 = type_name1
-        else:
-            self.type1 = DataObject.registered_types[type_name1]
-        if isinstance(type_name2, type):
-            self.type2 = type_name2
-        else:
-            self.type2 = DataObject.registered_types[type_name2]
-
         if (self.type1.real_type != self.type2.real_type) and not bool(odo.convert.path(self.type1.real_type, self.type2.real_type)):
             raise RuntimeError("Odo cannot convert the types {0} and {1}.".format(self.type1.real_type.__name__, self.type2.real_type.__name__))
 
@@ -121,11 +129,12 @@ class ChainConversion(DataConversion):
 
 class IdentityConversion(DataConversion):
     """Conversion that does not change internal data type."""
-    def __init__(self, type_name1, type_name2, condition = None):
-        super(IdentityConversion, self).__init__(type_name1=type_name1, type_name2=type_name2, condition=condition)
-
     def _convert(self, origin, **kwargs):
-        from . import DataObject
-        type2 = DataObject.registered_types[self.type_name2]
-        new_inner_data = origin.inner_data
-        return type2(inner_data=new_inner_data, source=origin)
+        return self.type2(inner_data=origin.inner_data, source=origin)
+
+
+class ConstructorConversion(DataConversion):
+    """Conversion that uses constructor for conversion of inner data."""
+    def _convert(self, origin, **kwargs):
+        new_inner_data = self.type2.real_type(origin.inner_data)
+        return self.type2(inner_data=new_inner_data, source=origin)
