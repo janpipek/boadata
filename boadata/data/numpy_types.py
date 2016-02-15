@@ -1,4 +1,5 @@
 from boadata.core import DataObject
+from boadata.core.data_conversion import DataConversion
 import numpy as np
 
 
@@ -15,3 +16,9 @@ class NumpyArray(DataObject):
     @property
     def ndim(self):
         return self.inner_data.ndim
+
+    @DataConversion.register("numpy_array", "csv", condition=lambda x: x.ndim <= 2)
+    def to_csv(self, uri, **kwargs):
+        np.savetxt(uri, self.inner_data, delimiter=",")
+        csv_type = DataObject.registered_types["csv"]
+        return csv_type.from_uri(uri, source=self)
