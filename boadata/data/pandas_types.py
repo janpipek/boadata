@@ -17,10 +17,17 @@ class PandasDataFrame(DataObject):
         return 2
 
     @DataConversion.register("pandas_data_frame", "csv")
-    def to_csv(self, path, **args):
+    def to_csv(self, path, **kwargs):
         self.inner_data.to_csv(path)
         klass = DataObject.registered_types["csv"]
         return klass.from_uri(uri=path, source=self)
+
+    @DataConversion.register("pandas_data_frame", "numpy_array")
+    def to_numpy_array(self, **kwargs):
+        data = self.inner_data.as_matrix()
+        klass = DataObject.registered_types["numpy_array"]
+        return klass(data, source=self)
+
 
 
 @DataObject.register_type

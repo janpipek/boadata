@@ -1,6 +1,7 @@
 from boadata.core import DataObject
-from boadata.core.data_conversion import DataConversion
+from boadata.core.data_conversion import DataConversion, OdoConversion
 import numpy as np
+import pandas as pd
 
 
 @DataObject.register_type
@@ -22,3 +23,9 @@ class NumpyArray(DataObject):
         np.savetxt(uri, self.inner_data, delimiter=",")
         csv_type = DataObject.registered_types["csv"]
         return csv_type.from_uri(uri, source=self)
+
+    @DataConversion.register("numpy_array", "pandas_data_frame", condition=lambda x: x.ndim == 2)
+    def to_pandas_data_frame(self):
+        data = pd.DataFrame(self.inner_data)
+        klass = DataObject.registered_types["pandas_data_frame"]
+        return klass(data, source=self)

@@ -1,9 +1,10 @@
 from boadata.core import DataObject
-from boadata.core.data_conversion import OdoConversion, DataConversion
+from boadata.core.data_conversion import OdoConversion, DataConversion, ChainConversion
 import h5py
 import numpy as np
 
 
+@ChainConversion.enable_to("pandas_data_frame", through="numpy_array", condition=lambda x: x.ndim == 2)
 @DataObject.register_type
 class Hdf5Dataset(DataObject):
     real_type = h5py.Dataset
@@ -38,5 +39,5 @@ def numpy_to_dataset(data_object, uri, **kwargs):
     return Hdf5Dataset(ds, source=data_object, uri=uri)
 
 
-class Hdf5Table(DataObject):
-    real_type = h5py
+# class Hdf5Table(DataObject):
+#    real_type = h5py
