@@ -1,4 +1,4 @@
-from boadata.core import DataObject
+from boadata.core import DataObject, DataConversion
 import pandas as pd
 
 
@@ -15,6 +15,12 @@ class PandasDataFrame(DataObject):
     @property
     def ndim(self):
         return 2
+
+    @DataConversion.register("pandas_data_frame", "csv")
+    def to_csv(self, path, **args):
+        self.inner_data.to_csv(path)
+        klass = DataObject.registered_types["csv"]
+        return klass.from_uri(uri=path, source=self)
 
 
 @DataObject.register_type

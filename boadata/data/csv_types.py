@@ -27,13 +27,13 @@ class CSVFile(DataObject):
         return uri[-4:] == ".csv"
 
     @classmethod
-    def from_uri(cls, uri, index_col=False, **kwargs):
+    def from_uri(cls, uri, index_col=False, source=None, **kwargs):
         resource = odo.resource(uri)
         if hasattr(resource, "dialect"):
             kwargs.update(resource.dialect)
-        print(kwargs)
         try:
             data = odo.odo(uri, pd.DataFrame, index_col=index_col, **kwargs)
         except:
             data = pd.read_csv(uri, index_col=index_col, **kwargs)
-        return cls(inner_data=data, uri=uri, **kwargs)
+        return cls(inner_data=data, uri=uri, source=source, **kwargs)
+
