@@ -57,9 +57,9 @@ class DataConversion(object):
         return self.method(origin, **kwargs)
 
     @staticmethod
-    def register(type1, type2):
+    def register(type1, type2, condition=None):
         def wrap(method):
-            conversion = DataConversion(type1, type2, method)
+            conversion = DataConversion(type1, type2, method=method, condition=condition)
             conversion._register()
             return method
         return wrap
