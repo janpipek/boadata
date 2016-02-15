@@ -26,6 +26,11 @@ class CSVFile(DataObject):
     def accepts_uri(cls, uri):
         return uri[-4:] == ".csv"
 
+    def __getitem__(self, item):
+        item = self.convert("pandas_data_frame")[item]
+        item.source = self
+        return item
+
     @classmethod
     def from_uri(cls, uri, index_col=False, source=None, **kwargs):
         resource = odo.resource(uri)

@@ -1,8 +1,10 @@
 from boadata.core import DataObject, DataConversion
+from boadata.core.data_conversion import MethodConversion
 import pandas as pd
 
 
 @DataObject.register_type
+@MethodConversion.enable_to("numpy_array", method_name="as_matrix")
 class PandasDataFrame(DataObject):
     type_name = "pandas_data_frame"
 
@@ -22,11 +24,11 @@ class PandasDataFrame(DataObject):
         klass = DataObject.registered_types["csv"]
         return klass.from_uri(uri=path, source=self)
 
-    @DataConversion.register("pandas_data_frame", "numpy_array")
-    def to_numpy_array(self, **kwargs):
-        data = self.inner_data.as_matrix()
-        klass = DataObject.registered_types["numpy_array"]
-        return klass(data, source=self)
+    # @DataConversion.register("pandas_data_frame", "numpy_array")
+    # def to_numpy_array(self, **kwargs):
+    #     data = self.inner_data.as_matrix()
+    #     klass = DataObject.registered_types["numpy_array"]
+    #     return klass(data, source=self)
 
     def __getitem__(self, item):
         return PandasSeries(self.inner_data[item], source=self)
