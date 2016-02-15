@@ -65,23 +65,26 @@ class DataConversion(object):
         return wrap
 
     @classmethod
-    def enable_to(cls, type2, condition=None):
+    def enable_to(cls, type2, condition=None, **kwargs):
         def wrap(type1):
-            conversion = cls(type1, type2, condition)
+            kwargs["condition"] = condition
+            conversion = cls(type1, type2, **kwargs)
             conversion._register()
             return type1
         return wrap
 
     @classmethod
-    def enable_from(cls, type1, condition=None):
+    def enable_from(cls, type1, condition=None, **kwargs):
         def wrap(type2):
-            conversion = cls(type1, type2, condition)
+            kwargs["condition"] = condition
+            conversion = cls(type1, type2, **kwargs)
             conversion._register()
             return type2
         return wrap
 
 
 class OdoConversion(DataConversion):
+    """Conversion based on odo.convert."""
     def __init__(self, type_name1, type_name2, condition=None):
         super(OdoConversion, self).__init__(type_name1=type_name1, type_name2=type_name2, condition=condition)
 
@@ -103,7 +106,21 @@ class OdoConversion(DataConversion):
         return self.type2(inner_data=new_inner_data, source=origin)
 
 
+class ChainConversion(DataConversion):
+    """Conversion that has an intermediate data type."""
+    def __init__(self, type_name1, type_name2, through, condition = None):
+        super(ChainConversion, self).__init__(type_name1=type_name1, type_name2=type_name2, condition=condition)
+        self.through = through
+
+    def _convert(self, origin, **kwargs):
+        intermediate = origin.convert(self.through, **kwargs)
+        final = intermediate.convert(self.type_name2)
+        final.source = self
+        return final
+
+
 class IdentityConversion(DataConversion):
+    """Conversion that does not change internal data type."""
     def __init__(self, type_name1, type_name2, condition = None):
         super(IdentityConversion, self).__init__(type_name1=type_name1, type_name2=type_name2, condition=condition)
 
