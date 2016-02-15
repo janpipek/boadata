@@ -2,20 +2,18 @@ from .view import View
 from ..backends.matplotlib import MatplotlibBackend
 
 # @View.register_view
-class PlotView(View):
+class HistogramView(View):
     def accepts(cls, data_object):
         return True
 
-    def create_widget(self, xcol=0, ycol=1):
-        df = self.data_object.convert("pandas_data_frame")
-
-        x = df[xcol].inner_data
-        y = df[ycol].inner_data
+    def create_widget(self, xcol=None, bins=50):
+        if xcol is not None:
+            data = self.data_object[xcol].inner_data
+        else:
+            data = self.data_object.inner_data
 
         widget, fig = MatplotlibBackend.create_figure_widget()
         fig.add_subplot(111)
         ax = fig.get_axes()
-        ax[0].scatter(x, y)
-        ax[0].set_xlabel(xcol)
-        ax[0].set_ylabel(ycol)
+        ax[0].hist(data, bins)
         return widget

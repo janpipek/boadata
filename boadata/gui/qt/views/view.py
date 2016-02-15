@@ -2,6 +2,11 @@ import logging
 
 
 class View(object):
+    """
+
+    :type title: string
+    :type data_object: boadata.core.DataObject
+    """
     title = "Unknown view"
 
     @classmethod
@@ -11,6 +16,7 @@ class View(object):
         This is the default implementation.
 
         :type data_object: boadata.core.DataObject
+        :rtype bool
         :return:
         """
         for type_ in cls.supported_types:

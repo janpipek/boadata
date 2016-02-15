@@ -27,7 +27,8 @@ options = dict(
             'boatable = boadata.commands.boatable:run_app',
             'boaview = boadata.commands.boaview:run_app',
             'boatree = boadata.commands.boatree:run_app',
-            'boaplot = boadata.commands.boaplot:run_app'
+            'boaplot = boadata.commands.boaplot:run_app',
+            'boahist = boadata.commands.boahist:run_app'
         ]
     }
 )
