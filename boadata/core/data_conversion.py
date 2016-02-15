@@ -3,6 +3,14 @@ import odo
 
 
 class DataConversion(object):
+    """
+
+    :type _type1: type
+    :type type_name1: str
+    :type _type2: type
+    :type type_name2: str
+
+    """
     def __init__(self, type_name1, type_name2, method=None, condition=None):
         self._type1 = None
         self._type2 = None
@@ -137,4 +145,15 @@ class ConstructorConversion(DataConversion):
     """Conversion that uses constructor for conversion of inner data."""
     def _convert(self, origin, **kwargs):
         new_inner_data = self.type2.real_type(origin.inner_data)
+        return self.type2(inner_data=new_inner_data, source=origin)
+
+class MethodConversion(DataConversion):
+    """Conversion that uses a method of the origin class."""
+    def __init__(self, type_name1, type_name2, method_name, condition = None):
+        super(MethodConversion, self).__init__(type_name1=type_name1, type_name2=type_name2, condition=condition)
+        self.method_name = method_name
+
+    def _convert(self, origin, **kwargs):
+        method = getattr(origin.inner_data, self.method_name)
+        new_inner_data = method(**kwargs)
         return self.type2(inner_data=new_inner_data, source=origin)
