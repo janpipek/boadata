@@ -19,10 +19,10 @@ class PandasDataFrame(DataObject):
         return 2
 
     @DataConversion.register("pandas_data_frame", "csv")
-    def to_csv(self, path, **kwargs):
-        self.inner_data.to_csv(path)
+    def to_csv(self, uri, **kwargs):
+        self.inner_data.to_csv(uri)
         klass = DataObject.registered_types["csv"]
-        return klass.from_uri(uri=path, source=self)
+        return klass.from_uri(uri=uri, source=self)
 
     # @DataConversion.register("pandas_data_frame", "numpy_array")
     # def to_numpy_array(self, **kwargs):
