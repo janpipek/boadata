@@ -118,19 +118,24 @@ class OdoConversion(DataConversion):
             raise RuntimeError("Odo cannot convert the types {0} and {1}.".format(self.type1.real_type.__name__, self.type2.real_type.__name__))
 
     def _convert(self, origin, **kwargs):
-        new_inner_data = odo.convert(origin.inner_data, self.type2.real_type, **kwargs)
+        # print("Converting {0} to {1}".format(origin.inner_data.__class__, self.type2.real_type))
+        new_inner_data = odo.odo(origin.inner_data, self.type2.real_type, **kwargs)
         return self.type2(inner_data=new_inner_data, source=origin)
 
 
 class ChainConversion(DataConversion):
     """Conversion that has an intermediate data type."""
-    def __init__(self, type_name1, type_name2, through, condition = None):
+    def __init__(self, type_name1, type_name2, through, condition = None, pass_kwargs=[]):
         super(ChainConversion, self).__init__(type_name1=type_name1, type_name2=type_name2, condition=condition)
         self.through = through
+        self.pass_kwargs = pass_kwargs
 
     def _convert(self, origin, **kwargs):
+        second_kwargs = {}
+        for arg in self.pass_kwargs:
+            second_kwargs[arg] = kwargs.pop(arg)
         intermediate = origin.convert(self.through, **kwargs)
-        final = intermediate.convert(self.type_name2)
+        final = intermediate.convert(self.type_name2, **second_kwargs)
         final.source = self
         return final
 
