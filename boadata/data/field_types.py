@@ -60,9 +60,9 @@ class AbstractFieldMap(DataObject):
         return VectorFieldMap(data)
 
 
-@DataObject.register_type
-@IdentityConversion.enable_from("pandas_data_frame")
-@IdentityConversion.enable_from("csv")
+# @DataObject.register_type
+# @IdentityConversion.enable_from("pandas_data_frame")
+# @IdentityConversion.enable_from("csv")
 class VectorFieldMap(AbstractFieldMap):
     """A vector variable that is defined for each point in a 3D mesh.
 
@@ -81,7 +81,7 @@ class VectorFieldMap(AbstractFieldMap):
 #     field_ndim = 1
 
 
-@DataObject.register_type
+# @DataObject.register_type
 class FieldTableFile(DataObject):
     type_name = "field_table"
 

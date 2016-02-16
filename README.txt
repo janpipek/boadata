@@ -17,8 +17,6 @@ Requirements
 * sqlalchemy (optional)
 * pyqtgraph (optional - table support)
 * matplotlib (optional)
-* xlrd (optional, for reading Excel files)
-* bokeh (optional)
 * pandas_profiling (optional - dataframe summaries)
 
 * Python 2.7 / 3.4+
