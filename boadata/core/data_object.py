@@ -72,6 +72,8 @@ class DataObject(object):
         if isinstance(new_type_name, type):
             new_type, new_type_name = new_type_name, new_type_name.type_name
         else:
+            if not new_type_name in DataObject.registered_types:
+                return False
             new_type = DataObject.registered_types[new_type_name]
         if isinstance(self, new_type):
             return True
@@ -154,3 +156,13 @@ class DataObject(object):
             return list(self.inner_data.columns.values)
         else:
             return None
+
+
+class OdoDataObject(DataObject):
+    def __init__(self, uri, **kwargs):
+        inner_data = odo.resource(uri)
+        super(OdoDataObject, self).__init__(inner_data=inner_data, uri=uri, **kwargs)
+
+    @classmethod
+    def from_uri(cls, uri, **kwargs):
+        return cls(uri=uri, **kwargs)

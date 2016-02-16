@@ -18,11 +18,12 @@ class DataNode(object):
     They are not emitted before children are loaded.
     '''
     
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, uri=None):
         self.parent = parent
         self.children_loaded = False
         self._children = []        
         self._data_object = None
+        self._uri = uri
 
     node_type = "Unknown"
 
@@ -59,7 +60,7 @@ class DataNode(object):
 
     @property
     def uri(self):
-        return None
+        return self._uri
 
     @property
     def children(self):
