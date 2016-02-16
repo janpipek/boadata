@@ -49,11 +49,11 @@ class Hdf5FileNode(Hdf5Node, DataTree):
 
     @property
     def title(self):
-        return os.path.basename(self.path) + "(HDF5)"
+        return os.path.basename(self.path) + " (HDF5)"
 
     @classmethod
     def accepts_uri(cls, uri):
-        return h5py.is_hdf5(uri)
+        return uri and h5py.is_hdf5(uri)
 
 
 class GroupNode(Hdf5Node):

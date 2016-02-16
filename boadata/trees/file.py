@@ -45,8 +45,8 @@ class DirectoryNode(PathNode):
 class DirectoryTree(DirectoryNode, DataTree):
     @property
     def title(self):
-        return "File Browser"
+        return self.uri + " (Directory)"
 
     @classmethod
     def accepts_uri(cls, uri):
-        return os.path.isdir(uri)
+        return uri and os.path.isdir(uri)
