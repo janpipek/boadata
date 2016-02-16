@@ -85,11 +85,19 @@ class DataNode(object):
                 yield descendant
 
     def subtree(self):
+        from .data_tree import DataTree
+        for cls in DataTree.registered_trees:
+            if cls.accepts_uri(self.uri):
+                return cls(self.uri)
         return None
 
     def has_subtree(self):
         '''Whether the node can serve as a root of another tree.'''
-        return self.subtree() is not None
+        from .data_tree import DataTree
+        for cls in DataTree.registered_trees:
+            if cls.accepts_uri(self.uri) and cls != self.__class__:
+                return True
+        return False
 
     @property
     def children(self):

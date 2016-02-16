@@ -38,6 +38,7 @@ class Hdf5Node(DataNode):
         return self.h5_object.name.rsplit("/", 1)[1]
 
 
+@DataTree.register_tree
 class Hdf5FileNode(Hdf5Node, DataTree):
     def __init__(self, path, parent=None):
         super(Hdf5FileNode, self).__init__(parent)
@@ -49,6 +50,10 @@ class Hdf5FileNode(Hdf5Node, DataTree):
     @property
     def title(self):
         return os.path.basename(self.path) + "(HDF5)"
+
+    @classmethod
+    def accepts_uri(cls, uri):
+        return h5py.is_hdf5(uri)
 
 
 class GroupNode(Hdf5Node):
@@ -64,7 +69,3 @@ class DatasetNode(Hdf5Node):
     @property
     def uri(self):
         return "{0}::{1}".format(self.h5_object.file.filename, self.h5_object.name)
-
-
-FileNode.register_tree_generator(".hdf5", Hdf5FileNode)
-FileNode.register_tree_generator(".h5", Hdf5FileNode)

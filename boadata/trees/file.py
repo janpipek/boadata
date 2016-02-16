@@ -26,34 +26,6 @@ class PathNode(DataNode):
 class FileNode(PathNode):
     node_type = "File"
 
-    tree_generators = {}
-
-    @staticmethod
-    def register_tree_generator(mime_type, func):
-        FileNode.tree_generators[mime_type] = func
-
-    def has_subtree(self):
-        return self._get_subtree_generator() is not None
-
-    def _get_subtree_generator(self):
-        mime = self.mime_type[0]
-        if mime in FileNode.tree_generators:
-            return FileNode.tree_generators[mime]
-        else:
-            ext = os.path.splitext(self.path)[1]
-            return FileNode.tree_generators.get(ext, None)
-
-    def subtree(self):
-        gen = self._get_subtree_generator()
-        if not gen:
-            return None
-        else:
-            try:
-                return gen(self.path)
-            except Exception as ex:
-                logging.error(text_type(ex))
-                return None
-
 
 class DirectoryNode(PathNode):
     node_type = "Directory"
@@ -69,7 +41,12 @@ class DirectoryNode(PathNode):
             self.add_child(FileNode(f, self))
 
 
+@DataTree.register_tree
 class DirectoryTree(DirectoryNode, DataTree):
     @property
     def title(self):
         return "File Browser"
+
+    @classmethod
+    def accepts_uri(cls, uri):
+        return os.path.isdir(uri)
