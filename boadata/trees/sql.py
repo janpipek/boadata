@@ -1,25 +1,6 @@
 from ..core import DataNode, DataObject, DataProperties, DataTree
-import sqlalchemy
-import pandas as pd
-
-
-class TableObject(DataObject):
-    def __init__(self, node=None):
-        super(TableObject, self).__init__(node=node)
-        self.table_name = node.table_name
-        self.engine = node.parent.engine
-
-    def as_pandas_frame(self):
-        query = "SELECT * FROM %s LIMIT 1000" % self.table_name
-        return pd.read_sql_query(query, self.engine)            
-
-    @property
-    def ndim(self):
-        return 2
-
-    @property
-    def title(self):
-        return self.table_name
+import odo
+import os
 
 
 class TableNode(DataNode):
@@ -31,31 +12,48 @@ class TableNode(DataNode):
     def title(self):
         return self.table_name
 
-    def create_data_object(self):
-        return TableObject(self)
+    def has_subtree(self):
+        return False
+
+    @property
+    def uri(self):
+        return self.parent.uri + "::" + self.table_name
 
     node_type = "SQL Table"
 
 
+@DataTree.register_tree
 class DatabaseTree(DataTree):
-    def __init__(self, constr, parent=None):
-        '''
-        :param constr: Connection string of the database.
-        '''
-        super(DatabaseTree, self).__init__(parent)
-        self.constr = constr
-        self.engine = sqlalchemy.create_engine(constr)
+    def __init__(self, uri, parent=None):
+        if os.path.isfile(uri):
+            uri = "sqlite:///" + uri
+        super(DatabaseTree, self).__init__(parent, uri=uri)
+        self._db = None
 
     node_type = "SQL Database"
 
+    @property
+    def db(self):
+        if not self._db:
+            self._db = odo.resource(self.uri)
+        return self._db
+
     def load_children(self):
-        with self.engine.connect() as conn:
-            rows = conn.execute("SHOW TABLES").fetchall()
-            for row in rows:
-                name = row[0]
-                child = TableNode(table_name=name)
-                self.add_child(child)
+        for name in self.db.table_names():
+            child = TableNode(name, self)
+            self.add_child(child)
 
     @property
     def title(self):
-        return "Database"
+        return "Database ({0})".format(self.uri)
+
+    @classmethod
+    def accepts_uri(cls, uri):
+        if not uri:
+            return False
+        if uri.endswith(".sqlite") and os.path.isfile(uri):
+            return True
+        for schema in ["sqlite"]:
+            if uri.startswith(schema + ":///"):
+                return True
+        return False

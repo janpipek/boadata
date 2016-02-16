@@ -7,4 +7,6 @@ from .csv_types import CSVFile
 from .text_types import TextFile
 from .field_types import VectorFieldMap, FieldTableFile
 from .pydataset_types import PyDataSet
+from .sql_types import DatabaseTable
+
 
