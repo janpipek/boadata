@@ -13,12 +13,10 @@ options = dict(
     author='Jan Pipek',
     author_email='jan.pipek@gmail.com',
     url='https://github.com/janpipek/boadata',
-    install_requires = ['numpy', 'pandas', 'blinker', 'six', 'odo'],
+    install_requires = ['numpy', 'pandas', 'blinker', 'six', 'odo', 'h5py', 'sqlalchemy', 'pydataset'],
     extras_require = {
-        'sql' : ['sqlalchemy'],
         'pyqtgraph' : ['pyqtgraph'],
-        'matplotlib' : ['matplotlib'],
-        'hdf5' : ['h5py']
+        'matplotlib' : ['matplotlib']
     },
     entry_points = {
         'console_scripts' : [
@@ -30,7 +28,20 @@ options = dict(
             'boaplot = boadata.commands.boaplot:run_app',
             'boahist = boadata.commands.boahist:run_app'
         ]
-    }
+    },
+    classifiers=[
+        "Programming Language :: Python :: 2.7",
+        "Programming Language :: Python :: 3.4",
+        "Programming Language :: Python :: 3.5",
+        "Development Status :: 3 - Alpha",
+        "License :: OSI Approved :: MIT License",
+        "Operating System :: OS Independent",
+        "Intended Audience :: Developers",
+        "Intended Audience :: Information Technology",
+        "Intended Audience :: Science/Research",
+        "Topic :: Scientific/Engineering",
+        "Topic :: Software Development :: Libraries :: Python Modules"
+    ]
 )
 
 extras = options['extras_require']
