@@ -5,3 +5,4 @@ six
 odo
 matplotlib
 numexpr
+click
