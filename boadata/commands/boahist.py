@@ -1,4 +1,4 @@
-from boadata.core import DataObject
+from boadata import load
 from boadata.gui.qt.views import HistogramView
 import sys
 
@@ -8,7 +8,7 @@ from PyQt4 import QtGui
 def run_app():
     uri = sys.argv[1]
     try:
-        do = DataObject.from_uri(uri)
+        do = load(uri)
     except:
         print("URI not understood.")
         exit(-1)

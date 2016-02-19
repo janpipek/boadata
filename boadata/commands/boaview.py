@@ -1,4 +1,4 @@
-from boadata.core import DataObject
+from boadata import load
 from boadata.gui.qt import DataObjectWindow
 import sys
 
@@ -7,7 +7,7 @@ from PyQt4 import QtGui
 
 def run_app():
     uri = sys.argv[1]
-    do = DataObject.from_uri(uri)
+    do = load(uri)
 
     app = QtGui.QApplication(sys.argv)
     window = DataObjectWindow(data_object=do)

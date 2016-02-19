@@ -6,6 +6,7 @@ from boadata.core.data_tree import DataTree
 
 from PyQt4 import QtGui
 from boadata.gui.qt import MainWindow, DataTreeModel
+import boadata.data
 
 
 def run_app():

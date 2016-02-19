@@ -1,10 +1,10 @@
-from boadata.core import DataObject
+from boadata import load
 import sys
 
 
 def run_app():
     uri = sys.argv[1]
-    do = DataObject.from_uri(uri)
+    do = load(uri)
     if not do:
         print("URI not understood: {0}").format(uri)
         sys.exit(-1)

@@ -1,6 +1,6 @@
-__version__ = str('0.3.0')
+__version__ = str('0.3.1')
 
-from . import core
-from . import data
-
-load = core.DataObject.from_uri
+def load(uri, *args, **kwargs):
+    from . import core
+    from . import data     # Loads all formats
+    return core.DataObject.from_uri(uri, *args, **kwargs)
