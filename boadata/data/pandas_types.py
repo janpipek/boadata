@@ -3,6 +3,7 @@ from boadata.core.data_conversion import MethodConversion
 import pandas as pd
 
 
+@DataConversion.discover
 @DataObject.register_type
 @MethodConversion.enable_to("numpy_array", method_name="as_matrix")
 class PandasDataFrame(DataObject):
@@ -18,22 +19,16 @@ class PandasDataFrame(DataObject):
     def ndim(self):
         return 2
 
-    @DataConversion.register("pandas_data_frame", "csv")
-    def to_csv(self, uri, **kwargs):
+    def __to_csv__(self, uri, **kwargs):
         self.inner_data.to_csv(uri)
         klass = DataObject.registered_types["csv"]
         return klass.from_uri(uri=uri, source=self)
-
-    # @DataConversion.register("pandas_data_frame", "numpy_array")
-    # def to_numpy_array(self, **kwargs):
-    #     data = self.inner_data.as_matrix()
-    #     klass = DataObject.registered_types["numpy_array"]
-    #     return klass(data, source=self)
 
     def __getitem__(self, item):
         return PandasSeries(self.inner_data[item], source=self)
 
 
+@DataConversion.discover
 @DataObject.register_type
 class PandasSeries(DataObject):
     type_name = "pandas_series"
@@ -44,14 +39,13 @@ class PandasSeries(DataObject):
     def ndim(self):
         return 1
 
-    @DataConversion.register("pandas_series", "numpy_array")
-    def to_numpy_array(self, **kwargs):
+    def __to_numpy_array__(self, **kwargs):
         data = self.inner_data.as_matrix()
         klass = DataObject.registered_types["numpy_array"]
         return klass(data, source=self)
 
     @DataConversion.register("pandas_series", "csv")
-    def to_csv(self, path, **kwargs):
+    def __to_csv__(self, path, **kwargs):
         self.inner_data.to_csv(path)
         klass = DataObject.registered_types["csv"]
         return klass.from_uri(uri=path, source=self)

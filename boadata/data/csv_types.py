@@ -14,8 +14,7 @@ class CSVFile(DataObject):
 
     ndim = 2
 
-    @DataConversion.register("csv", "text")
-    def to_text(self, **kwargs):
+    def __to_text__(self, **kwargs):
         constructor = DataObject.registered_types["text"]
         return constructor.from_uri(self.uri, source=self, **kwargs)
 

@@ -91,6 +91,34 @@ class DataConversion(object):
             return method
         return wrap
 
+    @staticmethod
+    def condition(cond):
+        def wrap(method):
+            method.condition = cond
+            return method
+        return wrap
+
+    @staticmethod
+    def discover(cls):
+        for key in dir(cls):
+            if key.startswith("__to_") and key.endswith("__"):
+                other_type = key[5:-2]
+                attr = getattr(cls, key)
+                if hasattr(attr, "condition"):
+                    condition = attr.condition
+                else:
+                    condition = None
+                DataConversion.register(cls.type_name, other_type, condition=condition)(attr)
+            if key.startswith("__from_") and key.endswith("__"):
+                other_type = key[7:-2]
+                attr = getattr(cls, key)
+                if hasattr(attr, "condition"):
+                    condition = attr.condition
+                else:
+                    condition = None
+                DataConversion.register(other_type, cls.type_name, condition=condition)(attr)
+        return cls
+
     @classmethod
     def enable_to(cls, type2, condition=None, **kwargs):
         def wrap(type1):

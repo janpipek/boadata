@@ -3,6 +3,7 @@ from boadata.core.data_conversion import DataConversion, OdoConversion, Construc
 import numpy as np
 
 
+@DataConversion.discover
 @ConstructorConversion.enable_to("pandas_data_frame", condition=lambda x: x.ndim == 2)
 @ConstructorConversion.enable_to("pandas_series", condition=lambda x: x.ndim == 1)
 @DataObject.register_type
@@ -19,8 +20,8 @@ class NumpyArray(DataObject):
     def ndim(self):
         return self.inner_data.ndim
 
-    @DataConversion.register("numpy_array", "csv", condition=lambda x: x.ndim <= 2)
-    def to_csv(self, uri, **kwargs):
+    @DataConversion.condition(lambda x: x.ndim <= 2)
+    def __to_csv__(self, uri, **kwargs):
         np.savetxt(uri, self.inner_data, delimiter=",")
         csv_type = DataObject.registered_types["csv"]
         return csv_type.from_uri(uri, source=self)

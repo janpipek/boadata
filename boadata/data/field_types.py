@@ -1,5 +1,5 @@
 from boadata.core import DataObject
-from boadata.core.data_conversion import DataConversion, IdentityConversion
+from boadata.core.data_conversion import DataConversion, IdentityConversion, ChainConversion
 import pandas as pd
 import numpy as np
 import xarray as xr
@@ -63,9 +63,10 @@ class AbstractFieldMap(DataObject):
         return VectorFieldMap(data)
 
 
+@DataConversion.discover
 @DataObject.register_type
-# @IdentityConversion.enable_from("pandas_data_frame", condition=lambda df: len(df.columns) == 6)
-# @IdentityConversion.enable_from("csv", condition=lambda df: len(df.columns) == 6)
+@ChainConversion.enable_to("csv", through="pandas_data_frame")
+@ChainConversion.enable_from("csv", through="pandas_data_frame", condition=lambda c: len(c.columns) == 6)
 class VectorFieldMap(AbstractFieldMap):
     """A vector variable that is defined for each point in a 3D mesh.
 
@@ -80,7 +81,8 @@ class VectorFieldMap(AbstractFieldMap):
     real_type = xr.Dataset
 
     @classmethod
-    def from_pandas_data_frame(cls, origin, axis_columns=None, value_columns=None):
+    @DataConversion.condition(lambda x: len(x.columns) == 6)
+    def __from_pandas_data_frame__(cls, origin, axis_columns=None, value_columns=None):
         """
 
         :type origin: boadata.data.PandasDataFrame
@@ -95,8 +97,12 @@ class VectorFieldMap(AbstractFieldMap):
         data = xr.Dataset.from_dataframe(df)
         return cls(inner_data=data, source=origin)
 
+    def __to_pandas_data_frame__(self):
+        self.inner_data.to_data_frame()
 
-# @DataObject.register_type
+
+@DataConversion.discover
+@DataObject.register_type
 class FieldTableFile(DataObject):
     type_name = "field_table"
 
@@ -110,14 +116,12 @@ class FieldTableFile(DataObject):
     def _read_pandas(self):
         return pd.read_table(self.uri, names=["x", "y", "z", "Bx", "By", "Bz"], index_col=False, delim_whitespace=True, skiprows=2)
 
-    @DataConversion.register("field_table", "pandas_data_frame")
-    def to_pandas_data_frame(self, **kwargs):
+    def __to_pandas_data_frame__(self, **kwargs):
         data = self._read_pandas()
         constructor = DataObject.registered_types["pandas_data_frame"]
         return constructor(innner_data=data, source=self, uri=self.uri, **kwargs)
 
-    @DataConversion.register("field_table", "text")
-    def to_text(self, **kwargs):
+    def __to_text__(self, **kwargs):
         constructor = DataObject.registered_types["text"]
         return constructor.from_uri(self.uri, source=self, **kwargs)
 
@@ -132,6 +136,7 @@ class FieldTableFile(DataObject):
 
 @IdentityConversion.enable_to("pandas_data_frame")
 @DataObject.register_type
+@ChainConversion.enable_to("vector_field_map", through="pandas_data_frame")
 class ComsolFieldTextFile(DataObject):
     type_name = "comsol_field"
 
