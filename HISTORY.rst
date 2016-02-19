@@ -1,3 +1,8 @@
+0.3.0 (2016-2-16)
+-----------------
+* Completa API redesign
+* new command line utils
+
 0.2.9 (2016-01-22)
 ------------------
 * Simple quiver field view
