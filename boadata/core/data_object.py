@@ -167,10 +167,15 @@ class DataObject(object):
         Based on numexpr library
         """
         import numexpr as ne
+        import numpy as np
         local_dict = {
             col : self[col].inner_data for col in self.columns if isinstance(col, str)
         }
-        result = ne.evaluate(expression, local_dict=local_dict, global_dict={})
+        global_dict = {
+            "nan" : np.nan,
+            "inf" : np.inf
+        }
+        result = ne.evaluate(expression, local_dict=local_dict, global_dict=global_dict)
         array_type = DataObject.registered_types["numpy_array"]
         return array_type(inner_data=result)
 
