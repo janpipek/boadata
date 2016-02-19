@@ -102,14 +102,15 @@ class FieldView(View):
         return widget
 
     def redraw(self):
-        plane = self.field.get_plane(self.axis1, self.axis2, self.value3, self.tolerance)
+        plane = self.field.get_slice(self.axis3, self.value3, self.tolerance).convert("pandas_data_frame")
+        plane = plane.inner_data.reset_index()
         self.figure.clear()
         axis = self.figure.add_subplot(111)
         axis.set_xlabel(self.axis1)
         axis.set_ylabel(self.axis2)
         axis.quiver(plane[self.axis1], plane[self.axis2],
-                       plane["{0}{1}".format(self.field.value_prefix, self.axis1)],
-                       plane["{0}{1}".format(self.field.value_prefix, self.axis2)],
-                       )
+                        plane[self.field.get_corresponding_column(self.axis1)],
+                        plane[self.field.get_corresponding_column(self.axis2)]
+                        )
         self.figure.tight_layout()
         self.figure.canvas.draw()

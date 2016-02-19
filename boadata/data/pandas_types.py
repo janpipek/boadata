@@ -44,7 +44,6 @@ class PandasSeries(DataObject):
         klass = DataObject.registered_types["numpy_array"]
         return klass(data, source=self)
 
-    @DataConversion.register("pandas_series", "csv")
     def __to_csv__(self, path, **kwargs):
         self.inner_data.to_csv(path)
         klass = DataObject.registered_types["csv"]

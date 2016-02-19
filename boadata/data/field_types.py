@@ -1,27 +1,31 @@
 from boadata.core import DataObject
-from boadata.core.data_conversion import DataConversion, IdentityConversion, ChainConversion
+from boadata.core.data_conversion import DataConversion, IdentityConversion, ChainConversion, MethodConversion
 import pandas as pd
 import numpy as np
 import xarray as xr
 import os
-import re
 
 
 class AbstractFieldMap(DataObject):
-    real_type = pd.DataFrame
-
-    def __init__(self, inner_data=None, uri=None, source=None, value_prefix="B", axes=("x", "y", "z"), **kwargs):
+    @property
+    def axes(self):
         """
 
-        :type inner_data: pd.DataFrame
+        :rtype: list[str]
         """
-        super(AbstractFieldMap, self).__init__(inner_data=inner_data, uri=uri, source=source, **kwargs)
-        self.axes = axes
-        self.value_prefix = value_prefix
+        return list(self.inner_data.coords.keys())
 
     @property
     def shape(self):
-        return self.inner_data.shape
+        return (len(self.axes),) + self.inner_data[self.columns[0]].shape
+
+    @property
+    def ndim(self):
+        return len(self.shape)
+
+    @property
+    def columns(self):
+        return list(self.inner_data.data_vars.keys())
 
     def get_last_axis(self, axis1, axis2):
         """Get the third axis for two selected ones.
@@ -32,39 +36,36 @@ class AbstractFieldMap(DataObject):
             if ax not in (axis1, axis2):
                 return ax
 
-    def get_plane(self, axis1, axis2, plane3, tolerance=1e-6):
-        """Select one plane from the field.
+    def get_corresponding_column(self, axis):
+        i = self.axes.index(axis)
+        return self.columns[i]
 
-        :rtype: pd.DataFrame
-        """
-        axis3 = self.get_last_axis(axis1, axis2)
-        return self.inner_data[np.abs(self.inner_data[axis3] - plane3) < tolerance]
+    def get_slice(self, axis, value, tolerance=1e-6):
+        kwargs = {
+            "method": "nearest",
+            axis: value,
+            "tolerance": tolerance
+        }
+        return self.__class__(self.inner_data.sel(**kwargs))
 
     def get_axis_values(self, axis):
         """All unique coordinates along a given axis.
 
         :rtype: list
         """
-        return sorted(self.inner_data[axis].unique())
+        axis_values = self.inner_data[axis]
+        if axis_values.ndim > 0:
+            return axis_values.to_series().tolist()
+        else:
+            return [float(axis_values)]
 
-    def simple_reduce(self, factor, copy=True):
-        """Field with resolution reduced by a specified factor.
-
-        :return: An independent copy with reduced size
-        :type factor: int
-        :rtype: Field
-        """
-        data = self.inner_data
-        for ax in self.axes:
-            allowed_values = self.get_axis_values(ax)[::factor]
-            data = data[data[ax].isin(allowed_values)]
-            if copy:
-                data = data.copy()
-        return VectorFieldMap(data)
+    def __repr__(self):
+        return "{0}({1} -> {2})".format(self.__class__.__name__, ", ".join(self.axes), ", ".join(self.columns))
 
 
 @DataConversion.discover
 @DataObject.register_type
+@MethodConversion.enable_to("pandas_data_frame", method_name="to_dataframe")
 @ChainConversion.enable_to("csv", through="pandas_data_frame")
 @ChainConversion.enable_from("csv", through="pandas_data_frame", condition=lambda c: len(c.columns) == 6)
 class VectorFieldMap(AbstractFieldMap):
@@ -73,10 +74,6 @@ class VectorFieldMap(AbstractFieldMap):
     The data are stored as pandas DataFrame with columns for position and field values.
     """
     type_name = "vector_field_map"
-
-    ndim = 4
-
-    field_ndim = 3
 
     real_type = xr.Dataset
 
@@ -97,12 +94,13 @@ class VectorFieldMap(AbstractFieldMap):
         data = xr.Dataset.from_dataframe(df)
         return cls(inner_data=data, source=origin)
 
-    def __to_pandas_data_frame__(self):
-        self.inner_data.to_data_frame()
+    # def __to_pandas_data_frame__(self):
+    #     self.inner_data.to_dataframe()
 
 
 @DataConversion.discover
 @DataObject.register_type
+@ChainConversion.enable_to("vector_field_map", through="pandas_data_frame")
 class FieldTableFile(DataObject):
     type_name = "field_table"
 
@@ -119,7 +117,7 @@ class FieldTableFile(DataObject):
     def __to_pandas_data_frame__(self, **kwargs):
         data = self._read_pandas()
         constructor = DataObject.registered_types["pandas_data_frame"]
-        return constructor(innner_data=data, source=self, uri=self.uri, **kwargs)
+        return constructor(data, source=self, uri=self.uri, **kwargs)
 
     def __to_text__(self, **kwargs):
         constructor = DataObject.registered_types["text"]
@@ -150,7 +148,7 @@ class ComsolFieldTextFile(DataObject):
             with open(uri, "rb") as f:
                 file_data = f.read(1000)
                 in_lines = file_data.decode()
-                for line in in_lines:
+                for line in in_lines.splitlines():
                     if line.startswith("% Version") and "COMSOL" in line:
                         return True
         except:
