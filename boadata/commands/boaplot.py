@@ -7,7 +7,6 @@ import click
 from boadata.gui import qt   # Force sip
 from PyQt4 import QtGui
 
-
 @click.command()
 @click.argument("uri")
 @click.argument("x", default="0") #, help="Column or expression to be displayed on x axis.")
@@ -28,5 +27,4 @@ def run_app(uri, x, y, type, **kwargs):
     widget = view.create_widget(x, y, **kwargs)
     widget.show()
     widget.setWindowTitle(do.uri)
-
     sys.exit(app.exec_())

@@ -1,10 +1,13 @@
 from boadata import load
 import sys
+import click
 
 
-def run_app():
-    uri = sys.argv[1]
-    do = load(uri)
+@click.command()
+@click.argument("uri")
+@click.option("-t", "--type", default=None, help="What type is the object.")
+def run_app(uri, type, **kwargs):
+    do = load(uri, type)
     if not do:
         print("URI not understood: {0}").format(uri)
         sys.exit(-1)

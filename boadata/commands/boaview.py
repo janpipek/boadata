@@ -1,13 +1,17 @@
 from boadata import load
+import boadata.data
 from boadata.gui.qt import DataObjectWindow
 import sys
+import click
 
 from boadata.gui import qt   # Force sip
 from PyQt4 import QtGui
 
-def run_app():
-    uri = sys.argv[1]
-    do = load(uri)
+@click.command()
+@click.argument("uri")
+@click.option("-t", "--type", default=None, help="What type is the object.")
+def run_app(uri, type, **kwargs):
+    do = load(uri, type)
 
     app = QtGui.QApplication(sys.argv)
     window = DataObjectWindow(data_object=do)
