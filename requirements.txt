@@ -4,3 +4,4 @@ blinker
 six
 odo
 matplotlib
+numexpr

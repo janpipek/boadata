@@ -19,7 +19,7 @@ Executables
 ------------
 * `boadescribe <uri>` - show basic info about a data object (in command-line)
 * `boatree <uri>` - list nodes in a data tree
-* `boaplot <uri> <colx> <coly>` - scatter plot of two columns
+* `boaplot <uri> <colx> <coly>` - scatter plot of two columns (colx,y can be expressions like x**2, sqrt(y+2*exp(-x)) etc.)
 * `boahist <uri> <col>` - histogram of a column
 * `boadata [<uri>]` - full gui with a tree
 * `boatable <uri>` - show tabular representation of a dataobject
@@ -36,6 +36,7 @@ Requirements
 * numpy
 * six
 * blinker
+* numexpr
 * h5py (optional)
 * sqlalchemy (optional)
 * pyqtgraph (optional - table support)

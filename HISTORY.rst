@@ -1,6 +1,14 @@
-0.3.0 (2016-2-16)
------------------
-* Completa API redesign
+0.3.2 (2016-02-19)
+------------------
+* enable numerical expressions in boaplot
+
+0.3.1 (2016-02-16)
+------------------
+* bug fixes
+
+0.3.0 (2016-02-16)
+------------------
+* Complete API redesign
 * new command line utils
 
 0.2.9 (2016-01-22)

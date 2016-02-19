@@ -1,4 +1,4 @@
-__version__ = str('0.3.1')
+__version__ = str('0.3.2')
 
 def load(uri, *args, **kwargs):
     from . import core
