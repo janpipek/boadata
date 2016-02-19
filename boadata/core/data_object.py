@@ -157,6 +157,22 @@ class DataObject(object):
         else:
             return None
 
+    def evaluate(self, expression):
+        """Do calculation on columns of the dataset.
+
+        :param expression: a valid expression
+        :type expression: string
+        :return: boadata.data.NumpyArray
+
+        Based on numexpr library
+        """
+        import numexpr as ne
+        local_dict = {
+            col : self[col].inner_data for col in self.columns if isinstance(col, str)
+        }
+        result = ne.evaluate(expression, local_dict=local_dict, global_dict={})
+        array_type = DataObject.registered_types["numpy_array"]
+        return array_type(inner_data=result)
 
 class OdoDataObject(DataObject):
     def __init__(self, uri, **kwargs):

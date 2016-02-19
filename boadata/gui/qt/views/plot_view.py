@@ -9,8 +9,14 @@ class PlotView(View):
     def create_widget(self, xcol=0, ycol=1):
         df = self.data_object.convert("pandas_data_frame")
 
-        x = df[xcol].inner_data
-        y = df[ycol].inner_data
+        # TODO: More intensive guessing!
+        try:
+            x = df.evaluate(xcol).inner_data
+            y = df.evaluate(ycol).inner_data
+        except:
+            x = df[xcol].inner_data
+            y = df[ycol].inner_data
+
 
         widget, fig = MatplotlibBackend.create_figure_widget()
         fig.add_subplot(111)
