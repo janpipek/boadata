@@ -6,3 +6,4 @@ odo
 matplotlib
 numexpr
 click
+xray

@@ -1,3 +1,8 @@
+0.3.3 (2016-??-??)
+------------------
+* support more complicated input arguments (based on click)
+* add support for field maps exported from COMSOL
+
 0.3.2 (2016-02-19)
 ------------------
 * enable numerical expressions in boaplot

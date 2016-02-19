@@ -2,6 +2,9 @@ from boadata.core import DataObject
 from boadata.core.data_conversion import DataConversion, IdentityConversion
 import pandas as pd
 import numpy as np
+import xarray as xr
+import os
+import re
 
 
 class AbstractFieldMap(DataObject):
@@ -60,9 +63,9 @@ class AbstractFieldMap(DataObject):
         return VectorFieldMap(data)
 
 
-# @DataObject.register_type
-# @IdentityConversion.enable_from("pandas_data_frame")
-# @IdentityConversion.enable_from("csv")
+@DataObject.register_type
+# @IdentityConversion.enable_from("pandas_data_frame", condition=lambda df: len(df.columns) == 6)
+# @IdentityConversion.enable_from("csv", condition=lambda df: len(df.columns) == 6)
 class VectorFieldMap(AbstractFieldMap):
     """A vector variable that is defined for each point in a 3D mesh.
 
@@ -70,15 +73,27 @@ class VectorFieldMap(AbstractFieldMap):
     """
     type_name = "vector_field_map"
 
-    ndim = 2
+    ndim = 4
 
     field_ndim = 3
 
+    real_type = xr.Dataset
 
-# class ScalarFieldMap(AbstractFieldMap):
-#     type_name = "scalar_field_map"
-#
-#     field_ndim = 1
+    @classmethod
+    def from_pandas_data_frame(cls, origin, axis_columns=None, value_columns=None):
+        """
+
+        :type origin: boadata.data.PandasDataFrame
+        :param axis_columns: list[str] | None
+        :param value_columns: list[str] | None
+        :return:
+        """
+        if not axis_columns:
+            axis_columns = origin.inner_data.columns[:3]
+        axis_columns = list(axis_columns)
+        df = origin.inner_data.set_index(axis_columns)
+        data = xr.Dataset.from_dataframe(df)
+        return cls(inner_data=data, source=origin)
 
 
 # @DataObject.register_type
@@ -113,3 +128,39 @@ class FieldTableFile(DataObject):
     @classmethod
     def from_uri(cls, uri, **kwargs):
         return cls(uri=uri, **kwargs)
+
+
+@IdentityConversion.enable_to("pandas_data_frame")
+@DataObject.register_type
+class ComsolFieldTextFile(DataObject):
+    type_name = "comsol_field"
+
+    real_type = pd.DataFrame
+
+    @classmethod
+    def accepts_uri(cls, uri):
+        if not os.path.isfile(uri):
+            return False
+        try:
+            with open(uri, "rb") as f:
+                file_data = f.read(1000)
+                in_lines = file_data.decode()
+                for line in in_lines:
+                    if line.startswith("% Version") and "COMSOL" in line:
+                        return True
+        except:
+            return False
+
+    @classmethod
+    def from_uri(cls, uri, index_col=False, source=None, **kwargs):
+        header_lines = []
+        with open(uri, "r") as f:
+            for line in f:
+                if line.startswith("%"):
+                    header_lines.append(line.strip())
+                else:
+                    break
+        frags = header_lines[-1][1:].strip().split()
+        column_names = [ frag for frag in frags if not frag.startswith("(")]
+        data = pd.read_csv(uri, skiprows=len(header_lines), index_col=False, header=None, delimiter="\\s+", engine="python", names=column_names)
+        return cls(inner_data=data, uri=uri)
