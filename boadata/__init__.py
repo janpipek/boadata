@@ -23,13 +23,12 @@ def unwrap(boadata_object, **kwargs):
     :param kwargs:
     :return:
     """
-    return boadata_object.inner_data
+    from .core import DataObject
+    if isinstance(boadata_object, DataObject):
+        return boadata_object.inner_data
+    else:
+        return boadata_object
 
 
 def apply(native_object, function):
-    from . import core
-    wrapped = wrap(native_object)
-    result = function(wrapped)
-    if isinstance(result, core.DataObject):
-        result = unwrap(result)
-    return result
+    result = unwrap(function(wrap(native_object)))
