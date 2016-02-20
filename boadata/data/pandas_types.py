@@ -12,7 +12,12 @@ class PandasDataFrameBase(DataObject, GetItemMixin, StatisticsMixin):
         klass = DataObject.registered_types["csv"]
         return klass.from_uri(uri=uri, source=self)
 
+    def hist(self, *args, **kwargs):
+        return {col: self[col].hist(*args, **kwargs) for col in self.columns}
 
+
+@DataObject.proxy_methods("dropna")
+@DataObject.proxy_methods("hist", through="numpy_array")
 class PandasSeriesBase(DataObject, GetItemMixin, StatisticsMixin):
     real_type = pd.Series
 
@@ -24,6 +29,10 @@ class PandasSeriesBase(DataObject, GetItemMixin, StatisticsMixin):
         self.inner_data.to_csv(path)
         klass = DataObject.registered_types["csv"]
         return klass.from_uri(uri=path, source=self)
+
+    def __repr__(self):
+        return "{0} (name={1}, shape={2}, dtype={3})".format(self.__class__.__name__,
+                                                             self.inner_data.name, self.shape, self.dtype)
 
 
 @DataObject.register_type(default=True)
