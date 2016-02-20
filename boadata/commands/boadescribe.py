@@ -16,4 +16,11 @@ def run_app(uri, type, **kwargs):
     print("Data shape: {0}".format(do.shape))
     columns = do.columns
     if columns:
-        print("Column names: {0}".format(", ".join(columns)))
+        print("Columns:")
+        for name in columns:
+            s = "  - {0}".format(name)
+            try:
+                s += " (dtype={0})".format(do[name].dtype)
+            except:
+                pass
+            print(s)
