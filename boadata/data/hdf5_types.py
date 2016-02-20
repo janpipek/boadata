@@ -4,11 +4,10 @@ import h5py
 import numpy as np
 
 
-@DataConversion.discover
+@DataObject.register_type(default=True)
 @ChainConversion.enable_to("pandas_data_frame", through="numpy_array", condition=lambda x: x.ndim == 2)
 @ChainConversion.enable_to("pandas_series", through="numpy_array", condition=lambda x: x.ndim == 1)
 @ChainConversion.enable_to("csv", through="numpy_array", condition=lambda x: x.ndim <= 2)
-@DataObject.register_type
 class Hdf5Dataset(DataObject):
     real_type = h5py.Dataset
 

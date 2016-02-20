@@ -4,29 +4,11 @@ import pandas as pd
 import numpy as np
 import xarray as xr
 import os
+from .xarray_types import XarrayDatasetBase
+from .pandas_types import PandasDataFrameBase
 
 
-class AbstractFieldMap(DataObject):
-    @property
-    def axes(self):
-        """
-
-        :rtype: list[str]
-        """
-        return list(self.inner_data.coords.keys())
-
-    @property
-    def shape(self):
-        return (len(self.axes),) + self.inner_data[self.columns[0]].shape
-
-    @property
-    def ndim(self):
-        return len(self.shape)
-
-    @property
-    def columns(self):
-        return list(self.inner_data.data_vars.keys())
-
+class AbstractFieldMap():
     def get_last_axis(self, axis1, axis2):
         """Get the third axis for two selected ones.
 
@@ -59,23 +41,17 @@ class AbstractFieldMap(DataObject):
         else:
             return [float(axis_values)]
 
-    def __repr__(self):
-        return "{0}({1} -> {2})".format(self.__class__.__name__, ", ".join(self.axes), ", ".join(self.columns))
 
-
-@DataConversion.discover
-@DataObject.register_type
+@DataObject.register_type()
 @MethodConversion.enable_to("pandas_data_frame", method_name="to_dataframe")
 @ChainConversion.enable_to("csv", through="pandas_data_frame")
 @ChainConversion.enable_from("csv", through="pandas_data_frame", condition=lambda c: len(c.columns) == 6)
-class VectorFieldMap(AbstractFieldMap):
+class VectorFieldMap(AbstractFieldMap, XarrayDatasetBase):
     """A vector variable that is defined for each point in a 3D mesh.
 
     The data are stored as pandas DataFrame with columns for position and field values.
     """
     type_name = "vector_field_map"
-
-    real_type = xr.Dataset
 
     @classmethod
     @DataConversion.condition(lambda x: len(x.columns) == 6)
@@ -98,8 +74,7 @@ class VectorFieldMap(AbstractFieldMap):
     #     self.inner_data.to_dataframe()
 
 
-@DataConversion.discover
-@DataObject.register_type
+@DataObject.register_type()
 @ChainConversion.enable_to("vector_field_map", through="pandas_data_frame")
 class FieldTableFile(DataObject):
     type_name = "field_table"
@@ -132,10 +107,10 @@ class FieldTableFile(DataObject):
         return cls(uri=uri, **kwargs)
 
 
+@DataObject.register_type()
 @IdentityConversion.enable_to("pandas_data_frame")
-@DataObject.register_type
 @ChainConversion.enable_to("vector_field_map", through="pandas_data_frame")
-class ComsolFieldTextFile(DataObject):
+class ComsolFieldTextFile(PandasDataFrameBase):
     type_name = "comsol_field"
 
     real_type = pd.DataFrame

@@ -2,34 +2,22 @@ from boadata.core import DataObject, DataConversion
 from boadata.core.data_conversion import IdentityConversion, ChainConversion
 import pandas as pd
 import odo
+from .pandas_types import PandasDataFrameBase
 
 
-@DataObject.register_type
+@DataObject.register_type()
 @IdentityConversion.enable_to("pandas_data_frame")
 @ChainConversion.enable_to("numpy_array", through="pandas_data_frame")
-class CSVFile(DataObject):
+class CSVFile(PandasDataFrameBase):
     type_name = "csv"
-
-    real_type = pd.DataFrame
-
-    ndim = 2
 
     def __to_text__(self, **kwargs):
         constructor = DataObject.registered_types["text"]
         return constructor.from_uri(self.uri, source=self, **kwargs)
 
-    @property
-    def shape(self):
-        return self.inner_data.shape
-
     @classmethod
     def accepts_uri(cls, uri):
         return uri[-4:] == ".csv"
-
-    def __getitem__(self, item):
-        item = self.convert("pandas_data_frame")[item]
-        item.source = self
-        return item
 
     @classmethod
     def _fallback_read(cls, uri, **kwargs):

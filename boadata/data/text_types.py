@@ -2,7 +2,7 @@ from boadata.core import DataObject
 import codecs
 
 
-@DataObject.register_type
+@DataObject.register_type()
 class TextFile(DataObject):
     type_name = "text"
 

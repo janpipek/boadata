@@ -2,15 +2,13 @@ import pydataset
 import pandas as pd
 from boadata.core import DataObject
 from boadata.core.data_conversion import IdentityConversion, ChainConversion
+from .pandas_types import PandasDataFrameBase
 
 
-@DataObject.register_type
+@DataObject.register_type()
 @IdentityConversion.enable_to("pandas_data_frame")
-@ChainConversion.enable_to("csv", through="pandas_data_frame")
-class PyDataSet(DataObject):
+class PyDataSet(PandasDataFrameBase):
     type_name = "pydataset"
-
-    real_type = pd.DataFrame
 
     @classmethod
     def accepts_uri(cls, uri):

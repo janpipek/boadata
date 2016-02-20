@@ -3,9 +3,9 @@ from boadata.core.data_conversion import OdoConversion, ChainConversion
 import sqlalchemy as sa
 
 
+@DataObject.register_type()
 @OdoConversion.enable_to("pandas_data_frame")
 @ChainConversion.enable_to("csv", through="pandas_data_frame", pass_kwargs=("uri",))
-@DataObject.register_type
 class DatabaseTable(OdoDataObject):
     type_name = "db_table"
 

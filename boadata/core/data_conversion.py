@@ -2,6 +2,15 @@ from collections import OrderedDict
 import odo
 
 
+class ConversionUnknown(RuntimeError):
+    pass
+
+
+class ConversionConditionFailed(RuntimeError):
+    pass
+
+
+
 class DataConversion(object):
     """
 
@@ -77,7 +86,7 @@ class DataConversion(object):
 
     def convert(self, origin, check=True, **kwargs):
         if check and not self.applies(origin):
-            raise RuntimeError("Cannot convert to " + self.type_name2)
+            raise ConversionConditionFailed("Cannot convert to " + self.type_name2)
         return self._convert(origin, **kwargs)
 
     def _convert(self, origin, **kwargs):
@@ -108,7 +117,8 @@ class DataConversion(object):
                     condition = attr.condition
                 else:
                     condition = None
-                DataConversion.register(cls.type_name, other_type, condition=condition)(attr)
+                if cls.type_name != other_type:
+                    DataConversion.register(cls.type_name, other_type, condition=condition)(attr)
             if key.startswith("__from_") and key.endswith("__"):
                 other_type = key[7:-2]
                 attr = getattr(cls, key)
@@ -116,12 +126,14 @@ class DataConversion(object):
                     condition = attr.condition
                 else:
                     condition = None
-                DataConversion.register(other_type, cls.type_name, condition=condition)(attr)
-        return cls
+                if cls.type_name != other_type:
+                    DataConversion.register(other_type, cls.type_name, condition=condition)(attr)
 
     @classmethod
     def enable_to(cls, type2, condition=None, **kwargs):
         def wrap(type1):
+            if hasattr(type1, "_registered"):
+                raise RuntimeError("Cannot decorate already registered types with conversions.")
             kwargs["condition"] = condition
             conversion = cls(type1, type2, **kwargs)
             conversion._register()

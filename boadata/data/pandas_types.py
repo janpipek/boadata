@@ -1,36 +1,40 @@
 from boadata.core import DataObject, DataConversion
 from boadata.core.data_conversion import MethodConversion
+from .mixins import GetItemMixin, StatisticsMixin
 import pandas as pd
 
 
-@DataConversion.discover
-@DataObject.register_type
-@MethodConversion.enable_to("numpy_array", method_name="as_matrix")
-class PandasDataFrame(DataObject):
-    type_name = "pandas_data_frame"
-
+class PandasDataFrameBase(DataObject, GetItemMixin, StatisticsMixin):
     real_type = pd.DataFrame
-
-    @property
-    def shape(self):
-        return self.inner_data.shape
-
-    @property
-    def ndim(self):
-        return 2
 
     def __to_csv__(self, uri, **kwargs):
         self.inner_data.to_csv(uri)
         klass = DataObject.registered_types["csv"]
         return klass.from_uri(uri=uri, source=self)
 
-    def __getitem__(self, item):
-        return PandasSeries(self.inner_data[item], source=self)
+
+class PandasSeriesBase(DataObject, GetItemMixin, StatisticsMixin):
+    real_type = pd.Series
+
+    @property
+    def ndim(self):
+        return 1
+
+    def __to_csv__(self, path, **kwargs):
+        self.inner_data.to_csv(path)
+        klass = DataObject.registered_types["csv"]
+        return klass.from_uri(uri=path, source=self)
 
 
-@DataConversion.discover
-@DataObject.register_type
-class PandasSeries(DataObject):
+@DataObject.register_type(default=True)
+@MethodConversion.enable_to("numpy_array", method_name="as_matrix")
+class PandasDataFrame(PandasDataFrameBase):
+    type_name = "pandas_data_frame"
+
+
+@DataObject.register_type(default=True)
+@MethodConversion.enable_to("numpy_array", method_name="as_matrix")
+class PandasSeries(PandasSeriesBase):
     type_name = "pandas_series"
 
     real_type = pd.Series
@@ -38,11 +42,6 @@ class PandasSeries(DataObject):
     @property
     def ndim(self):
         return 1
-
-    def __to_numpy_array__(self, **kwargs):
-        data = self.inner_data.as_matrix()
-        klass = DataObject.registered_types["numpy_array"]
-        return klass(data, source=self)
 
     def __to_csv__(self, path, **kwargs):
         self.inner_data.to_csv(path)
