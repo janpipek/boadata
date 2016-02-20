@@ -2,6 +2,7 @@
 ------------------
 * support more complicated input arguments (based on click)
 * add support for field maps exported from COMSOL
+* re-enable FieldView
 
 0.3.2 (2016-02-19)
 ------------------

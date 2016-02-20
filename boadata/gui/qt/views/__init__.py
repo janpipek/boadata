@@ -6,7 +6,7 @@ from .field_view import FieldView
 from .plot_view import PlotView
 from .histogram_view import HistogramView
 
-try:
-    from .pandas_summary import PandasSummaryView
-except:
-    pass
+# try:
+#     from .pandas_summary import PandasSummaryView
+# except:
+#     pass

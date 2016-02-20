@@ -10,7 +10,6 @@ class ConversionConditionFailed(RuntimeError):
     pass
 
 
-
 class DataConversion(object):
     """
 
