@@ -8,5 +8,6 @@ from .text_types import TextFile
 from .field_types import VectorFieldMap, FieldTableFile, ComsolFieldTextFile
 from .pydataset_types import PyDataSet
 from .sql_types import DatabaseTable
+from .wiki_types import WikiTable
 
 
