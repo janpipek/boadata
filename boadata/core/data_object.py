@@ -191,8 +191,8 @@ class DataObject(object):
 
     @property
     def dtype(self):
-        if hasattr(self.inner_data, "dshape"):
-            return self.inner_data.dshape
+        if hasattr(self.inner_data, "dtype"):
+            return self.inner_data.dtype
         else:
             return None
 
@@ -232,7 +232,10 @@ class DataObject(object):
                     elif same_class:
                         return boadata_type.from_native(result)
                     else:
-                        return DataObject.from_native(result)
+                        try:
+                            return DataObject.from_native(result)
+                        except:
+                            return result
                 setattr(boadata_type, method_name, proxied_method)
             return boadata_type
         return wrapper
