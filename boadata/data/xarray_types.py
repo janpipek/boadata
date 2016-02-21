@@ -1,9 +1,9 @@
 from boadata.core import DataObject
 import xarray as xr
-from .mixins import GetItemMixin, StatisticsMixin
+from .mixins import GetItemMixin, SetItemMixin, StatisticsMixin, NumericalMixin
 
 
-class _XarrayBase(DataObject, GetItemMixin, StatisticsMixin):
+class _XarrayBase(DataObject, GetItemMixin, StatisticsMixin, NumericalMixin):
     @property
     def axes(self):
         """
@@ -16,7 +16,7 @@ class _XarrayBase(DataObject, GetItemMixin, StatisticsMixin):
         return DataObject.from_native(self.inner_data.data)
 
 
-class XarrayDatasetBase(_XarrayBase):
+class XarrayDatasetBase(_XarrayBase, SetItemMixin):
     @property
     def shape(self):
         return (len(self.axes),) + self.inner_data[self.columns[0]].shape
@@ -24,6 +24,17 @@ class XarrayDatasetBase(_XarrayBase):
     @property
     def columns(self):
         return list(self.inner_data.data_vars.keys())
+
+    def add_column(self, key, expression):
+        if isinstance(expression, str):
+            try:
+                result = self.evaluate(expression, wrap=False)
+                self.inner_data = self.inner_data.merge({key : (self.axes, result)})
+            except:
+                raise RuntimeError("Error when evaluating {0}".format(expression))
+        else:
+            raise RuntimeError("Cannot add column {0} from {1}".format(key, expression))
+        return self
 
     def __repr__(self):
         return "{0}({1} -> {2}, shape={3})".format(self.__class__.__name__, ", ".join(self.axes), ", ".join(self.columns), self.shape)
@@ -50,3 +61,12 @@ class XarrayDataset(XarrayDatasetBase):
 @DataObject.register_type(default=True)
 class XarrayDataArray(XarrayDataArrayBase):
     type_name = "xarray_data_array"
+
+    @classmethod
+    def from_native(cls, native_object, **kwargs):
+        if not native_object.ndim:
+            return native_object.dtype.type(native_object)
+        else:
+            if isinstance(native_object, XarrayDataArrayBase):
+                return native_object.convert(cls.type_name, **kwargs)
+            return cls(inner_data=native_object, **kwargs)

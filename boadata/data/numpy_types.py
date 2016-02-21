@@ -1,6 +1,6 @@
 from boadata.core import DataObject
 from boadata.core.data_conversion import DataConversion, OdoConversion, ConstructorConversion
-from .mixins import GetItemMixin, StatisticsMixin
+from .mixins import GetItemMixin, StatisticsMixin, NumericalMixin
 import numpy as np
 
 
@@ -8,7 +8,7 @@ import numpy as np
 @ConstructorConversion.enable_to("pandas_data_frame", condition=lambda x: x.ndim == 2)
 @ConstructorConversion.enable_to("pandas_series", condition=lambda x: x.ndim == 1)
 @DataObject.proxy_methods("flatten")
-class NumpyArray(DataObject, GetItemMixin, StatisticsMixin):
+class NumpyArray(DataObject, GetItemMixin, StatisticsMixin, NumericalMixin):
     real_type = np.ndarray
 
     type_name = "numpy_array"
