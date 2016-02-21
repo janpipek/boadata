@@ -210,18 +210,29 @@ class DataObject(object):
             return None
 
     @staticmethod
-    def proxy_methods(methods, wrap=True, same_class=False, through=None):
+    def proxy_methods(methods, wrap=True, unwrap_args=True, same_class=False, through=None):
         """Decorator which ....
 
-        It is not possible to proxy slots!
+        :param wrap: Whether to wrap result
+        :param unwrap_args: Whether to unwrap arguments
+        :param same_class: Whether to try to convert to self's class
+        :param through: if None, done via inner_data, otherwise through a named type
+
+        It is not possible to proxy slots, but it is possible to inherit proxied slots :-)
         """
+        import boadata
         def wrapper(boadata_type):
             if isinstance(methods, str):
                 method_names = [methods]
             else:
                 method_names = methods
-            for method_name in method_names:
+
+            def make_method(method_name):
                 def proxied_method(self, *args, **kwargs):
+                    if unwrap_args:
+                        args = [boadata.unwrap(arg) for arg in args]
+                        kwargs = {key: boadata.unwrap(value) for key, value in kwargs.items()}
+
                     if through:
                         native_method = getattr(self.convert(through), method_name)
                     else:
@@ -236,16 +247,17 @@ class DataObject(object):
                             return DataObject.from_native(result)
                         except:
                             return result
-                setattr(boadata_type, method_name, proxied_method)
+                return proxied_method
+            for method_name in method_names:
+                setattr(boadata_type, method_name, make_method(method_name))
             return boadata_type
         return wrapper
 
-    def evaluate(self, expression):
+    def evaluate(self, expression, wrap=True):
         """Do calculation on columns of the dataset.
 
         :param expression: a valid expression
         :type expression: string
-        :return: boadata.data.NumpyArray
 
         Based on numexpr library
         """
@@ -259,8 +271,10 @@ class DataObject(object):
             "inf" : np.inf
         }
         result = ne.evaluate(expression, local_dict=local_dict, global_dict=global_dict)
-        array_type = DataObject.registered_types["numpy_array"]
-        return array_type(inner_data=result)
+        if wrap:
+            return DataObject.from_native(result, source=self)
+        else:
+            return result
 
 class OdoDataObject(DataObject):
     def __init__(self, uri, **kwargs):
