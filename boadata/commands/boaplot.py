@@ -30,7 +30,7 @@ def run_app(uri, x, y, type, **kwargs):
 
     view = PlotView(data_object=do)
     if y:
-        y = y.split(";")
+        y = y.split(",")
     widget = view.create_widget(x, y, **kwargs)
     widget.show()
     widget.setWindowTitle(do.uri)
