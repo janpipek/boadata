@@ -12,49 +12,35 @@ class PlotView(View):
     def accepts(cls, data_object):
         if data_object.ndim == 1:
             return True
-        if data_object.ndim == 2 and data_object.shape[1] <= 2:
+        if data_object.ndim == 2 and (2 in data_object.shape or 1 in data_object.shape):
             return True
         return False
 
-    def create_widget(self, xcol=None, ycol=None, plot_type="scatter", **kwargs):
-        df = self.data_object
-        if xcol and ycol:
-            try:
-                x = df.evaluate(xcol)
-            except Exception as e:
-                x = df[xcol]
-            try:
-                y = df.evaluate(ycol)
-            except Exception as e:
-                y = df[ycol]
-        elif len(df.columns) == 2:
-            xcol, ycol = tuple(df.columns)
-            x = df[df.columns[0]]
-            y = df[df.columns[1]]
-        elif len(df.columns) == 1:
-            xcol, ycol = "#", df.columns[0]
-            y = df[df.columns[1]]
-            x = range(0, df.shape[1])
-        elif df.ndim == 1:
-            y = df
-            x = range(0, df.shape[1])
-        x = unwrap(x)
-        y = unwrap(y)
-
+    def create_widget(self, xcol=None, ycols=None, plot_type="scatter", **kwargs):
         widget, fig = MatplotlibBackend.create_figure_widget()
         fig.add_subplot(111)
         ax = fig.get_axes()
-        if plot_type == "line":
-            ax[0].plot(x, y)
-        elif plot_type == "scatter":
-            ax[0].scatter(x, y)
-        elif plot_type == "box":
-            ax[0].bar(x, y)
-        ax[0].set_xlabel(xcol)
-        ax[0].set_ylabel(ycol)
+
+        if not isinstance(ycols, list):
+            ycols = [ycols]
+        for ycol in ycols:
+            data = self.data_object.convert("xy_dataseries", x=xcol, y=ycol)
+
+            if plot_type == "line":
+                ax[0].plot(data.x, data.y, label=data.yname)
+            elif plot_type == "scatter":
+                ax[0].scatter(data.x, data.y, label=data.yname)
+            elif plot_type == "box":
+                ax[0].bar(data.x, data.y, label=data.yname)
+            ax[0].set_xlabel(kwargs.get("xlabel", data.xname))
+            if len(ycols) == 1:
+                ax[0].set_ylabel(kwargs.get("ylabel", data.yname))
 
         if kwargs.get("logx"):
             ax[0].set_xscale("log")
         if kwargs.get("logy"):
             ax[0].set_yscale("log")
+        if len(ycols) > 1:
+            ax[0].set_ylabel(kwargs.get("ylabel", "y"))
+            ax[0].legend()
         return widget

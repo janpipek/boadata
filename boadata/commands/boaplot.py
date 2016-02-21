@@ -29,8 +29,8 @@ def run_app(uri, x, y, type, **kwargs):
     app = QtGui.QApplication(sys.argv)
 
     view = PlotView(data_object=do)
-    # if y:
-    #     y = y.split(";")
+    if y:
+        y = y.split(";")
     widget = view.create_widget(x, y, **kwargs)
     widget.show()
     widget.setWindowTitle(do.uri)
