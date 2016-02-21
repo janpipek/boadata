@@ -1,8 +1,11 @@
-0.3.3 (2016-??-??)
+0.3.3 (2016-02-21)
 ------------------
 * support more complicated input arguments (based on click)
 * add support for field maps exported from COMSOL
 * re-enable FieldView
+* DataObject.evaluate()
+* xarray data types
+* and much more...
 
 0.3.2 (2016-02-19)
 ------------------
