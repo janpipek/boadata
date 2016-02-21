@@ -1,10 +1,13 @@
 from boadata.core import DataObject
+from boadata import wrap
 
 
+@DataObject.proxy_methods([
+    "__getitem__"
+])
 class GetItemMixin(object):
     """Enable proxing of GetItem."""
-    def __getitem__(self, *args):
-        return DataObject.from_native(self.inner_data.__getitem__(*args))
+    pass
 
 
 class SetItemMixin(object):
@@ -30,3 +33,16 @@ class StatisticsMixin(object):
 ])
 class NumericalMixin(object):
     pass
+
+
+class AsArrayMixin(object):
+    """Enable the object to be converted to native numpy array.
+
+    Including this mixin, you can use the object in matplotlib and seaborn
+    """
+    def __array__(self):
+        import numpy as np
+        return self.convert("numpy_array").inner_data
+
+    def astype(self, *args):
+        return self.__array__().astype(*args)

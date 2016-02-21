@@ -9,11 +9,16 @@ def load(uri, type=None, *args, **kwargs):
         return core.DataObject.from_uri(uri, *args, **kwargs)
 
 
-def wrap(native_object, **kwargs):
+def wrap(native_object, force=True, **kwargs):
     """Change some data object into a wrapped boadata type."""
     from . import core
     from . import data     # Loads all formats
-    return core.DataObject.from_native(native_object)
+    try:
+        return core.DataObject.from_native(native_object)
+    except RuntimeError as ex:
+        if not force:
+            return native_object
+        raise
 
 
 def unwrap(boadata_object, **kwargs):

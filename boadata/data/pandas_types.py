@@ -1,6 +1,6 @@
 from boadata.core import DataObject, DataConversion
 from boadata.core.data_conversion import MethodConversion
-from .mixins import GetItemMixin, StatisticsMixin, NumericalMixin
+from .mixins import GetItemMixin, StatisticsMixin, NumericalMixin, AsArrayMixin
 import pandas as pd
 
 
@@ -57,7 +57,7 @@ class PandasDataFrameBase(_PandasBase):
 
 @DataObject.proxy_methods("dropna")
 @DataObject.proxy_methods("hist", through="numpy_array")
-class PandasSeriesBase(_PandasBase):
+class PandasSeriesBase(_PandasBase, AsArrayMixin):
     real_type = pd.Series
 
     @property
