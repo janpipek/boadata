@@ -194,6 +194,13 @@ class _DataObjectInterface():
         else:
             return None
 
+    @property
+    def name(self):
+        if hasattr(self.inner_data, "name"):
+            return self.inner_data.name
+        else:
+            return None
+
 
 class DataObject(_DataObjectRegistry, _DataObjectConversions, _DataObjectInterface):
     '''A basic object that contains data representable by boadata.
