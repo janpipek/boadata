@@ -1,5 +1,4 @@
 from boadata.core import DataObject
-from boadata import wrap
 
 
 @DataObject.proxy_methods([
@@ -22,7 +21,15 @@ class SetItemMixin(object):
     "sum", "std", "max", "mean"
 ])
 class StatisticsMixin(object):
-    pass
+    """
+
+    """
+    def quantile(self, n):
+        if hasattr(self.inner_data, "quantile"):
+            return self.inner_data.quantile()
+        if isinstance(n, list):
+            return [ self.quantile(x) for x in n ]
+
 
 @DataObject.proxy_methods([
     "__add__", "__radd__", "__sub__", "__rsub__",
@@ -41,7 +48,6 @@ class AsArrayMixin(object):
     Including this mixin, you can use the object in matplotlib and seaborn
     """
     def __array__(self):
-        import numpy as np
         return self.convert("numpy_array").inner_data
 
     def astype(self, *args):
