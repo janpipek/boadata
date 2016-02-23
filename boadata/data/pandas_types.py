@@ -39,7 +39,7 @@ class PandasDataFrameBase(_PandasBase):
         if not x and not y:
             # Auto from 2 dim
             if len(self.columns) == 1:
-                return self[self.columns[0]].convert("xy_dataset")
+                return self[self.columns[0]].convert("xy_dataseries")
             elif len(self.columns) == 2:
                 xdata = self[self.columns[0]]
                 ydata = self[self.columns[1]]
@@ -69,7 +69,7 @@ class PandasDataFrameBase(_PandasBase):
                 yname = y
         else:
             raise RuntimeError("Cannot specify col2 and not col1.")
-        return constructor(xdata, ydata, xname=xname, yname=yname)
+        return constructor(xdata, ydata, xname=kwargs.get("xname", xname), yname=kwargs.get("yname", yname))
 
 
 @DataObject.proxy_methods("dropna")
@@ -86,7 +86,7 @@ class PandasSeriesBase(_PandasBase, AsArrayMixin):
                                                              self.inner_data.name, self.shape, self.dtype)
 
     def __to_xy_dataseries__(self, **kwargs):
-        constructor = DataObject.registered_types["xy_dataset"]
+        constructor = DataObject.registered_types["xy_dataseries"]
         x = range(self.shape[0])     # TODO: Change to proper index
         y = self
         if self.inner_data.name:
