@@ -17,6 +17,23 @@ class PandasDataFrameBase(_PandasBase):
     def hist(self, *args, **kwargs):
         return {col: self[col].hist(*args, **kwargs) for col in self.columns}
 
+    def sql(self, sql, table_name=None):
+        """Run SQL query on columns of the table.
+
+        Uses SQLite in-memory storage to create temporary table.
+        """
+        from sqlalchemy import create_engine
+        from boadata import wrap
+
+        if not table_name:
+            table_name = self.name
+        if not table_name:
+            raise RuntimeError("Cannot run SQL queries on unnamed dataframe. Specify table_name argument...")
+        engine = create_engine('sqlite:///:memory:')
+        self.inner_data.to_sql(table_name, engine)
+        # TODO: some clean up???
+        return wrap(pd.read_sql_query(sql, engine), source=self)
+
     def __to_xy_dataseries__(self, x=None, y=None, **kwargs):
         constructor = DataObject.registered_types["xy_dataseries"]
         if not x and not y:

@@ -14,7 +14,7 @@ def wrap(native_object, force=True, **kwargs):
     from . import core
     from . import data     # Loads all formats
     try:
-        return core.DataObject.from_native(native_object)
+        return core.DataObject.from_native(native_object, **kwargs)
     except RuntimeError as ex:
         if not force:
             return native_object

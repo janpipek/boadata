@@ -43,7 +43,13 @@ class CSVFile(PandasDataFrameBase):
         for method in methods:
             try:
                 data = method()
-                return cls(inner_data=data, uri=uri, source=source, **kwargs)
+                result = cls(inner_data=data, uri=uri, source=source, **kwargs)
+                break
             except:
                 pass
+        if result:
+            if not result.name:
+                import os
+                result.inner_data.name = os.path.splitext(os.path.basename(uri))[0]
+            return result
         raise RuntimeError("No CSV reading method understands the file.")

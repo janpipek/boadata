@@ -300,16 +300,6 @@ class DataObject(_DataObjectRegistry, _DataObjectConversions, _DataObjectInterfa
         else:
             return result
 
-    def sql(self, sql, table_name=None):
-        if not table_name:
-            table_name = self.name
-        dshape = odo.discover(self.inner_data)
-        db_table = odo.odo(self.inner_data, "sqlite:///:memory:::{0}".format(table_name))
-        db = odo.resource("sqlite:///:memory:")
-
-        # TODO: this would be nice here, but we don't see any table :-(
-        return db.execute(sql)
-
 
 class OdoDataObject(DataObject):
     def __init__(self, uri, **kwargs):
