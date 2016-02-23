@@ -29,7 +29,7 @@ class PlotView(View):
             if plot_type == "line":
                 ax[0].plot(data.x, data.y, label=data.yname)
             elif plot_type == "scatter":
-                ax[0].scatter(data.x, data.y, label=data.yname)
+                ax[0].scatter(data.x, data.y, label=data.yname, marker=".", s=1)
             elif plot_type == "box":
                 ax[0].bar(data.x, data.y, label=data.yname)
             ax[0].set_xlabel(kwargs.get("xlabel", data.xname))

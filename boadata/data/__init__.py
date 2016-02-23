@@ -9,5 +9,6 @@ from .field_types import VectorFieldMap, FieldTableFile, ComsolFieldTextFile
 from .pydataset_types import PyDataSet
 from .sql_types import DatabaseTable
 from .plotting_types import XYPlotDataSeries #, XYPlotDataSet
+from .matlab_types import MatlabFigXYData
 
 

@@ -13,7 +13,7 @@ options = dict(
     author='Jan Pipek',
     author_email='jan.pipek@gmail.com',
     url='https://github.com/janpipek/boadata',
-    install_requires = ['numpy', 'pandas', 'blinker', 'six', 'odo', 'h5py', 'sqlalchemy', 'pydataset', 'numexpr', 'click', 'xray'],
+    install_requires = ['numpy', 'pandas', 'blinker', 'six', 'odo', 'h5py', 'sqlalchemy', 'pydataset', 'numexpr', 'click', 'xray', 'scipy'],
     extras_require = {
         'pyqtgraph' : ['pyqtgraph'],
         'matplotlib' : ['matplotlib']
@@ -30,7 +30,6 @@ options = dict(
         ]
     },
     classifiers=[
-        "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3.4",
         "Programming Language :: Python :: 3.5",
         "Development Status :: 3 - Alpha",
