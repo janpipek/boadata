@@ -8,6 +8,7 @@ import click
 @click.version_option(__version__)
 @click.argument("x", default=None, required=False) #, help="Column or expression to be displayed on x axis.")
 @click.argument("y", default=None, required=False) #, help="Column or expression to be displayed on y axis.")
+@click.option("--sql", required=False, help="SQL to run on the object.")
 @click.option("-t", "--type", default=None, help="What type is the object.")
 @click.option("-s", "--scatter", "plot_type", default=True, flag_value="scatter", help="Scatter plot")
 @click.option("-b", "--box", "plot_type", default=False, flag_value="box", help="Box plot")
@@ -16,12 +17,17 @@ import click
 @click.option("--logx", default=False, is_flag=True, help="Logarithmic scale on X axis")
 @click.option("--logy", default=False, is_flag=True, help="Logarithmic scale on Y axis")
 def run_app(uri, x, y, type, **kwargs):
+    wargs = {key : value for key, value in kwargs.items() if value is not None}
+    
     from boadata import load
     try:
         do = load(uri, type)
     except:
         print("URI not understood:", uri)
         exit(-1)
+
+    if "sql" in kwargs:
+        do = do.sql(kwargs.get("sql"), table_name="data")        
 
     from boadata.gui import qt   # Force sip
     from PyQt4 import QtGui

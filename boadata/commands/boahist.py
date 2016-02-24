@@ -9,6 +9,7 @@ from boadata import __version__
 @click.argument("x", default=None, required=False)
 @click.option("-t", "--type", default=None, help="What type is the object.")
 @click.option('-n', "--bins", default=50, type=int, help="How many bins")
+@click.option("-s", "--sql", required=False, help="SQL to run on the object.")
 @click.option('-r', "--relative", default=False, is_flag=True, help="Show relative frequency")
 # @click.option("-a", "--all", default=False, is_flag=True, help="Show histograms for all")
 @click.option("--logy", default=False, is_flag=True, help="Logarithmic scale on Y axis")
