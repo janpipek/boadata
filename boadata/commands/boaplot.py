@@ -19,6 +19,8 @@ from PyQt4 import QtGui
 # @click.option("-j", "--joint", "plot_type", default=False, flag_value="joint", help="Joint plot")
 @click.option("--logx", default=False, is_flag=True, help="Logarithmic scale on X axis")
 @click.option("--logy", default=False, is_flag=True, help="Logarithmic scale on Y axis")
+@click.option("--xlabel", help="Title for x axis", required=False)
+@click.option("--ylabel", help="Title for y axis", required=False)
 def run_app(uri, x, y, type, **kwargs):
     try:
         do = load(uri, type)
@@ -31,6 +33,8 @@ def run_app(uri, x, y, type, **kwargs):
     view = PlotView(data_object=do)
     if y:
         y = y.split(",")
+    # Remove None's
+    kwargs = { key : value for key, value in kwargs.items() if value is not None }
     widget = view.create_widget(x, y, **kwargs)
     widget.show()
     widget.setWindowTitle(do.uri)
