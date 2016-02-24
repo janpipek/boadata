@@ -26,7 +26,8 @@ options = dict(
             'boaview = boadata.commands.boaview:run_app',
             'boatree = boadata.commands.boatree:run_app',
             'boaplot = boadata.commands.boaplot:run_app',
-            'boahist = boadata.commands.boahist:run_app'
+            'boahist = boadata.commands.boahist:run_app',
+            'boacat = boadata.commands.boacat:run_app'
         ]
     },
     classifiers=[
