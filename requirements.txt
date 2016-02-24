@@ -13,3 +13,4 @@ seaborn
 pydataset
 h5py
 pydons
+tabulate
