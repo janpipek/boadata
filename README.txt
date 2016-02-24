@@ -17,12 +17,15 @@ Concepts
 
 Executables
 ------------
+Run `command --help` to see full list of options
+
 * `boadescribe <uri>` - show basic info about a data object (in command-line)
 * `boatree <uri>` - list nodes in a data tree
 * `boaplot <uri> <colx> <coly>` - scatter plot of two columns (colx,y can be expressions like x**2, sqrt(y+2*exp(-x)) etc.)
 * `boahist <uri> <col>` - histogram of a column
 * `boadata [<uri>]` - full gui with a tree
-* `boatable <uri>` - show tabular representation of a dataobject
+* `boatable <uri>` - show tabular representation of a dataobject (GUI)
+* `boacat <uri>` - print tabular representation of a dataobject (command-line)
 
 Status
 ------
@@ -30,30 +33,37 @@ Status
 
 Requirements
 ------------
-* PyQt4
+* PyQt4 (to become optional / replaceable with PySide/PyQt5)
 * odo
 * pandas
 * numpy
-* six
-* blinker
 * numexpr
+* click
+* tabulate
+* six (perhaps to be removed)
+* blinker (perhaps to be removed)
 * h5py (optional)
 * sqlalchemy (optional)
-* pyqtgraph (optional - table support)
-* matplotlib (optional)
+* pyqtgraph (to be removed)
+* matplotlib (to become optional)
+* bokeh (to become optional instead of matplotlib)
+* seaborn
 * pandas_profiling (optional - dataframe summaries)
-* Python 2.7 / 3.4+
+
+* Python 3.4+
 
 Supported formats and sources
 -----------------------------
 * File system tree
 * HDF5
-* CSV
+* CSV (including web links)
 * SQL based on SqlAlchemy (sqlite supported)
 * pydataset datasets
+* seaborn datasets
+* MATLAB .fig files
 
-Supported views
----------
+Supported GUI views
+-------------------
 * Table
 * Histogram
 * Scatter plot

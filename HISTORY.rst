@@ -1,3 +1,10 @@
+0.3.4 (2016-02-24)
+------------------
+* boacat tool
+* more options for plotting tools
+* basic support for MATLAB new-format figs (needs pydons)
+* drop support for Python 2.7
+
 0.3.3 (2016-02-23)
 ------------------
 * support more complicated input arguments (based on click)
