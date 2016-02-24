@@ -6,3 +6,8 @@ from . import hdf5
 from . import pydaset
 from . import sql
 
+try:
+    # Dependence on pydons
+    from . import matlab
+except:
+    pass

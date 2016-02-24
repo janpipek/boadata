@@ -11,11 +11,33 @@ class MatlabFigXYData(XYPlotDataSeriesBase):
         return uri and uri.endswith(".fig")
 
     @classmethod
-    def from_uri(cls, uri, **kwargs):
+    def _from_matlab73(cls, uri, **kwargs):
+        import pydons
+        fb = pydons.FileBrowser(uri, any_keys=True)
+        x = None
+        y = None
+        xlabel = "x"
+        ylabel = "y"
+
+        for key, value in fb["#refs#"].items():
+            if not isinstance(value, pydons.MatStruct):
+                continue
+            if "properties" in value:
+                if "XData" in value.properties and "YData" in value.properties and "ZData" not in value.properties:
+                    x = value.properties.XData
+                    y = value.properties.YData
+
+        if x is not None and y is not None:
+            return cls(x=x, y=y, xname=xlabel, yname=ylabel, uri=uri)
+        else:
+            raise RuntimeError("No suitable figures found in {0}".format(uri))
+
+    @classmethod
+    def _from_oldmatlab(cls, uri, **kwargs):
         from scipy.io import loadmat
         from numpy import size
-
         data = loadmat(uri, squeeze_me=True, struct_as_record=False)
+
         ax1 = data['hgS_070000'].children
         if size(ax1) > 1:
             ax1 = ax1[0]
@@ -42,3 +64,16 @@ class MatlabFigXYData(XYPlotDataSeriesBase):
 
         if x is not None and y is not None:
             return cls(x=x, y=y, xname=xlabel, yname=ylabel, uri=uri)
+        else:
+            raise RuntimeError("No suitable figures found in {0}".format(uri))
+
+    @classmethod
+    def from_uri(cls, uri, **kwargs):
+        try:
+            return cls._from_oldmatlab(uri, **kwargs)
+        except:
+            try:
+                return cls._from_matlab73(uri, **kwargs)
+            except:
+                raise RuntimeError("Cannot interpret MATLAB figure {0}".format(uri))
+
