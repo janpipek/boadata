@@ -1,5 +1,6 @@
 __version__ = str('0.3.3')
 
+
 def load(uri, type=None, *args, **kwargs):
     from . import core
     from . import data     # Loads all formats

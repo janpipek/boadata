@@ -1,18 +1,21 @@
-from boadata import load
-from boadata.gui.qt.views import TableView
+from boadata import __version__
 import sys
 import click
 
-from boadata.gui import qt   # Force sip
-from PyQt4 import QtGui
 
 @click.command()
+@click.version_option(__version__)
 @click.argument("uri")
 @click.option("-t", "--type", default=None, help="What type is the object.")
 def run_app(uri, type, **kwargs):
+    from boadata import load
     do = load(uri, type)
 
+    from boadata.gui import qt   # Force sip
+    from PyQt4 import QtGui
     app = QtGui.QApplication(sys.argv)
+
+    from boadata.gui.qt.views import TableView
     view = TableView(data_object=do)
     widget = view.create_widget()
     widget.show()

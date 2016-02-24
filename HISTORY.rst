@@ -1,11 +1,13 @@
-0.3.3 (2016-02-21)
+0.3.3 (2016-02-23)
 ------------------
 * support more complicated input arguments (based on click)
 * add support for field maps exported from COMSOL
+* add support for MATLAB .fig files (to read x,y data)
 * re-enable FieldView
 * DataObject.evaluate()
 * xarray data types
 * and much more...
+* enable .sql on DataFrames
 
 0.3.2 (2016-02-19)
 ------------------
