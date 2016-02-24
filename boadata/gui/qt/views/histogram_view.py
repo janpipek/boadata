@@ -1,6 +1,7 @@
 from .view import View
 from ..backends.matplotlib import MatplotlibBackend
 from boadata import unwrap
+import seaborn as sns
 import numpy as np
 
 
@@ -23,9 +24,13 @@ class HistogramView(View):
         widget, fig = MatplotlibBackend.create_figure_widget()
         fig.add_subplot(111)
         ax = fig.get_axes()
-        ax[0].hist(data, bins,
-                   normed=kwargs.get("relative")
-        )
+
+        extra_args = {}
+        if not kwargs.get("hist"):
+            extra_args["kde_kws"] = {"shade": True}
+
+        sns.distplot(data, hist=kwargs.get("hist", False), kde=kwargs.get("kde", False),
+                     bins=bins, rug=kwargs.get("rug", False), ax=ax[0], **extra_args)
         xlabel = kwargs.get("xlabel", xcol)
         ax[0].set_xlabel(xlabel)
 
