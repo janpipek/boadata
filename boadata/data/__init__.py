@@ -3,6 +3,7 @@
 from .pandas_types import PandasDataFrame, PandasSeries
 from .numpy_types import NumpyArray
 from .csv_types import CSVFile
+from .json_types import JsonFileDataset
 from .text_types import TextFile
 from .field_types import VectorFieldMap, FieldTableFile, ComsolFieldTextFile
 from .sql_types import DatabaseTable
