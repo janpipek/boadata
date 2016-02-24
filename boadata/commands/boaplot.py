@@ -17,7 +17,7 @@ import click
 @click.option("--logx", default=False, is_flag=True, help="Logarithmic scale on X axis")
 @click.option("--logy", default=False, is_flag=True, help="Logarithmic scale on Y axis")
 def run_app(uri, x, y, type, **kwargs):
-    wargs = {key : value for key, value in kwargs.items() if value is not None}
+    kwargs = {key : value for key, value in kwargs.items() if value is not None}
     
     from boadata import load
     try:
