@@ -149,22 +149,28 @@ class DataNode(object):
         '''Called after any change of this node or its children.'''
         self.changed.send(self)
 
-    def dump(self, stream=sys.stdout, indent=u"  ", subtree=False, in_depth=0, children_only=False, data_object_info=False):
+    def dump(self, stream=sys.stdout, indent=u"  ", subtree=False, in_depth=0, children_only=False,
+             data_object_info=False, full_title=False):
         '''Write a textual representation of the tree.'''
         if not children_only:
             stream.write(in_depth * indent)
-            stream.write(self.title)
+            if full_title:
+                stream.write(self.full_title)
+            else:
+                stream.write(self.title)
             # stream.write(str(self.has_object()))
             if data_object_info and self.has_object():
                 # stream.write("!")
                 stream.write(" (" + " x ".join(str(i) for i in self.data_object.shape) + ")")
         if self.has_subtree() and subtree:
             stream.write(":")
-            self.subtree().dump(stream, indent, subtree, in_depth, children_only=True, data_object_info=data_object_info)
+            self.subtree().dump(stream, indent, subtree, in_depth, children_only=True,
+                                data_object_info=data_object_info, full_title=full_title)
         else:
             stream.write("\n")
         for child in self.children:    
-            child.dump(stream, indent, subtree, in_depth+1, data_object_info=data_object_info)
+            child.dump(stream, indent, subtree, in_depth+1, data_object_info=data_object_info,
+                       full_title=full_title)
 
     def _repr_html_(self):
         '''Simple HTML representation to be used e.g. in IPython.'''
