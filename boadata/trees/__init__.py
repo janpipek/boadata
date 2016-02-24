@@ -1,9 +1,16 @@
 from . import file
-from . import hdf5
-# from . import excel
-# from . import sql
 
-from . import pydaset
+try:
+	# Dependence on h5py
+	from . import hdf5
+except:
+	pass
+
+try:
+	# Dependence on pydataset
+	from . import pydaset
+except:
+	pass
 from . import sql
 
 try:

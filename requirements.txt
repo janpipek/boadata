@@ -8,3 +8,9 @@ numexpr
 click
 xray
 scipy
+pyqtgraph
+seaborn
+pydataset
+h5py
+pydons
+tabulate

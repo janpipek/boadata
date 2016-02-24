@@ -11,6 +11,7 @@ class _PandasBase(DataObject, GetItemMixin, StatisticsMixin, NumericalMixin):
         return klass.from_uri(uri=uri, source=self)
 
 
+@DataObject.proxy_methods("head")
 class PandasDataFrameBase(_PandasBase):
     real_type = pd.DataFrame
 
@@ -72,7 +73,7 @@ class PandasDataFrameBase(_PandasBase):
         return constructor(xdata, ydata, xname=kwargs.get("xname", xname), yname=kwargs.get("yname", yname))
 
 
-@DataObject.proxy_methods("dropna")
+@DataObject.proxy_methods("dropna", "head")
 @DataObject.proxy_methods("hist", through="numpy_array")
 class PandasSeriesBase(_PandasBase, AsArrayMixin):
     real_type = pd.Series

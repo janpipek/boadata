@@ -1,12 +1,15 @@
-from boadata import load
+#!/usr/bin/env python
 import sys
 import click
+from boadata import __version__
 
 
 @click.command()
+@click.version_option(__version__)
 @click.argument("uri")
 @click.option("-t", "--type", default=None, help="What type is the object.")
 def run_app(uri, type, **kwargs):
+    from boadata import load
     do = load(uri, type)
     if not do:
         print("URI not understood: {0}").format(uri)
@@ -24,3 +27,6 @@ def run_app(uri, type, **kwargs):
             except:
                 pass
             print(s)
+
+if __name__ == "__main__":
+    run_app()

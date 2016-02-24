@@ -1,19 +1,24 @@
 #!/usr/bin/env python
 import sys
-from boadata.gui import qt    # Force sip API
-import boadata.trees          # Load all trees
-from boadata.core.data_tree import DataTree
-
-from PyQt4 import QtGui
-from boadata.gui.qt import MainWindow, DataTreeModel
-import boadata.data
+import click
+from boadata import __version__
 
 
-def run_app():
+@click.command()
+@click.version_option(__version__)
+@click.argument("uri", default=None, required=False)
+def run_app(uri=None):
+    import boadata.data
+    import boadata.trees          # Load all trees
+    from boadata.gui import qt    # Force sip API
+    from PyQt4 import QtGui
+    from boadata.core.data_tree import DataTree
+    from boadata.gui.qt import MainWindow, DataTreeModel
+
     app = QtGui.QApplication(sys.argv)
 
-    if len(sys.argv) > 1:
-        uri = sys.argv[1]
+    if uri:
+        tree = None
         try:
             for cls in DataTree.registered_trees:
                 if cls.accepts_uri(uri):
