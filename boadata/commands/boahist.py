@@ -14,8 +14,9 @@ from PyQt4 import QtGui
 @click.option('-n', "--bins", default=50, type=int, help="How many bins")
 @click.option('-r', "--relative", default=False, is_flag=True, help="Show relative frequency")
 @click.option("-a", "--all", default=False, is_flag=True, help="Show histograms for all")
-# @click.option('-r', "--relative", default=False, is_flag=True, "Show relative frequency")
 @click.option("--logy", default=False, is_flag=True, help="Logarithmic scale on Y axis")
+@click.option("--xlabel", required=False, help="Label to be displayed on X axis")
+@click.option("--title", required=False, help="Title of the plot")
 def run_app(uri, x, bins, type, **kwargs):
     try:
         do = load(uri, type)
@@ -24,6 +25,8 @@ def run_app(uri, x, bins, type, **kwargs):
         exit(-1)
 
     app = QtGui.QApplication(sys.argv)
+
+    kwargs = {key : value for key, value in kwargs.items() if value is not None}
 
     def show(x):
          view = HistogramView(data_object=do)

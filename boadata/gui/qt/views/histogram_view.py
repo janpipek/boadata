@@ -28,4 +28,7 @@ class HistogramView(View):
         )
         xlabel = kwargs.get("xlabel", xcol)
         ax[0].set_xlabel(xlabel)
+
+        if "title" in kwargs:
+            ax[0].set_title(kwargs["title"])
         return widget
