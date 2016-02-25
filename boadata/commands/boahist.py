@@ -29,6 +29,8 @@ def run_app(uri, x, bins, type, **kwargs):
     from boadata.gui import qt   # Force sip
     from PyQt4 import QtGui
     app = QtGui.QApplication(sys.argv)
+    from . import enable_ctrl_c
+    enable_ctrl_c()
 
     kwargs = {key : value for key, value in kwargs.items() if value is not None}
 

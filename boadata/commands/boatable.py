@@ -14,6 +14,8 @@ def run_app(uri, type, **kwargs):
     from boadata.gui import qt   # Force sip
     from PyQt4 import QtGui
     app = QtGui.QApplication(sys.argv)
+    from . import enable_ctrl_c
+    enable_ctrl_c()    
 
     from boadata.gui.qt.views import TableView
     view = TableView(data_object=do)

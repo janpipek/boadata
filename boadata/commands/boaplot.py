@@ -31,9 +31,11 @@ def run_app(uri, x, y, type, **kwargs):
     if "sql" in kwargs:
         do = do.sql(kwargs.get("sql"), table_name="data")        
 
-    from boadata.gui import qt   # Force sip
+    from boadata.gui import qt   # Force sip   
     from PyQt4 import QtGui
     app = QtGui.QApplication(sys.argv)
+    from . import enable_ctrl_c
+    enable_ctrl_c()
 
     from boadata.gui.qt.views import PlotView
     view = PlotView(data_object=do)
@@ -44,4 +46,5 @@ def run_app(uri, x, y, type, **kwargs):
     widget = view.create_widget(x, y, **kwargs)
     widget.show()
     widget.setWindowTitle(do.uri)
+
     sys.exit(app.exec_())

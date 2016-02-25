@@ -13,8 +13,10 @@ def run_app(uri, type, **kwargs):
 
     from boadata.gui import qt   # Force sip
     from PyQt4 import QtGui
-
     app = QtGui.QApplication(sys.argv)
+    # TODO: Think here?
+    from . import enable_ctrl_c
+    enable_ctrl_c()    
 
     from boadata.gui.qt import DataObjectWindow
     window = DataObjectWindow(data_object=do)
