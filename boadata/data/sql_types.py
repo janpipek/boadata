@@ -1,6 +1,8 @@
 from boadata.core.data_object import OdoDataObject, DataObject
 from boadata.core.data_conversion import OdoConversion, ChainConversion
 import sqlalchemy as sa
+import re
+import os
 
 
 @DataObject.register_type()
@@ -11,9 +13,16 @@ class DatabaseTable(OdoDataObject):
 
     real_type = sa.Table
 
+    schemas = ("sqlite", "postgresql", "mysql", "mssql", "oracle", "firebird")
+
     @classmethod
     def accepts_uri(cls, uri):
-        if uri.startswith("sqlite:///"):
+        if not uri:
+            return False
+        for schema in DatabaseTable.schemas:
+            if re.match("^{0}(\+.+)?://.+::.+".format(schema), uri):
+                return True
+        if os.path.isfile(uri) and os.path.splitext(uri)[1] in (".db", ".sqlite", ".sqlite3"):
             return True
         return False
 
@@ -25,7 +34,7 @@ class DatabaseTable(OdoDataObject):
     def shape(self):
         rows = self.inner_data.count().execute().fetchone()[0]
         cols = len(self.columns)
-        return (cols, rows)
+        return (rows, cols)
 
     def __getitem__(self, item):
         return self.convert("pandas_data_frame")[item]

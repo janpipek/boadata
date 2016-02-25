@@ -56,9 +56,15 @@ class _DataObjectConversions():
         by checking all registered types.
         """
         if cls == DataObject:
+            last_exception = None
             for type_ in DataObject.registered_types.values():
                 if type_.accepts_uri(uri):
-                    return type_.from_uri(uri, **kwargs)
+                    try:
+                        return type_.from_uri(uri, **kwargs)
+                    except Exception as exc:
+                        last_exception = exc
+            if last_exception:
+                raise exc
             raise BaseException("Cannot interpret " + uri + ".")
         else:
             inner_data = odo.odo(uri, cls.real_type, **kwargs)
