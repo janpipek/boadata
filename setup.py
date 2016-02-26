@@ -13,7 +13,7 @@ options = dict(
     author='Jan Pipek',
     author_email='jan.pipek@gmail.com',
     url='https://github.com/janpipek/boadata',
-    install_requires = ['numpy', 'pandas', 'blinker', 'six', 'odo', 'sqlalchemy', 'numexpr', 'click', 'xray', 'scipy',
+    install_requires = ['numpy', 'pandas', 'blinker', 'six', 'odo', 'sqlalchemy', 'numexpr', 'click', 'xarray', 'scipy',
         'matplotlib', 'pyqtgraph', 'seaborn', 'tabulate'],
     extras_require = {
         'matlab' : ['pydons'],
