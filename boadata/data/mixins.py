@@ -18,17 +18,28 @@ class SetItemMixin(object):
 
 
 @DataObject.proxy_methods([
-    "sum", "std", "max", "mean"
+    "sum", "std", "max", "mean", "min"
 ])
 class StatisticsMixin(object):
     """
 
     """
     def quantile(self, n):
+        import boadata
+        import numpy as np
         if hasattr(self.inner_data, "quantile"):
-            return self.inner_data.quantile()
-        if isinstance(n, list):
-            return [ self.quantile(x) for x in n ]
+            return boadata.wrap(self.inner_data.quantile(n), force=False)
+        if isinstance(self.inner_data, np.ndarray):
+            return boadata.wrap(np.percentile(self.inner_data, np.array(n) * 100.0), force=False)
+        else:
+            raise RuntimeError("Object does not support quantiles")
+
+    def percentile(self, n):
+        import numpy as np
+        return self.quantile(np.array(n) / 100.0)
+
+    def median(self):
+        return self.quantile(0.5)
 
 
 @DataObject.proxy_methods([
@@ -47,8 +58,9 @@ class AsArrayMixin(object):
 
     Including this mixin, you can use the object in matplotlib and seaborn
     """
-    def __array__(self):
-        return self.convert("numpy_array").inner_data
+    def __array__(self, *args):
+        import numpy as np
+        return np.array(self.convert("numpy_array").inner_data, *args)
 
     def astype(self, *args):
         return self.__array__().astype(*args)
