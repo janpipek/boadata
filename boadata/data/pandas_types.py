@@ -72,6 +72,17 @@ class PandasDataFrameBase(_PandasBase):
             raise RuntimeError("Cannot specify col2 and not col1.")
         return constructor(xdata, ydata, xname=kwargs.get("xname", xname), yname=kwargs.get("yname", yname))
 
+    @DataObject.columns.setter
+    def columns(self, new_names):
+        if (len(new_names) != len(self.columns)):
+            raise RuntimeError("Wrong number of columns for renaming")
+        self.inner_data.columns = new_names
+
+    def add_column(self, name, expression):
+        if name in self.columns:
+            raise RuntimeError("Column already exists: {0}".format(name))
+        new_column = self.evaluate(expression, wrap=False)
+        self.inner_data[name] = new_column
 
 @DataObject.proxy_methods("dropna", "head")
 @DataObject.proxy_methods("hist", through="numpy_array")

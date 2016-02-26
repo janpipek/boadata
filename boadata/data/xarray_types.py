@@ -70,3 +70,19 @@ class XarrayDataArray(XarrayDataArrayBase):
             if isinstance(native_object, XarrayDataArrayBase):
                 return native_object.convert(cls.type_name, **kwargs)
             return cls(inner_data=native_object, **kwargs)
+
+    @classmethod
+    def __from_pandas_data_frame__(cls, origin, value_column=None):
+        """
+
+        :type origin: boadata.data.PandasDataFrame
+        :param axis_columns: list[str] | None
+        :param value_columns: list[str] | None
+        :return:
+        """
+        if not value_column:
+            value_column = origin.columns[-1]
+        axis_columns = [column for column in origin.columns if column != value_column]
+        df = origin.inner_data.set_index(axis_columns)
+        data = xr.Dataset.from_dataframe(df)[value_column]
+        return cls(inner_data=data, source=origin)            
