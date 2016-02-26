@@ -306,6 +306,23 @@ class DataObject(_DataObjectRegistry, _DataObjectConversions, _DataObjectInterfa
         else:
             return result
 
+    def where(self, condition, sql=False):
+        """Choose a subset of a dataset.
+
+        :param condition: a valid condition returning 
+        :param sql: if True, the condition is evaluated as sql WHERE clause
+        """
+        if sql:
+            if not "sql" in dir(self):
+                raise RuntimeError("Object {0} does not support SQL.".format(self.__class__.__name__))
+            query = "SELECT * FROM data WHERE {0}".format(condition)
+            return self.sql(query, table_name="data")
+        else:    
+            import numpy as np
+            mask = self.evaluate(condition, wrap=False)
+            if mask.dtype != np.dtype(bool):
+                raise RuntimeError("The result of condition has to be a boolean array")
+            return DataObject.from_native(self.inner_data[mask], source=self)
 
 class OdoDataObject(DataObject):
     def __init__(self, uri, **kwargs):
