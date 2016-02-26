@@ -64,7 +64,7 @@ class _DataObjectConversions():
                     except Exception as exc:
                         last_exception = exc
             if last_exception:
-                raise exc
+                raise last_exception
             raise BaseException("Cannot interpret " + uri + ".")
         else:
             inner_data = odo.odo(uri, cls.real_type, **kwargs)
