@@ -2,6 +2,7 @@
 from collections import OrderedDict
 import odo            # Make optional?
 import blinker
+import weakref
 from .data_conversion import DataConversion, ConversionUnknown
 
 
@@ -214,6 +215,7 @@ class DataObject(_DataObjectRegistry, _DataObjectConversions, _DataObjectInterfa
     :type registered_types: OrderedDict[str, type]
     :type real_type: type | None
     :type type_name: str
+    :param source: From where we obtained the object (kept as weak reference)
 
     It is necessary to keep all arguments keyword (enforceable in Python 3).
     '''
@@ -224,7 +226,8 @@ class DataObject(_DataObjectRegistry, _DataObjectConversions, _DataObjectInterfa
             ))
         self.inner_data = inner_data
         self.uri = uri
-        self.source = source
+        if source:
+            self.source = weakref.ref(source)
 
     changed = blinker.Signal("changed")    # For dynamic data objects
 
@@ -323,6 +326,7 @@ class DataObject(_DataObjectRegistry, _DataObjectConversions, _DataObjectInterfa
             if mask.dtype != np.dtype(bool):
                 raise RuntimeError("The result of condition has to be a boolean array")
             return DataObject.from_native(self.inner_data[mask], source=self)
+
 
 class OdoDataObject(DataObject):
     def __init__(self, uri, **kwargs):
