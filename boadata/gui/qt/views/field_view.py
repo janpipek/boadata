@@ -43,6 +43,8 @@ class FieldView(View):
         self.sliceIndexSlider.sliderMoved.connect(self.onSliderMoved)
         self.sliceIndexSlider.setTickPosition(QtGui.QSlider.TicksAbove)
 
+
+
         self.toolBar.addWidget(self.sliceIndexSlider)
 
         self.sliceIndexLabel = QtGui.QLabel()
@@ -51,6 +53,11 @@ class FieldView(View):
 
         self.toolBar.addWidget(self.sliceIndexLabel)
         widget.layout().addWidget(self.toolBar)
+
+        self.swapAxesCheckbox = QtGui.QCheckBox("Swap axes", self.toolBar)
+        self.swapAxesCheckbox.stateChanged.connect(lambda _: self.redraw())
+
+        self.toolBar.addWidget(self.swapAxesCheckbox)
         return self.toolBar
 
     def onPlaneSelected(self, _, *args):
@@ -106,11 +113,17 @@ class FieldView(View):
         plane = plane.inner_data.reset_index()
         self.figure.clear()
         axis = self.figure.add_subplot(111)
-        axis.set_xlabel(self.axis1)
-        axis.set_ylabel(self.axis2)
-        axis.quiver(plane[self.axis1], plane[self.axis2],
-                        plane[self.field.get_corresponding_column(self.axis1)],
-                        plane[self.field.get_corresponding_column(self.axis2)]
+        if self.swapAxesCheckbox.isChecked():
+            axis1 = self.axis2
+            axis2 = self.axis1
+        else:
+            axis1 = self.axis1
+            axis2 = self.axis2
+        axis.set_xlabel(axis1)
+        axis.set_ylabel(axis2)
+        axis.quiver(plane[axis1], plane[axis2],
+                        plane[self.field.get_corresponding_column(axis1)],
+                        plane[self.field.get_corresponding_column(axis2)]
                         )
         self.figure.tight_layout()
         self.figure.canvas.draw()
