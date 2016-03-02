@@ -36,8 +36,8 @@ class CSVFile(PandasDataFrameBase):
             kwargs.update(resource.dialect)
 
         methods = [
-            lambda: odo.odo(uri, pd.DataFrame, index_col=index_col, **kwargs),
             lambda: pd.read_csv(uri, index_col=index_col, **kwargs),
+            lambda: odo.odo(uri, pd.DataFrame, index_col=index_col, **kwargs),
             lambda: cls._fallback_read(uri, **kwargs)
         ]
         for method in methods:
