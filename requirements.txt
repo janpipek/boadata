@@ -8,7 +8,7 @@ odo
 matplotlib
 numexpr
 click
-xray
+xarray
 scipy
 pyqtgraph
 seaborn
