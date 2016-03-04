@@ -9,7 +9,7 @@ import seaborn as sns
 
 class MatplotlibBackend(object):
     @classmethod
-    def create_figure_widget(cls):
+    def create_figure_widget(cls, parent=None):
         """
 
         :rtype tuple(QWidget, Figure)
@@ -18,7 +18,7 @@ class MatplotlibBackend(object):
         # http://matplotlib.org/examples/user_interfaces/embedding_in_qt4_wtoolbar.html
         fig = Figure()
 
-        widget = QtGui.QWidget()
+        widget = QtGui.QWidget(parent)
         layout = QtGui.QVBoxLayout()
         widget.setLayout(layout)
 

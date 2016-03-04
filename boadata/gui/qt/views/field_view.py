@@ -101,8 +101,8 @@ class FieldView(View):
     def get_value(self, index):
         return self.min + self.step * index
 
-    def create_widget(self):
-        widget, self.figure = MatplotlibBackend.create_figure_widget()
+    def create_widget(self, parent=None):
+        widget, self.figure = MatplotlibBackend.create_figure_widget(parent=parent)
         self.create_toolbar(widget)
         self.radios[self.axis1 + self.axis2].setChecked(True)
         self.update_axes()
