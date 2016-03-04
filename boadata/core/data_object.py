@@ -203,6 +203,10 @@ class _DataObjectInterface():
 
     @property
     def name(self):
+        """
+
+        :rtype: str | None
+        """
         if hasattr(self.inner_data, "name"):
             return self.inner_data.name
         else:
