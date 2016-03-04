@@ -60,3 +60,4 @@ def tree(uri):
                 pass
     if not tree:
         raise RuntimeError("No tree understood could be created from URI=" + uri)
+    return tree
