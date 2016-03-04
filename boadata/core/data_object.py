@@ -86,7 +86,7 @@ class _DataObjectConversions():
                 return native_object
             boadata_type = DataObject.registered_default_types.get(type(native_object))
             if not boadata_type:
-                raise RuntimeError("Native object of the type {0} not understood.".format(type(native_object).__name__))
+                raise RuntimeError("Native object of the type {0} not understood.".format(type(native_object)))
             return boadata_type.from_native(native_object, **kwargs)
         else:
             if isinstance(native_object, DataObject):

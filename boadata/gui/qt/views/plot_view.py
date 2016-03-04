@@ -50,8 +50,8 @@ class PlotView(View):
         self.figure.add_subplot(111)
         ax = self.figure.get_axes()
 
-        self.xcol = self.x_list.selected_columns[0]
-        self.ycols = self.y_list.selected_columns
+        self.xcol = self.x_list.selected_columns()[0]
+        self.ycols = self.y_list.selected_columns()
 
         for i, ycol in enumerate(self.ycols):
             data = self.data_object.convert("xy_dataseries", x=self.xcol, y=ycol)

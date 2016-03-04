@@ -46,5 +46,5 @@ class NumpyArrayBase(DataObject):
 @ConstructorConversion.enable_to("pandas_data_frame", condition=lambda x: x.ndim == 2)
 @ConstructorConversion.enable_to("pandas_series", condition=lambda x: x.ndim == 1)
 @DataObject.proxy_methods("flatten")
-class NumpyArray(DataObject, GetItemMixin, StatisticsMixin, NumericalMixin, AsArrayMixin):
+class NumpyArray(NumpyArrayBase, GetItemMixin, StatisticsMixin, NumericalMixin, AsArrayMixin):
     type_name = "numpy_array"
