@@ -4,14 +4,8 @@ from .mixins import GetItemMixin, StatisticsMixin, NumericalMixin, AsArrayMixin
 import numpy as np
 
 
-@DataObject.register_type(default=True)
-@ConstructorConversion.enable_to("pandas_data_frame", condition=lambda x: x.ndim == 2)
-@ConstructorConversion.enable_to("pandas_series", condition=lambda x: x.ndim == 1)
-@DataObject.proxy_methods("flatten")
-class NumpyArray(DataObject, GetItemMixin, StatisticsMixin, NumericalMixin, AsArrayMixin):
+class NumpyArrayBase(DataObject):
     real_type = np.ndarray
-
-    type_name = "numpy_array"
 
     @property
     def shape(self):
@@ -46,3 +40,11 @@ class NumpyArray(DataObject, GetItemMixin, StatisticsMixin, NumericalMixin, AsAr
             return collections.OrderedDict(pairs)
         else:
             return np.histogram(self.inner_data, bins, *args, **kwargs)
+
+
+@DataObject.register_type(default=True)
+@ConstructorConversion.enable_to("pandas_data_frame", condition=lambda x: x.ndim == 2)
+@ConstructorConversion.enable_to("pandas_series", condition=lambda x: x.ndim == 1)
+@DataObject.proxy_methods("flatten")
+class NumpyArray(DataObject, GetItemMixin, StatisticsMixin, NumericalMixin, AsArrayMixin):
+    type_name = "numpy_array"
