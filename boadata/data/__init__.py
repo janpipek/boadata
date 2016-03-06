@@ -27,4 +27,9 @@ try:
 except:
     pass
 
+try:
+    # Dependence on xlrd...
+    from .excel_types import ExcelSheet
+except:
+    pass
 

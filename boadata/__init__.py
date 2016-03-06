@@ -40,8 +40,8 @@ def unwrap(boadata_object, **kwargs):
         return boadata_object
 
 
-def apply(native_object, function):
-    result = unwrap(function(wrap(native_object)))
+def apply(native_object, function, *args, **kwargs):
+    result = unwrap(function(wrap(native_object), *args, **kwargs))
 
 def tree(uri):
     """Load a tree from some URI.

@@ -18,3 +18,8 @@ try:
     from . import matlab
 except:
     pass
+
+try:
+    from . import excel
+except:
+    pass

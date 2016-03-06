@@ -35,6 +35,9 @@ class PandasDataFrameBase(_PandasBase):
         # TODO: some clean up???
         return wrap(pd.read_sql_query(sql, engine), source=self)
 
+    def __to_pandas_data_frame__(self):
+        return PandasDataFrame(inner_data=self.inner_data, source=self)
+
     def __to_xy_dataseries__(self, x=None, y=None, **kwargs):
         constructor = DataObject.registered_types["xy_dataseries"]
         if not x and not y:
@@ -72,6 +75,17 @@ class PandasDataFrameBase(_PandasBase):
             raise RuntimeError("Cannot specify col2 and not col1.")
         return constructor(xdata, ydata, xname=kwargs.get("xname", xname), yname=kwargs.get("yname", yname))
 
+    def __to_excel_sheet__(self, uri):
+        if "::" in uri:
+            file, sheet = uri.split("::")
+        else:
+            file = uri
+            sheet = self.name or "Unknown"
+        self.inner_data.to_excel(file, sheet)
+        uri = "{0}::{1}".format(file, sheet)
+        klass = DataObject.registered_types.get("excel_sheet")
+        return klass.from_uri(uri=uri, source=self)
+
     @DataObject.columns.setter
     def columns(self, new_names):
         if (len(new_names) != len(self.columns)):
@@ -83,6 +97,7 @@ class PandasDataFrameBase(_PandasBase):
             raise RuntimeError("Column already exists: {0}".format(name))
         new_column = self.evaluate(expression, wrap=False)
         self.inner_data[name] = new_column
+
 
 @DataObject.proxy_methods("dropna", "head")
 @DataObject.proxy_methods("hist", through="numpy_array")
