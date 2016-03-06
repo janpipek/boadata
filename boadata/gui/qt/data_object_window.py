@@ -21,5 +21,6 @@ class DataObjectWindow(QtGui.QMainWindow):
                 pass
                 # self.tabWidget.addTab(QtGui.QLabel("Not supported"), view.title)
 
+        self.setWindowTitle(self.data_object.title)
         self.setCentralWidget(self.tabWidget)
 
