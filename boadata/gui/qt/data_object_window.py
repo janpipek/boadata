@@ -13,7 +13,7 @@ class DataObjectWindow(QtGui.QMainWindow):
             if view.accepts(data_object):
                 try:
                     self.tabWidget.addTab(view(data_object).create_widget(self), view.title)
-                except RuntimeError as exc:
+                except BaseException as exc:
                     print(exc)
                     pass
             else:
