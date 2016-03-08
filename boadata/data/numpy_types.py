@@ -30,16 +30,19 @@ class NumpyArrayBase(DataObject):
     def __repr__(self):
         return "{0}(shape={1}, dtype={2})".format(self.__class__.__name__, self.shape, self.inner_data.dtype)
 
-    def hist(self, bins, *args, **kwargs):
+    def histogram(self, bins, **kwargs):
+        data = self.inner_data
         if self.dtype.kind in ["O", "U"]:
             import collections
             map = collections.defaultdict(lambda: 0)
-            for item in self.inner_data.flatten():
+            for item in data.flatten():
                 map[item] += 1
             pairs = ((key, map[key]) for key in sorted(map.keys()))
             return collections.OrderedDict(pairs)
         else:
-            return np.histogram(self.inner_data, bins, *args, **kwargs)
+            if kwargs.pop("dropna", False):
+                data = data[~np.isnan(self.inner_data)]
+            return np.histogram(data, bins, **kwargs)
 
 
 @DataObject.register_type(default=True)
