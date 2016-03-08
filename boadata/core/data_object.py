@@ -136,7 +136,8 @@ class _DataObjectConversions():
             return self
         conversion = DataConversion.registered_conversions.get((self.__class__.type_name, new_type_name))
         if not conversion:
-            raise ConversionUnknown("Unknown conversion from {0} to {1}".format(self.__class__.type_name, new_type_name))
+            available = [key[1] for key in DataConversion.registered_conversions.keys() if key[0] == self.__class__.type_name]
+            raise ConversionUnknown("Unknown conversion from {0} to {1}. Available: {2}".format(self.__class__.type_name, new_type_name, ", ".join(available)))
         return conversion.convert(self, new_type, **kwargs)
 
 

@@ -8,6 +8,7 @@ from .text_types import TextFile
 from .field_types import VectorFieldMap, FieldTableFile, ComsolFieldTextFile
 from .sql_types import DatabaseTable
 from .plotting_types import XYPlotDataSeries #, XYPlotDataSet
+from .xarray_types import XarrayDataArray, XarrayDataset
 
 try:
     # Dependence on h5py

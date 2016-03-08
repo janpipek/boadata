@@ -40,6 +40,7 @@ class CSVFile(PandasDataFrameBase):
             lambda: odo.odo(uri, pd.DataFrame, index_col=index_col, **kwargs),
             lambda: cls._fallback_read(uri, **kwargs)
         ]
+        result = None
         for method in methods:
             try:
                 data = method()
@@ -52,4 +53,4 @@ class CSVFile(PandasDataFrameBase):
                 import os
                 result.inner_data.name = os.path.splitext(os.path.basename(uri))[0]
             return result
-        raise RuntimeError("No CSV reading method understands the file.")
+        raise RuntimeError("No CSV reading method understands the file: {0}".format(uri))

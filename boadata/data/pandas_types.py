@@ -113,6 +113,9 @@ class PandasSeriesBase(_PandasBase, AsArrayMixin):
 class PandasDataFrame(PandasDataFrameBase):
     type_name = "pandas_data_frame"
 
+    def __repr__(self):
+        return "{0} (name={1}, shape={2})".format(self.__class__.__name__, self.name, self.shape)
+
 
 @DataObject.register_type(default=True)
 @MethodConversion.enable_to("numpy_array", method_name="as_matrix")

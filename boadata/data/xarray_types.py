@@ -15,6 +15,9 @@ class _XarrayBase(DataObject, GetItemMixin, StatisticsMixin, NumericalMixin):
     def __to_numpy_array__(self):
         return DataObject.from_native(self.inner_data.data)
 
+    def __to_pandas_data_frame__(self):
+        return DataObject.from_native(self.inner_data.to_dataframe())
+
 
 class XarrayDatasetBase(_XarrayBase, SetItemMixin):
     @property
