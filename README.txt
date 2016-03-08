@@ -26,6 +26,7 @@ Run `command --help` to see full list of options
 * `boadata [<uri>]` - full gui with a tree
 * `boatable <uri>` - show tabular representation of a dataobject (GUI)
 * `boacat <uri>` - print tabular representation of a dataobject (command-line)
+* `boaview <uri>` - show a tabbed window with all available views for the dataobject
 
 Status
 ------
@@ -66,7 +67,7 @@ Supported GUI views
 -------------------
 * Table
 * Histogram
-* Scatter plot
+* Scatter / line plot
 * Text view
 * Summary (from pandas_profiling)
 

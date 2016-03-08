@@ -1,4 +1,4 @@
-__version__ = str('0.3.4.2')
+__version__ = str('0.3.5.1')
 
 # Suppress the unpleasant pandas/seaborn<->matplotlib warning
 import warnings
@@ -40,8 +40,8 @@ def unwrap(boadata_object, **kwargs):
         return boadata_object
 
 
-def apply(native_object, function):
-    result = unwrap(function(wrap(native_object)))
+def apply(native_object, function, *args, **kwargs):
+    result = unwrap(function(wrap(native_object), *args, **kwargs))
 
 def tree(uri):
     """Load a tree from some URI.
@@ -60,3 +60,4 @@ def tree(uri):
                 pass
     if not tree:
         raise RuntimeError("No tree understood could be created from URI=" + uri)
+    return tree

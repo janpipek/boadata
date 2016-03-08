@@ -8,10 +8,10 @@ class TableView(View):
 
     supported_types = ("pandas_data_frame",)
 
-    def create_widget(self):
+    def create_widget(self, parent=None):
         df = self.data_object.convert("pandas_data_frame").inner_data
         data = df.to_records(index=False)
         data = data[:1000]
-        pw = pg.TableWidget()
+        pw = pg.TableWidget(parent)
         pw.setData(data)
         return pw

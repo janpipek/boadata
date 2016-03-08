@@ -37,12 +37,11 @@ class Matlab73Struct(_MatlabNode):
 
 
 @DataTree.register_tree
-class Matlab73Tree(_MatlabNode):
+class Matlab73Tree(_MatlabNode, DataTree):
     def __init__(self, path, parent=None):
         self.path = path
         fb_node = pydons.FileBrowser(self.path, any_keys=True)
         super(Matlab73Tree, self).__init__(parent, self.path, fb_node)
-
 
     @classmethod
     def accepts_uri(cls, uri):
@@ -51,4 +50,36 @@ class Matlab73Tree(_MatlabNode):
     @property
     def title(self):
         return os.path.basename(self.path)
+
+
+class OldMatlabNode(DataNode):
+    def __init__(self, parent, key):
+        super(OldMatlabNode, self).__init__(parent=parent, uri=parent.uri + "::" + key)
+        self.data = self.parent.inner_dict[key]
+        self.key = key
+
+    @property
+    def data_object(self):
+        from boadata.data.matlab_types import OldMatlabData
+        return OldMatlabData(inner_data=self.data, uri=self.uri)
+
+    @property
+    def title(self):
+        return self.key
+
+
+@DataTree.register_tree
+class OldMatlabTree(DataTree):
+    @classmethod
+    def accepts_uri(cls, uri):
+        return uri and os.path.isfile(uri) and (uri.endswith(".mat"))
+
+    def __init__(self, path, parent=None):
+        from scipy.io import loadmat
+        super(OldMatlabTree, self).__init__(parent=parent, uri=path)
+        self.inner_dict = loadmat(path)
+
+    def load_children(self):
+        for key in self.inner_dict.keys():
+            self.add_child(OldMatlabNode(self, key))
 

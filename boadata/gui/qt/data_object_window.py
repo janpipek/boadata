@@ -11,11 +11,16 @@ class DataObjectWindow(QtGui.QMainWindow):
         for view in View.registered_views:
             # print(data_object)
             if view.accepts(data_object):
-                self.tabWidget.addTab(view(data_object).create_widget(), view.title)
+                try:
+                    self.tabWidget.addTab(view(data_object).create_widget(self), view.title)
+                except BaseException as exc:
+                    print(exc)
+                    pass
             else:
                 # print("View {0} not supported.".format(view.title))
                 pass
                 # self.tabWidget.addTab(QtGui.QLabel("Not supported"), view.title)
 
+        self.setWindowTitle(self.data_object.title)
         self.setCentralWidget(self.tabWidget)
 

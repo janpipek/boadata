@@ -11,8 +11,8 @@ class TextView(View):
     def __init__(self, data_object):
         super(TextView, self).__init__(data_object)
 
-    def create_widget(self):
-        self.text_widget = QTextEdit()
+    def create_widget(self, parent=None):
+        self.text_widget = QTextEdit(parent)
         self.text_widget.setReadOnly(True)
         do = self.data_object.convert("text")
         self.text_widget.setText(do.inner_data)

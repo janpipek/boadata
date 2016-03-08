@@ -1,6 +1,7 @@
 from PyQt4 import QtCore, QtGui
 from six import text_type
 
+
 class DataTreeModel(QtCore.QAbstractItemModel):
     def __init__(self, data_node, parent=None):
         super(DataTreeModel, self).__init__(parent)
@@ -15,6 +16,10 @@ class DataTreeModel(QtCore.QAbstractItemModel):
             return self.rootItem.columnCount()
 
     def data(self, index, role):
+        """
+        :type index: QtCore.QModelIndex
+        :type role: int
+        """
         if not index.isValid():
             return None
         item = index.internalPointer()

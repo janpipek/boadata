@@ -36,8 +36,25 @@ class View(object):
     def __repr__(self):
         return self.__class__.__name__
 
-    def create_widget(self):
+    def create_widget(self, parent=None, *args, **kwargs):
         raise NotImplementedError("You have to implement create_widget.")
+
+    @classmethod
+    def show(cls, data_object, *args, **kwargs):
+        """Create a view and show it.
+
+        Blocks the execution for the time the GUI is displayed.
+        """
+        from .. import get_application
+        # import signal
+        # sig = signal.getsignal(signal.SIGINT)
+        app = get_application()
+        view = cls(data_object)
+        widget = view.create_widget(parent=None, *args, **kwargs)
+        widget.show()
+        widget.setWindowTitle(data_object.name or data_object.uri or "Untitled")
+        # signal.signal(signal.SIGINT, lambda a1, a2: widget.close())
+        app.exec_()
 
     registered_views = []
 

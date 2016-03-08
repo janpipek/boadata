@@ -15,3 +15,14 @@ from .data_object_window import DataObjectWindow
 from .selectable_item_list_view import SelectableItemListView
 
 from . import views
+
+_application = None
+
+def get_application():
+    import sys
+    from PyQt4 import QtGui
+
+    global _application
+    if not _application:
+        _application = QtGui.QApplication(sys.argv)
+    return _application

@@ -24,7 +24,7 @@ def run_app(uri, type, **kwargs):
 
     from boadata.gui.qt.views import TableView
     view = TableView(data_object=do)
-    widget = view.create_widget()
+    widget = view.create_widget(None)
     widget.show()
     widget.setWindowTitle(do.uri)
 

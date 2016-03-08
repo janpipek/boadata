@@ -49,7 +49,7 @@ def run_app(uri, x, bins, type, **kwargs):
             try:
                 if col.dtype != object:
                     view = HistogramView(data_object=col)
-                    widget = view.create_widget(bins=bins, **kwargs)
+                    widget = view.create_widget(None, bins=bins, **kwargs)
                     widget.show()
                     widget.setWindowTitle(do.uri + "/" + x)
                     i += 1

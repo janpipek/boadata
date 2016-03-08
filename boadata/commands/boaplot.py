@@ -41,9 +41,7 @@ def run_app(uri, x, y, type, **kwargs):
     view = PlotView(data_object=do)
     if y:
         y = y.split(",")
-    # Remove None's
-    kwargs = { key : value for key, value in kwargs.items() if value is not None }
-    widget = view.create_widget(x, y, **kwargs)
+    widget = view.create_widget(None, x, y, **kwargs)
     widget.show()
     widget.setWindowTitle(do.uri)
 

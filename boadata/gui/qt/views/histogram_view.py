@@ -10,7 +10,7 @@ class HistogramView(View):
     def accepts(cls, data_object):
         return True
 
-    def create_widget(self, xcol=None, bins=50, **kwargs):
+    def create_widget(self, parent=None, xcol=None, bins=50, **kwargs):
         if xcol is not None:
             try:
                 data = self.data_object.evaluate(xcol)
@@ -21,7 +21,7 @@ class HistogramView(View):
             xcol = "x"
         data = unwrap(data.dropna().convert("numpy_array"))
 
-        widget, fig = MatplotlibBackend.create_figure_widget()
+        widget, fig = MatplotlibBackend.create_figure_widget(parent=parent)
         fig.add_subplot(111)
         ax = fig.get_axes()
 
