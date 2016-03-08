@@ -9,6 +9,7 @@ from .field_types import VectorFieldMap, FieldTableFile, ComsolFieldTextFile
 from .sql_types import DatabaseTable
 from .plotting_types import XYPlotDataSeries #, XYPlotDataSet
 from .xarray_types import XarrayDataArray, XarrayDataset
+from .geant4_types import Geant4Scoring
 
 try:
     # Dependence on h5py

@@ -12,9 +12,6 @@ class _XarrayBase(DataObject, GetItemMixin, StatisticsMixin, NumericalMixin):
         """
         return list(self.inner_data.coords.keys())
 
-    def __to_numpy_array__(self):
-        return DataObject.from_native(self.inner_data.data)
-
     def __to_pandas_data_frame__(self):
         return DataObject.from_native(self.inner_data.to_dataframe())
 
@@ -54,6 +51,9 @@ class XarrayDataArrayBase(_XarrayBase):
     @property
     def dtype(self):
         return self.inner_data.data.dtype
+
+    def __to_numpy_array__(self):
+        return DataObject.from_native(self.inner_data.data)        
 
 
 @DataObject.register_type(default=True)

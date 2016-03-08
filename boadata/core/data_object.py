@@ -118,7 +118,7 @@ class _DataObjectConversions():
 
     @property
     def allowed_conversions(self):
-        return [ key for (key, conversion) in DataConversion.registered_conversions.items() if key[0] == self.type_name and conversion.applies(self, key[1])]
+        return [ key for (key, conversion) in DataConversion.registered_conversions.items() if key[0] == self.type_name and conversion.applies(self)]
 
     def convert(self, new_type_name, **kwargs):
         """Convert to another boadata-supported type.
