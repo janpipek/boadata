@@ -31,8 +31,8 @@ class XYPlotDataSeriesBase(DataObject):
 
     def __to_pandas_data_frame__(self, **kwargs):
         data = pd.DataFrame()
-        data[self.xname] = self.inner_data[0]
-        data[self.yname] = self.inner_data[1]
+        data[self.xname] = self.x
+        data[self.yname] = self.y
         klass = DataObject.registered_types["pandas_data_frame"]
         return klass(inner_data=data, source=self)
 
