@@ -2,6 +2,7 @@ from boadata.core import DataObject, DataConversion
 from boadata.core.data_conversion import MethodConversion
 from .mixins import GetItemMixin, StatisticsMixin, NumericalMixin, AsArrayMixin
 import pandas as pd
+import numpy as np
 
 
 class _PandasBase(DataObject, GetItemMixin, StatisticsMixin, NumericalMixin):
@@ -15,8 +16,21 @@ class _PandasBase(DataObject, GetItemMixin, StatisticsMixin, NumericalMixin):
 class PandasDataFrameBase(_PandasBase):
     real_type = pd.DataFrame
 
-    def hist(self, *args, **kwargs):
-        return {col: self[col].hist(*args, **kwargs) for col in self.columns}
+    def histogram(self, bins, columns=None, **kwargs):
+        """Histogram on all numeric columns.
+
+        :param bins: number of bins or edges (numpy-like)
+
+        kwargs
+        ------
+        - dropna: don't include nan values (these make zero values)
+        """
+        if not columns:
+            # All numeric
+            columns = [col for col in self.columns if self.inner_data[col].dtype.kind in "iuf"]
+        if isinstance(columns, str):
+            columns = [columns]
+        return {col: self[col].histogram(bins=bins, **kwargs) for col in columns}
 
     def sql(self, sql, table_name=None):
         """Run SQL query on columns of the table.
@@ -100,7 +114,7 @@ class PandasDataFrameBase(_PandasBase):
 
 
 @DataObject.proxy_methods("dropna", "head")
-@DataObject.proxy_methods("hist", through="numpy_array")
+@DataObject.proxy_methods("histogram", through="numpy_array")
 class PandasSeriesBase(_PandasBase, AsArrayMixin):
     real_type = pd.Series
 
