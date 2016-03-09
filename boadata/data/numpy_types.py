@@ -31,18 +31,28 @@ class NumpyArrayBase(DataObject):
         return "{0}(shape={1}, dtype={2})".format(self.__class__.__name__, self.shape, self.inner_data.dtype)
 
     def histogram(self, bins, **kwargs):
+        """
+        :rtype: boadata.data.plotting_types.HistogramData
+        """
         data = self.inner_data
-        if self.dtype.kind in ["O", "U"]:
-            import collections
-            map = collections.defaultdict(lambda: 0)
-            for item in data.flatten():
-                map[item] += 1
-            pairs = ((key, map[key]) for key in sorted(map.keys()))
-            return collections.OrderedDict(pairs)
+        if self.dtype.kind not in "iuf":
+            raise RuntimeError("Not supported")
+            # import collections
+            # map = collections.defaultdict(lambda: 0)
+            # for item in data.flatten():
+            #     map[item] += 1
+            # pairs = ((key, map[key]) for key in sorted(map.keys()))
+            # return collections.OrderedDict(pairs)
         else:
             if kwargs.pop("dropna", False):
                 data = data[~np.isnan(self.inner_data)]
-            return np.histogram(data, bins, **kwargs)
+            values, bins = np.histogram(data, bins, **kwargs)
+            underflow = data[data < bins[0]].size
+            overflow = data[data > bins[-1]].size
+            total = data.size - underflow - overflow
+            from .plotting_types import HistogramData
+            return HistogramData(bins=bins, values=values, total=total, underflow=underflow, overflow=overflow,
+                                 source=self, **kwargs)
 
 
 @DataObject.register_type(default=True)

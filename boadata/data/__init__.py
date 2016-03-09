@@ -7,7 +7,7 @@ from .json_types import JsonFileDataset
 from .text_types import TextFile
 from .field_types import VectorFieldMap, FieldTableFile, ComsolFieldTextFile
 from .sql_types import DatabaseTable
-from .plotting_types import XYPlotDataSeries #, XYPlotDataSet
+from .plotting_types import XYPlotDataSeries, HistogramData #, XYPlotDataSet
 from .xarray_types import XarrayDataArray, XarrayDataset
 from .geant4_types import Geant4Scoring
 
