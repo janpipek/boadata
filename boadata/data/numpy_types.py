@@ -61,3 +61,8 @@ class NumpyArrayBase(DataObject):
 @DataObject.proxy_methods("flatten")
 class NumpyArray(NumpyArrayBase, GetItemMixin, StatisticsMixin, NumericalMixin, AsArrayMixin):
     type_name = "numpy_array"
+
+    @classmethod
+    def random(cls, *shape):
+        data = np.random.rand(*shape)
+        return cls(inner_data=data)
