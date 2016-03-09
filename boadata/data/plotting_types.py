@@ -2,6 +2,7 @@ from boadata.core import DataObject
 import pandas as pd
 import numpy as np
 from boadata import unwrap
+import numbers
 
 
 class XYPlotDataSeriesBase(DataObject):
@@ -108,17 +109,38 @@ class HistogramData(XYPlotDataSeriesBase):
             self.total += 1
             return bin - 1
 
-    def normalize(self, inplace=False):
+    def normalize(self, total_weight=1.0, inplace=False):
         """Normalize the histogram so that the total weight=1.0.
 
+        :param total_weight: What will be the new total weight (default=1)
         :param inplace: True => Update this histogram (and return it), False => return a copy
         """
-        new_values = self.values / self.total_weight
+        factor = (total_weight / self.total_weight)
         if inplace:
-            self.inner_data[1] = new_values
+            self *= factor
             return self
         else:
-            return HistogramData(bins=self.bins, values=new_values, total=self.total, source=self)
+            return self * factor            
+
+    def __mul__(self, other):
+        if not isinstance(other, numbers.Real):
+            raise RuntimeError("Cannot multiply by unreal numbers")
+        new_values = self.values * other
+        return HistogramData(bins=self.bins, values=new_values, total=self.total, overflow=self.overflow, underflow=self.underflow, source=self)
+
+    def __imul__(self, other):
+        if not isinstance(other, numbers.Real):
+            raise RuntimeError("Cannot multiply by unreal numbers")
+        self.inner_data[1] = self.values * other
+        return self
+
+    def __truediv__(self, other):
+        return self * (1 / other)
+
+    def __itruediv__(self, other):
+        self *= 1 / other
+        return self
 
     def __repr__(self):
-        return "{0}(bins={1}, total={2})".format(self.__class__.__name__, len(self.bins) - 1, self.total)
+        return "{0}(bins={1}, total={2}, overflow={3}, overflow={4})".format(
+            self.__class__.__name__, len(self.bins) - 1, self.total, self.underflow, self.overflow)
