@@ -13,7 +13,16 @@ class Geant4Scoring(XarrayDatasetBase):
     type_name = "geant4_scoring"
 
     @classmethod
-    def from_uri(cls, uri, *args, **kwargs):
+    def from_uri(cls, uri, box_size=None, translate=None, *args, **kwargs):
+        """Load a file.
+
+        :param box_size: three-element array-like used in the scoring command (i.e. half-sizes)
+        :param translate: three-element array-like used in the scoring command
+
+        Rotations are not supported.
+        If box_size and translate arguments are specified, the following columns are converted: ix => x, iy => y, iz => z
+        """
+        # TODO: Support rotations to produce x, y, z from ix, iy, iz
         import pandas as pd
         mesh_name = ""
         scorers = []
@@ -33,4 +42,9 @@ class Geant4Scoring(XarrayDatasetBase):
                                     nrows=scorer[2] - scorer[1])
             df[scorer[0]] = scorer_df[scorer[0]]
         data = xr.Dataset.from_dataframe(df)
+        if box_size and translate:
+            data["ix"] = (data["ix"] - len(data["ix"]) / 2.0 + 0.5) * 2 * box_size[0] / (len(data["ix"])) + translate[0]
+            data["iy"] = (data["iy"] - len(data["iy"]) / 2.0 + 0.5) * 2 * box_size[1] / (len(data["iy"])) + translate[1]
+            data["iz"] = (data["iz"] - len(data["iz"]) / 2.0 + 0.5) * 2 * box_size[2] / (len(data["iz"])) + translate[2]
+            data.rename({"ix" : "x", "iy" : "y", "iz" : "z"}, inplace=True)
         return cls(inner_data=data, uri=uri)
