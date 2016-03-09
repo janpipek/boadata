@@ -50,7 +50,9 @@ class XYPlotDataSeries(XYPlotDataSeriesBase):
 class HistogramData(XYPlotDataSeriesBase):
     type_name = "histogram"
 
-    def __init__(self, bins, values=[], total=None, overflow=0, underflow=0, **kwargs):
+    def __init__(self, bins, values=None, total=None, overflow=0, underflow=0, **kwargs):
+        if values is None:
+            values = np.zeros(len(bins) - 1)
         assert len(values) == len(bins) - 1
         super(HistogramData, self).__init__(bins, values, **kwargs)
         if total is not None:

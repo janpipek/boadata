@@ -1,8 +1,7 @@
-from boadata.core import DataObject, DataConversion
+from boadata.core import DataObject
 from boadata.core.data_conversion import MethodConversion
 from .mixins import GetItemMixin, StatisticsMixin, NumericalMixin, AsArrayMixin
 import pandas as pd
-import numpy as np
 
 
 class _PandasBase(DataObject, GetItemMixin, StatisticsMixin, NumericalMixin):
@@ -16,24 +15,33 @@ class _PandasBase(DataObject, GetItemMixin, StatisticsMixin, NumericalMixin):
 class PandasDataFrameBase(_PandasBase):
     real_type = pd.DataFrame
 
-    def histogram(self, bins, columns=None, **kwargs):
-        """Histogram on all numeric columns.
+    def histogram(self, bins, columns=None, weights=None, **kwargs):
+        """Histogram data on all numeric columns.
 
         :param bins: number of bins or edges (numpy-like)
+        :param weights: as in numpy.histogram, but can be a column name as well
 
         kwargs
         ------
         - dropna: don't include nan values (these make zero values)
+        - range: as in numpy.histogram
+
+        In contrast to pandas hist method, this does not show the histogram.
         """
         if not columns:
             # All numeric
             columns = [col for col in self.columns if self.inner_data[col].dtype.kind in "iuf"]
         if isinstance(columns, str):
             columns = [columns]
-        return {col: self[col].histogram(bins=bins, **kwargs) for col in columns}
+        if isinstance(weights, str):
+            columns = [col for col in columns if col != weights]
+        weights = self[weights]
+        return {col: self[col].histogram(bins=bins, weights=weights, **kwargs) for col in columns}
 
     def sql(self, sql, table_name=None):
         """Run SQL query on columns of the table.
+
+        :param table_name: name of the temporary table (default is the name of the dataframe)
 
         Uses SQLite in-memory storage to create temporary table.
         """
@@ -100,16 +108,25 @@ class PandasDataFrameBase(_PandasBase):
         klass = DataObject.registered_types.get("excel_sheet")
         return klass.from_uri(uri=uri, source=self)
 
-    @DataObject.columns.setter
-    def columns(self, new_names):
-        if (len(new_names) != len(self.columns)):
-            raise RuntimeError("Wrong number of columns for renaming")
+    def rename_columns(self, col_dict):
+        new_names = [col_dict.get(col, col) for col in self.columns]
         self.inner_data.columns = new_names
 
-    def add_column(self, name, expression):
+    def add_column(self, expression, name=None):
         if name in self.columns:
             raise RuntimeError("Column already exists: {0}".format(name))
-        new_column = self.evaluate(expression, wrap=False)
+        if isinstance(expression, str):
+            new_column = self.evaluate(expression, wrap=False)
+            if not name:
+                name = expression
+        elif isinstance(expression, PandasSeriesBase):
+            new_column = expression.inner_data
+            if not name:
+                name = new_column.name
+        elif isinstance(expression, pd.Series):
+            new_column = expression
+            if not name:
+                name = new_column.name
         self.inner_data[name] = new_column
 
 
@@ -136,6 +153,12 @@ class PandasSeriesBase(_PandasBase, AsArrayMixin):
             name = "data"
         return constructor(x, y, xname="#", yname=name)
 
+    def __to_pandas_data_frame__(self, name=None):
+        if not name:
+            name = self.name = "Data"
+        df = pd.DataFrame()
+        df[name] = self.inner_data
+        return DataObject.from_native(df, source=self)
 
 @DataObject.register_type(default=True)
 @MethodConversion.enable_to("numpy_array", method_name="as_matrix")
