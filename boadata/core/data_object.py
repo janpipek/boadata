@@ -332,6 +332,20 @@ class DataObject(_DataObjectRegistry, _DataObjectConversions, _DataObjectInterfa
                 raise RuntimeError("The result of condition has to be a boolean array")
             return DataObject.from_native(self.inner_data[mask], source=self)
 
+    def apply_native(self, method_name, *args, **kwargs):
+        """Apply a method defined on the native object.
+
+        If possible, converts the result to DataObject.
+        """
+        # TODO: Check that it is ok (see proxy etc., consider a clever proxy attribute)
+        method = getattr(self.inner_data, method_name)
+        result = method(*args, **kwargs)
+        try:
+            result = DataObject.from_native(result)
+        except:
+            pass
+        return result
+
 
 class OdoDataObject(DataObject):
     def __init__(self, uri, **kwargs):
