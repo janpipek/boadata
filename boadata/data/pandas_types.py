@@ -160,6 +160,12 @@ class PandasSeriesBase(_PandasBase, AsArrayMixin):
         df[name] = self.inner_data
         return DataObject.from_native(df, source=self)
 
+    def mode(self):
+        """Mode interpreted as in scipy.mode"""
+        result = self.inner_data.mode()
+        return result.min()
+
+
 @DataObject.register_type(default=True)
 @MethodConversion.enable_to("numpy_array", method_name="as_matrix")
 class PandasDataFrame(PandasDataFrameBase):

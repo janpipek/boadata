@@ -54,6 +54,12 @@ class NumpyArrayBase(DataObject):
             return HistogramData(bins=bins, values=values, total=total, underflow=underflow, overflow=overflow,
                                  source=self, **kwargs)
 
+    def mode(self):
+        """Mode interpreted as in scipy.mode"""
+        import scipy
+        result = scipy.stats.mode(self.inner_data, axis=None)[0]
+        return result[0]
+
 
 @DataObject.register_type(default=True)
 @ConstructorConversion.enable_to("pandas_data_frame", condition=lambda x: x.ndim == 2)
