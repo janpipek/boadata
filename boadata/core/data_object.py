@@ -327,9 +327,12 @@ class DataObject(_DataObjectRegistry, _DataObjectConversions, _DataObjectInterfa
             return self.sql(query, table_name="data")
         else:    
             import numpy as np
-            mask = self.evaluate(condition, wrap=False)
-            if mask.dtype != np.dtype(bool):
-                raise RuntimeError("The result of condition has to be a boolean array")
+            if not self.size:
+                mask = []
+            else:
+                mask = self.evaluate(condition, wrap=False)
+                if mask.dtype != np.dtype(bool):
+                    raise RuntimeError("The result of condition has to be a boolean array")
             return DataObject.from_native(self.inner_data[mask], source=self)
 
     def apply_native(self, method_name, *args, **kwargs):

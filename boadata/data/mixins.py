@@ -24,19 +24,23 @@ class StatisticsMixin(object):
     """
 
     """
-    def quantile(self, n):
+    def quantile(self, n, wrap=True):
         import boadata
         import numpy as np
         if hasattr(self.inner_data, "quantile"):
-            return boadata.wrap(self.inner_data.quantile(n), force=False)
-        if isinstance(self.inner_data, np.ndarray):
-            return boadata.wrap(np.percentile(self.inner_data, np.array(n) * 100.0), force=False)
+            result = self.inner_data.quantile(n)
+        elif isinstance(self.inner_data, np.ndarray):
+            result = np.percentile(self.inner_data, np.array(n) * 100.0)
         else:
             raise RuntimeError("Object does not support quantiles")
+        if wrap:
+            return boadata.wrap(result, force=False)
+        else:
+            return result
 
-    def percentile(self, n):
+    def percentile(self, n, wrap=False):
         import numpy as np
-        return self.quantile(np.array(n) / 100.0)
+        return self.quantile(np.array(n) / 100.0, wrap=wrap)
 
     def median(self):
         return self.quantile(0.5)

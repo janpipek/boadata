@@ -132,6 +132,7 @@ class PandasDataFrameBase(_PandasBase):
 
 @DataObject.proxy_methods("dropna", "head")
 @DataObject.proxy_methods("histogram", through="numpy_array")
+@DataObject.proxy_methods("abs")
 class PandasSeriesBase(_PandasBase, AsArrayMixin):
     real_type = pd.Series
 
