@@ -109,7 +109,23 @@ class PandasDataFrameBase(_PandasBase):
         return klass.from_uri(uri=uri, source=self)
 
     def rename_columns(self, col_dict):
-        new_names = [col_dict.get(col, col) for col in self.columns]
+        """Change columns names.
+
+        :param col_dict: New names
+        :type col_dict: list | dict
+
+        If col_dict is a dict, it is used as a mapping (non-matching ignored)
+        If col_dict is a list, all columns are renamed to this (size checked)
+        """
+        if isinstance(col_dict, list):
+            if len(col_dict) != len(self.columns):
+                raise RuntimeError("Invalid number of columns to rename")
+            new_names = col_dict
+        elif isinstance(col_dict, dict):
+            new_names = [col_dict.get(col, col) for col in self.columns]
+        else:
+            # TODO: Implement for lambdas
+            raise RuntimeError("Column names not understood.")
         self.inner_data.columns = new_names
 
     def add_column(self, expression, name=None):
