@@ -40,6 +40,10 @@ class XYPlotDataSeriesBase(DataObject):
     def shape(self):
         return (len(self.x), 2)
 
+    def where(self, condition):
+        """Run a condition on the data."""
+        return self.convert("pandas_data_frame").where(condition).convert("xy_dataseries")
+
 
 @DataObject.register_type()
 class XYPlotDataSeries(XYPlotDataSeriesBase):
@@ -122,7 +126,7 @@ class HistogramData(XYPlotDataSeriesBase):
             self *= factor
             return self
         else:
-            return self * factor            
+            return self * factor  
 
     def __mul__(self, other):
         if not isinstance(other, numbers.Real):
