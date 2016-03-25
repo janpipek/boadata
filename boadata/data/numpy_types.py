@@ -60,6 +60,17 @@ class NumpyArrayBase(DataObject):
         result = scipy.stats.mode(self.inner_data, axis=None)[0]
         return result[0]
 
+    def where(self, condition):
+        """Run a condition on numpy array
+
+        :type condition: lambda (callable?)
+        """
+        ufunc = np.frompyfunc(condition, 1, 1)
+        indices = ufunc(self.inner_data).astype(bool)
+        # raise RuntimeError("eee: {0}".format(indices.dtype))
+        inner_data = self.inner_data[indices]
+        return type(self)(inner_data=inner_data, source=self)
+
 
 @DataObject.register_type(default=True)
 @ConstructorConversion.enable_to("pandas_data_frame", condition=lambda x: x.ndim == 2)

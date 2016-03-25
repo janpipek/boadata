@@ -326,6 +326,7 @@ class DataObject(_DataObjectRegistry, _DataObjectConversions, _DataObjectInterfa
             query = "SELECT * FROM data WHERE {0}".format(condition)
             return self.sql(query, table_name="data")
         else:    
+            # TODO: Allow to be lambda
             import numpy as np
             if not self.size:
                 mask = []
