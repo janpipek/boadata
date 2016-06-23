@@ -120,7 +120,7 @@ class _DataObjectConversions():
     def allowed_conversions(self):
         return [ key for (key, conversion) in DataConversion.registered_conversions.items() if key[0] == self.type_name and conversion.applies(self)]
 
-    def convert(self, new_type_name, **kwargs):
+    def convert(self, new_type_name=None, **kwargs):
         """Convert to another boadata-supported type.
 
         :type new_type_name: str
@@ -129,6 +129,9 @@ class _DataObjectConversions():
         Auto-conversion returns the same object.
         Default implementation is based on odo.
         """
+        if new_type_name is None:
+            available = [key[1] for key in DataConversion.registered_conversions.keys() if key[0] == self.__class__.type_name]
+            raise TypeError("convert() missing 1 required positional argument: 'new_type_name', available argument values: {0}".format(", ".join(available)))
         # TODO: check argument?
 
         new_type = DataObject.registered_types[new_type_name]
@@ -317,7 +320,7 @@ class DataObject(_DataObjectRegistry, _DataObjectConversions, _DataObjectInterfa
     def where(self, condition, sql=False):
         """Choose a subset of a dataset.
 
-        :param condition: a valid condition returning 
+        :param condition: a valid condition returning boolean
         :param sql: if True, the condition is evaluated as sql WHERE clause
         """
         if sql:
