@@ -1,5 +1,5 @@
 from boadata.core import DataObject
-from boadata.core.data_conversion import MethodConversion
+from boadata.core.data_conversion import MethodConversion, DataConversion
 from .mixins import GetItemMixin, StatisticsMixin, NumericalMixin, AsArrayMixin
 import pandas as pd
 
@@ -172,7 +172,7 @@ class PandasSeriesBase(_PandasBase, AsArrayMixin):
 
     def __to_pandas_data_frame__(self, name=None):
         if not name:
-            name = self.name = "Data"
+            name = self.name or "Data"
         df = pd.DataFrame()
         df[name] = self.inner_data
         return DataObject.from_native(df, source=self)

@@ -4,6 +4,7 @@ from .mixins import GetItemMixin, StatisticsMixin, NumericalMixin, AsArrayMixin
 import numpy as np
 
 
+@ConstructorConversion.enable_to("pandas_series", condition=lambda x: x.ndim == 1)
 class NumpyArrayBase(DataObject):
     real_type = np.ndarray
 
@@ -26,6 +27,18 @@ class NumpyArrayBase(DataObject):
         np.savetxt(uri, self.inner_data, delimiter=",")
         csv_type = DataObject.registered_types["csv"]
         return csv_type.from_uri(uri, source=self)
+
+    def __to_numpy_array__(self):
+        return NumpyArray(inner_data=self.inner_data, source=self)
+
+    @DataConversion.condition(lambda x: x.ndim == 2)
+    def __to_pandas_data_frame__(self, name=None, columns=None, **kwargs):
+        import pandas as pd
+        data = pd.DataFrame(data=self.inner_data, columns=columns, **kwargs)
+        klass = DataObject.registered_types["pandas_data_frame"]
+        if not name:
+            name = self.name
+        return klass(inner_data=data, source=self, name=name)        
 
     def __repr__(self):
         return "{0}(shape={1}, dtype={2})".format(self.__class__.__name__, self.shape, self.inner_data.dtype)
@@ -73,8 +86,6 @@ class NumpyArrayBase(DataObject):
 
 
 @DataObject.register_type(default=True)
-@ConstructorConversion.enable_to("pandas_data_frame", condition=lambda x: x.ndim == 2)
-@ConstructorConversion.enable_to("pandas_series", condition=lambda x: x.ndim == 1)
 @DataObject.proxy_methods("flatten")
 class NumpyArray(NumpyArrayBase, GetItemMixin, StatisticsMixin, NumericalMixin, AsArrayMixin):
     type_name = "numpy_array"
