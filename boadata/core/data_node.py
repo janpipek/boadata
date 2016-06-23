@@ -108,6 +108,10 @@ class DataNode(object):
             self.changed.send(self)
         return self._children
 
+    @property
+    def children_names(self):
+        return [child.title for child in self.children]
+
     def add_child(self, child):
         if not child in self._children:
             child.parent = self
@@ -178,6 +182,16 @@ class DataNode(object):
                 s += "<li>%s</li>" % child._repr_html_()
             s += "</ul>"
         return s
+
+    def __getitem__(self, name):
+        if isinstance(name, int):
+            if name > len(self.children):
+                return None
+            return self.children[name]
+        for child in self.children:
+            if child.title == name:
+                return child
+        return None
 
 
 # Event logging
