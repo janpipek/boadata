@@ -2,11 +2,14 @@ from boadata.core import DataObject
 from boadata.core.data_conversion import MethodConversion, DataConversion
 from .mixins import GetItemMixin, StatisticsMixin, NumericalMixin, AsArrayMixin
 import pandas as pd
+import numpy as np
+import types
+from .. import wrap
 
 
 class _PandasBase(DataObject, GetItemMixin, StatisticsMixin, NumericalMixin):
     def __to_csv__(self, uri, **kwargs):
-        self.inner_data.to_csv(uri)
+        self.inner_data.to_csv(uri, **kwargs)
         klass = DataObject.registered_types["csv"]
         return klass.from_uri(uri=uri, source=self)
 
@@ -108,6 +111,13 @@ class PandasDataFrameBase(_PandasBase):
         klass = DataObject.registered_types.get("excel_sheet")
         return klass.from_uri(uri=uri, source=self)
 
+    def drop_columns(self, columns, allow_nonexistent=False):
+        if isinstance(columns, str):
+            columns = [columns] 
+        if allow_nonexistent:
+            columns = [column for column in columns if column in self.columns]
+        self.inner_data.drop(columns, axis=1, inplace=True)
+
     def rename_columns(self, col_dict):
         """Change columns names.
 
@@ -123,14 +133,18 @@ class PandasDataFrameBase(_PandasBase):
             new_names = col_dict
         elif isinstance(col_dict, dict):
             new_names = [col_dict.get(col, col) for col in self.columns]
+        elif isinstance(col_dict, types.FunctionType):
+            new_names = [col_dict(col) for col in self.columns]
         else:
-            # TODO: Implement for lambdas
             raise RuntimeError("Column names not understood.")
         self.inner_data.columns = new_names
 
     def add_column(self, expression, name=None):
         if name in self.columns:
             raise RuntimeError("Column already exists: {0}".format(name))
+        self._create_column(expression, name)       
+
+    def _create_column(self, expression, name=None):
         if isinstance(expression, str):
             new_column = self.evaluate(expression, wrap=False)
             if not name:
@@ -142,8 +156,32 @@ class PandasDataFrameBase(_PandasBase):
         elif isinstance(expression, pd.Series):
             new_column = expression
             if not name:
-                name = new_column.name
+                name = new_column.name   
         self.inner_data[name] = new_column
+
+    def replace_column(self, name, expression):
+        if name not in self.columns:
+            raise IndexError("The column {0} does not exist".format(name))
+        self._create_column(expression, name)
+
+    def dropna(self, **kwargs):
+        kwargs["inplace"] = True
+        self.inner_data.dropna(**kwargs)
+
+    def append(self, other, **kwargs):
+        other = wrap(other)
+        if not isinstance(other, PandasDataFrameBase):
+            try:
+                other = other.convert("pandas_data_frame")
+            except:
+                raise TypeError("Only dataframes may be appended to dataframes.")
+        if self.columns:
+            if other.columns:
+                if not other.columns == self.columns:
+                    raise RuntimeError("Both dataframes must have same column names")
+            if not np.all(other.inner_data.dtypes == self.inner_data.dtypes):
+                raise RuntimeError("Both dataframes must have same column dtypes.")
+        self.inner_data = self.inner_data.append(other.inner_data, **kwargs)
 
 
 @DataObject.proxy_methods("dropna", "head")
@@ -187,6 +225,11 @@ class PandasSeriesBase(_PandasBase, AsArrayMixin):
 @MethodConversion.enable_to("numpy_array", method_name="as_matrix")
 class PandasDataFrame(PandasDataFrameBase):
     type_name = "pandas_data_frame"
+
+    def __init__(self, inner_data=None, *args, **kwargs):
+        if inner_data is None:
+            inner_data = pd.DataFrame()
+        super(PandasDataFrame, self).__init__(inner_data, *args, **kwargs)
 
     def __repr__(self):
         return "{0} (name={1}, shape={2})".format(self.__class__.__name__, self.name, self.shape)

@@ -6,6 +6,12 @@ warnings.filterwarnings("ignore", module="matplotlib")
 
 
 def load(uri, type=None, *args, **kwargs):
+    """Load an object from some URI.
+
+    :type uri: str
+    :type type: str
+    :param type: If present, forces this type to be used.
+    """
     from . import core
     from . import data     # Loads all formats
     if type:

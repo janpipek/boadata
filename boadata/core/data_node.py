@@ -109,7 +109,7 @@ class DataNode(object):
         return self._children
 
     @property
-    def children_names(self):
+    def child_names(self):
         return [child.title for child in self.children]
 
     def add_child(self, child):
