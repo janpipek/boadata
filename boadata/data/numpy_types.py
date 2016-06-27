@@ -43,7 +43,7 @@ class NumpyArrayBase(DataObject):
     def __repr__(self):
         return "{0}(shape={1}, dtype={2})".format(self.__class__.__name__, self.shape, self.inner_data.dtype)
 
-    def histogram(self, bins, **kwargs):
+    def histogram(self, *args, **kwargs):
         """
         :rtype: boadata.data.plotting_types.HistogramData
         """
@@ -57,15 +57,10 @@ class NumpyArrayBase(DataObject):
             # pairs = ((key, map[key]) for key in sorted(map.keys()))
             # return collections.OrderedDict(pairs)
         else:
-            if kwargs.pop("dropna", False):
-                data = data[~np.isnan(self.inner_data)]
-            values, bins = np.histogram(data, bins, **kwargs)
-            underflow = data[data < bins[0]].size
-            overflow = data[data > bins[-1]].size
-            total = data.size - underflow - overflow
+            from physt import h1
+            inner_data = h1(data, **kwargs)
             from .plotting_types import HistogramData
-            return HistogramData(bins=bins, values=values, total=total, underflow=underflow, overflow=overflow,
-                                 source=self, **kwargs)
+            return HistogramData(inner_data=inner_data, source=self)
 
     def mode(self):
         """Mode interpreted as in scipy.mode"""

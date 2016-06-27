@@ -18,7 +18,7 @@ class _PandasBase(DataObject, GetItemMixin, StatisticsMixin, NumericalMixin):
 class PandasDataFrameBase(_PandasBase):
     real_type = pd.DataFrame
 
-    def histogram(self, bins, columns=None, weights=None, **kwargs):
+    def histogram(self, bins=None, columns=None, weights=None, **kwargs):
         """Histogram data on all numeric columns.
 
         :param bins: number of bins or edges (numpy-like)
