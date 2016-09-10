@@ -83,3 +83,9 @@ class OldMatlabTree(DataTree):
         for key in self.inner_dict.keys():
             self.add_child(OldMatlabNode(self, key))
 
+# TODO: Consider this which I found in one kaggle notebook
+# def mat_to_pandas(path):
+#    mat = loadmat(path)
+#    names = mat['dataStruct'].dtype.names
+#    ndata = {n: mat['dataStruct'][n][0, 0] for n in names}
+#    return pd.DataFrame(ndata['data'], columns=ndata['channelIndices'][0])
