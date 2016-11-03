@@ -8,6 +8,10 @@ from .. import wrap
 
 
 class _PandasBase(DataObject, GetItemMixin, StatisticsMixin, NumericalMixin):
+    """Shared behaviour for all pandas-based types.
+
+    These include Series and DataFrame based types.
+    """
     def __to_csv__(self, uri, **kwargs):
         self.inner_data.to_csv(uri, **kwargs)
         klass = DataObject.registered_types["csv"]
@@ -188,6 +192,8 @@ class PandasDataFrameBase(_PandasBase):
 @DataObject.proxy_methods("histogram", through="numpy_array")
 @DataObject.proxy_methods("abs")
 class PandasSeriesBase(_PandasBase, AsArrayMixin):
+    """Abstract class for all types based on pandas Series"""
+
     real_type = pd.Series
 
     @property
