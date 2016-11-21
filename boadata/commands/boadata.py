@@ -11,11 +11,11 @@ def run_app(uri=None):
     import boadata.data
     import boadata.trees          # Load all trees
     from boadata.gui import qt    # Force sip API
-    from PyQt4 import QtGui
+    from qtpy import QtGui, QtWidgets
     from boadata.core.data_tree import DataTree
     from boadata.gui.qt import MainWindow, DataTreeModel
 
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
 
     if uri:
         tree = None

@@ -1,5 +1,5 @@
 from ..backends.matplotlib import MatplotlibBackend
-from PyQt4 import QtGui, QtCore
+from qtpy import QtWidgets, QtCore
 import itertools
 from . import View
 
@@ -19,15 +19,15 @@ class FieldView(View):
     supported_types = ("vector_field_map",)       # TODO: Add scalar field map
 
     def create_toolbar(self, widget):
-        self.toolBar = QtGui.QToolBar(widget)
-        self.toolBar.addWidget(QtGui.QLabel("Plane: "))
+        self.toolBar = QtWidgets.QToolBar(widget)
+        self.toolBar.addWidget(QtWidgets.QLabel("Plane: "))
 
         # Radio buttons for axes
-        self.buttonGroup = QtGui.QButtonGroup()
+        self.buttonGroup = QtWidgets.QButtonGroup()
         self.radios = {}
         for combination in itertools.combinations(self.field.axes, 2):
             text = "{0}{1}".format(combination[0], combination[1])
-            radio = QtGui.QRadioButton(text)
+            radio = QtWidgets.QRadioButton(text)
             self.radios[text] = radio
             self.buttonGroup.addButton(radio)
             self.toolBar.addWidget(radio)
@@ -36,25 +36,25 @@ class FieldView(View):
         # self.buttonGroup.buttonClicked.connect(self.onPlaneSelected)
         self.toolBar.addSeparator()
 
-        self.sliceIndexSlider = QtGui.QSlider(QtCore.Qt.Horizontal, self.toolBar)
+        self.sliceIndexSlider = QtWidgets.QSlider(QtCore.Qt.Horizontal, self.toolBar)
         self.sliceIndexSlider.setTracking(False)
         # self.sliceIndexSlider.setPageStep(1)
         self.sliceIndexSlider.valueChanged.connect(self.onValueSelected)
         self.sliceIndexSlider.sliderMoved.connect(self.onSliderMoved)
-        self.sliceIndexSlider.setTickPosition(QtGui.QSlider.TicksAbove)
+        self.sliceIndexSlider.setTickPosition(QtWidgets.QSlider.TicksAbove)
 
 
 
         self.toolBar.addWidget(self.sliceIndexSlider)
 
-        self.sliceIndexLabel = QtGui.QLabel()
+        self.sliceIndexLabel = QtWidgets.QLabel()
         self.sliceIndexLabel.setAlignment(QtCore.Qt.AlignLeft)
         self.sliceIndexLabel.setFixedWidth(80)
 
         self.toolBar.addWidget(self.sliceIndexLabel)
         widget.layout().addWidget(self.toolBar)
 
-        self.swapAxesCheckbox = QtGui.QCheckBox("Swap axes", self.toolBar)
+        self.swapAxesCheckbox = QtWidgets.QCheckBox("Swap axes", self.toolBar)
         self.swapAxesCheckbox.stateChanged.connect(lambda _: self.redraw())
 
         self.toolBar.addWidget(self.swapAxesCheckbox)
@@ -64,7 +64,7 @@ class FieldView(View):
         """
 
         :param button:
-        :type button: QtGui.QRadioButton
+        :type button: QtWidgets.QRadioButton
         :return:
         """
         self.update_axes()

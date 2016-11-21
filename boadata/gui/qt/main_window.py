@@ -1,11 +1,11 @@
-from PyQt4.QtGui import QMainWindow, QMdiArea, QDockWidget, QMdiSubWindow, QAction, qApp, QFileDialog
-from PyQt4 import QtCore
+from qtpy import QtCore
+from qtpy.QtWidgets import QMainWindow, QMdiArea, QDockWidget, QAction, qApp, QFileDialog
 from .data_tree_view import DataTreeView
 from boadata.trees.file import DirectoryTree
 from .data_tree_model import DataTreeModel
 from .data_object_window import DataObjectWindow
 
-# Inspired by https://github.com/Werkov/PyQt4/blob/master/examples/mainwindows/mdi/mdi.py
+# Inspired by https://github.com/Werkov/Qt/blob/master/examples/mainwindows/mdi/mdi.py
 
 
 class MainWindow(QMainWindow):

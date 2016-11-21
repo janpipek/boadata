@@ -1,13 +1,13 @@
-from PyQt4 import QtGui
+from qtpy import QtWidgets
 from .views import View
 
 
-class DataObjectWindow(QtGui.QMainWindow):
+class DataObjectWindow(QtWidgets.QMainWindow):
     def __init__(self, data_object, parent=None, *args, **kwargs):
         super(DataObjectWindow, self).__init__(parent, *args, **kwargs)
         self.data_object = data_object
 
-        self.tabWidget = QtGui.QTabWidget(self)
+        self.tabWidget = QtWidgets.QTabWidget(self)
         for view in View.registered_views:
             # print(data_object)
             if view.accepts(data_object):
@@ -23,4 +23,3 @@ class DataObjectWindow(QtGui.QMainWindow):
 
         self.setWindowTitle(self.data_object.title)
         self.setCentralWidget(self.tabWidget)
-

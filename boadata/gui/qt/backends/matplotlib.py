@@ -3,7 +3,7 @@ from matplotlib.backend_bases import key_press_handler
 from matplotlib.backends.backend_qt4agg import (
     FigureCanvasQTAgg as FigureCanvas,
     NavigationToolbar2QT as NavigationToolbar)
-from PyQt4 import QtGui, QtCore
+from qtpy import QtGui, QtCore, QtWidgets
 import seaborn as sns
 
 
@@ -18,14 +18,14 @@ class MatplotlibBackend(object):
         # http://matplotlib.org/examples/user_interfaces/embedding_in_qt4_wtoolbar.html
         fig = Figure()
 
-        widget = QtGui.QWidget(parent)
-        layout = QtGui.QVBoxLayout()
+        widget = QtWidgets.QWidget(parent)
+        layout = QtWidgets.QVBoxLayout()
         widget.setLayout(layout)
 
         # The canvas widget
         canvas = FigureCanvas(fig)
-        canvas.setSizePolicy(QtGui.QSizePolicy.Expanding,
-           QtGui.QSizePolicy.Expanding)
+        canvas.setSizePolicy(QtWidgets.QSizePolicy.Expanding,
+           QtWidgets.QSizePolicy.Expanding)
         canvas.setFocusPolicy(QtCore.Qt.StrongFocus)
         canvas.updateGeometry()
 

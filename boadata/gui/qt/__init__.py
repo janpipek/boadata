@@ -20,9 +20,9 @@ _application = None
 
 def get_application():
     import sys
-    from PyQt4 import QtGui
+    from qtpy import QtWidgets
 
     global _application
     if not _application:
-        _application = QtGui.QApplication(sys.argv)
+        _application = QtWidgets.QApplication(sys.argv)
     return _application

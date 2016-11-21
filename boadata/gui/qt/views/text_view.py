@@ -1,4 +1,4 @@
-from PyQt4.QtGui import QTextEdit
+from qtpy.QtWidgets import QTextEdit
 from .view import View
 
 

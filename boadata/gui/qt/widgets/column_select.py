@@ -1,4 +1,4 @@
-from PyQt4 import QtCore, QtGui
+from qtpy import QtCore, QtGui, QtWidgets
 
 
 class ColumnModel(QtCore.QAbstractListModel):
@@ -36,7 +36,7 @@ class ColumnModel(QtCore.QAbstractListModel):
         return self.columns.index(name)
 
 
-class ColumnSelect(QtGui.QListView):
+class ColumnSelect(QtWidgets.QListView):
     def __init__(self, data_object, parent=None):
         super(ColumnSelect, self).__init__(parent)
         self.setModel(ColumnModel(data_object, self))
@@ -51,9 +51,9 @@ class ColumnSelect(QtGui.QListView):
 
         rows = [self.model().get_index(name) for name in columns]
         indexes = [self.model().index(i, 0, QtCore.QModelIndex()) for i in rows]
-        ranges = [QtGui.QItemSelectionRange(index) for index in indexes]
-        selection = QtGui.QItemSelection()
+        ranges = [QtCore.QItemSelectionRange(index) for index in indexes]
+        selection = QtCore.QItemSelection()
         for range in ranges:
             selection.append(range)
-        self.selectionModel().select(selection, QtGui.QItemSelectionModel.ClearAndSelect)
+        self.selectionModel().select(selection, QtCore.QItemSelectionModel.ClearAndSelect)
 

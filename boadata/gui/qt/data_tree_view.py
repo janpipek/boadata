@@ -1,10 +1,10 @@
-from PyQt4 import QtCore, QtGui
+from qtpy import QtCore, QtGui, QtWidgets
 # from .views import registered_views
 from six import text_type
 import logging
 
 
-class DataTreeView(QtGui.QTreeView):
+class DataTreeView(QtWidgets.QTreeView):
     '''A customized tree view widget for data tree model.'''
 
     def __init__(self, model, parent=None, main_window=None):

@@ -1,4 +1,4 @@
-from PyQt4 import QtCore, QtGui
+from qtpy import QtCore, QtGui
 from six import text_type
 
 

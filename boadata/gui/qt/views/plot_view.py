@@ -3,7 +3,7 @@ from ..backends.matplotlib import MatplotlibBackend
 from ..widgets.column_select import ColumnSelect
 from boadata import unwrap
 import seaborn as sns
-from PyQt4 import QtCore, QtGui
+from qtpy import QtCore, QtWidgets
 import numpy as np
 
 
@@ -19,29 +19,29 @@ class PlotView(View):
         return False
 
     def create_dock(self, main_widget):
-        widget = QtGui.QWidget()
+        widget = QtWidgets.QWidget()
 
         self.x_list = ColumnSelect(self.data_object, widget)
-        self.x_list.setSelectionMode(QtGui.QAbstractItemView.SingleSelection)
+        self.x_list.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
         self.x_list.select_columns([self.xcol])
         self.x_list.selectionModel().selectionChanged.connect(lambda a, b: self.update())
 
         self.y_list = ColumnSelect(self.data_object, widget)
-        self.y_list.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
+        self.y_list.setSelectionMode(QtWidgets.QAbstractItemView.ExtendedSelection)
         self.y_list.select_columns(self.ycols)
         self.y_list.selectionModel().selectionChanged.connect(lambda a, b: self.update())
 
-        vbox = QtGui.QVBoxLayout()
+        vbox = QtWidgets.QVBoxLayout()
 
-        vbox.addWidget(QtGui.QLabel("Data series (X)"))
+        vbox.addWidget(QtWidgets.QLabel("Data series (X)"))
         vbox.addWidget(self.x_list, 1)
 
-        vbox.addWidget(QtGui.QLabel("Data series (Y)"))
+        vbox.addWidget(QtWidgets.QLabel("Data series (Y)"))
         vbox.addWidget(self.y_list, 4)
 
         widget.setLayout(vbox)
 
-        self.dock = QtGui.QDockWidget("Data", main_widget)
+        self.dock = QtWidgets.QDockWidget("Data", main_widget)
         self.dock.setWidget(widget)
         main_widget.addDockWidget(QtCore.Qt.LeftDockWidgetArea, self.dock)
 
@@ -82,7 +82,7 @@ class PlotView(View):
         return sns.color_palette("muted")
 
     def create_widget(self, parent=None, xcol=None, ycols=None, plot_type="scatter", **kwargs):
-        self.window = QtGui.QMainWindow(parent=parent)
+        self.window = QtWidgets.QMainWindow(parent=parent)
 
         self.plot_type = plot_type
         self.plot_widget, self.figure = MatplotlibBackend.create_figure_widget()

@@ -2,7 +2,6 @@ from .view import View
 from ..backends.matplotlib import MatplotlibBackend
 from boadata import unwrap
 import seaborn as sns
-import numpy as np
 
 
 # @View.register_view

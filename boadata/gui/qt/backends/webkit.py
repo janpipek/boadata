@@ -1,4 +1,4 @@
-from PyQt4 import QtWebKit, QtCore
+from qtpy import QtWebKit, QtCore
 
 
 class WebkitBackend(object):
