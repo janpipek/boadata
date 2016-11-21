@@ -72,7 +72,7 @@ class OldMatlabNode(DataNode):
 class OldMatlabTree(DataTree):
     @classmethod
     def accepts_uri(cls, uri):
-        return uri and os.path.isfile(uri) and (uri.endswith(".mat"))
+        return uri and os.path.isfile(uri) and (uri.endswith(".mat") or uri.endswith(".fig"))
 
     def __init__(self, path, parent=None):
         from scipy.io import loadmat
