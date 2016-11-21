@@ -21,7 +21,11 @@ def load(uri, type=None, *args, **kwargs):
 
 
 def wrap(native_object, force=True, **kwargs):
-    """Change some data object into a wrapped boadata type."""
+    """Change some data object into a wrapped boadata type.
+
+    :param force: If false, wrapping an unsupported object will result that object.
+    :type force: bool
+    """
     from . import core
     from . import data     # Loads all formats
     try:
@@ -47,6 +51,7 @@ def unwrap(boadata_object, **kwargs):
 
 
 def apply(native_object, function, *args, **kwargs):
+    """Wrap an object, run something on it and then unwrap the result."""
     result = unwrap(function(wrap(native_object), *args, **kwargs))
 
 def tree(uri):
