@@ -1,3 +1,7 @@
+0.3.6 (2017-01-05)
+------------------
+* support HDF5 tables
+
 0.3.5 (2016-03-02)
 ------------------
 * selection of columns in plot view
