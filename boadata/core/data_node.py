@@ -44,14 +44,23 @@ class DataNode(object):
 
         :rtype: None | type
         """
-        if not self.uri:
+        uri = self.uri
+        if not uri:
             return None
+        import boadata.data  # Load registered types
         for type_ in DataObject.registered_types.values():
-            if type_.accepts_uri(self.uri):
+            if type_.accepts_uri(uri):
                 return type_
 
     @property
     def data_object(self):
+        """The data object
+
+        :rtype: None | boadata.core.DataObject
+
+        This is the default, relatively inefficient variant, based on URI.
+        If there is no object, returns None:
+        """
         constructor = self._get_object_constructor()
         if constructor:
             return constructor.from_uri(self.uri)
@@ -162,7 +171,7 @@ class DataNode(object):
             # stream.write(str(self.has_object()))
             if data_object_info and self.has_object():
                 # stream.write("!")
-                stream.write(" (" + " x ".join(str(i) for i in self.data_object.shape) + ")")
+                stream.write(" = " + self.data_object.type_name + "(" + " x ".join(str(i) for i in self.data_object.shape) + ")")
         if self.has_subtree() and subtree:
             stream.write(":")
             self.subtree().dump(stream, indent, subtree, in_depth, children_only=True,

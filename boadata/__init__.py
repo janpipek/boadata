@@ -58,6 +58,7 @@ def tree(uri):
     """Load a tree from some URI.
 
     :type uri: str
+    :rtpye boadata.core.DataTree
     """
     from . import trees
     from boadata.core.data_tree import DataTree
