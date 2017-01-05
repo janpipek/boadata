@@ -83,6 +83,9 @@ class Hdf5Table(DataObject, GetItemMixin):
     def shape(self):
         return len(self.inner_data), len(self.columns)
 
+    def __to_xy_dataseries__(self, x, y, **kwargs):
+        return self.convert("pandas_data_frame", **kwargs).convert("xy_dataseries", x=x, y=y)
+
     def __to_pandas_data_frame__(self):
         import pandas as pd
         df = pd.DataFrame(dict({key : pd.Series(self.inner_data[key]) for key in self.columns}))
