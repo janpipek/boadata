@@ -1,5 +1,6 @@
 from boadata.core import DataObject
 from boadata.core.data_conversion import OdoConversion, DataConversion, ChainConversion
+from boadata.data.mixins import GetItemMixin
 import h5py
 import numpy as np
 
@@ -35,9 +36,59 @@ class Hdf5Dataset(DataObject):
 
     @classmethod
     def accepts_uri(cls, uri):
-        # TODO: Check for file or h5py: in URL
-        return ".h5::" in uri or ".hdf5::" in uri
+        import odo
+        if not(".h5::" in uri or ".hdf5::" in uri):
+            return False
+        try:
+            candidate = odo.odo(uri, cls.real_type)
+            if candidate.attrs.get(b"CLASS") != b"TABLE":
+                return True
+        except:
+            pass
+        return False
 
 
-# class Hdf5Table(DataObject):
-#    real_type = h5py
+@DataObject.register_type()
+@ChainConversion.enable_to("csv", through="pandas_data_frame")
+class Hdf5Table(DataObject, GetItemMixin):
+    real_type = h5py.Dataset
+
+    type_name = "hdf5_table"
+
+    @classmethod
+    def accepts_uri(cls, uri):
+        import odo
+        if not(".h5::" in uri or ".hdf5::" in uri):
+            return False
+        try:
+            candidate = odo.odo(uri, cls.real_type)
+            if candidate.attrs.get(b"CLASS") == b"TABLE":
+                return True
+        except:
+            pass
+        return False
+
+    @property
+    def columns(self):
+        import re
+        attrs = dict(self.inner_data.attrs)
+        ncols = len([1 for key in attrs.keys() if re.match("FIELD_\\d+_NAME", key)])
+        return [attrs["FIELD_{0}_NAME".format(i)].decode() for i in range(ncols)]
+
+    @property
+    def ndim(self):
+        return 2
+
+    @property
+    def shape(self):
+        return len(self.inner_data), len(self.columns)
+
+    def __to_pandas_data_frame__(self):
+        import pandas as pd
+        df = pd.DataFrame(dict({key : pd.Series(self.inner_data[key]) for key in self.columns}))
+        df = df[self.columns]
+        pd_type = DataObject.registered_types["pandas_data_frame"]
+        return pd_type(df, source=self) #, name=self.inner_data.attrs["TITLE"].decode())
+
+
+
