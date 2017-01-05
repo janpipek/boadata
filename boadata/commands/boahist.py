@@ -27,8 +27,8 @@ def run_app(uri, x, bins, type, **kwargs):
         sys.exit(-1)
 
     from boadata.gui import qt   # Force sip
-    from PyQt4 import QtGui
-    app = QtGui.QApplication(sys.argv)
+    from qtpy import QtWidgets
+    app = QtWidgets.QApplication(sys.argv)
     from . import enable_ctrl_c
     enable_ctrl_c()
 

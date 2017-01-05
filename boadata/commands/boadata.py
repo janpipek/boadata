@@ -8,7 +8,7 @@ from boadata import __version__
 @click.version_option(__version__)
 @click.argument("uri", default=None, required=False)
 def run_app(uri=None):
-    import boadata.data
+    import boadata.data           # Load all types
     import boadata.trees          # Load all trees
     from boadata.gui import qt    # Force sip API
     from qtpy import QtGui, QtWidgets

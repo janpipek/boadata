@@ -1,11 +1,18 @@
 from matplotlib.figure import Figure
 from matplotlib.backend_bases import key_press_handler
-from matplotlib.backends.backend_qt4agg import (
-    FigureCanvasQTAgg as FigureCanvas,
-    NavigationToolbar2QT as NavigationToolbar)
-from qtpy import QtGui, QtCore, QtWidgets
-import seaborn as sns
+import qtpy
 
+if qtpy.API == "pyqt5":
+    from matplotlib.backends.backend_qt5agg import (
+        FigureCanvas,
+        NavigationToolbar2QT as NavigationToolbar)
+else:
+    from matplotlib.backends.backend_qt4 import (
+        FigureCanvasQTAgg as FigureCanvas,
+        NavigationToolbar2QT as NavigationToolbar)
+from qtpy import QtGui, QtCore, QtWidgets
+
+import seaborn as sns   # To style it a bit
 
 class MatplotlibBackend(object):
     @classmethod

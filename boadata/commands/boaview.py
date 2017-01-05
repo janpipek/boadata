@@ -17,8 +17,8 @@ def run_app(uri, type, **kwargs):
         do = do.sql(kwargs.get("sql"), table_name="data")       
 
     from boadata.gui import qt   # Force sip
-    from PyQt4 import QtGui
-    app = QtGui.QApplication(sys.argv)
+    from qtpy import QtWidgets
+    app = QtWidgets.QApplication(sys.argv)
     # TODO: Think here?
     from . import enable_ctrl_c
     enable_ctrl_c()    
