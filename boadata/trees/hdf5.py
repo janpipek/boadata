@@ -68,4 +68,4 @@ class DatasetNode(Hdf5Node):
 
     @property
     def uri(self):
-        return "{0}::{1}".format(self.h5_object.file.filename, self.h5_object.name)
+        return "{0}::{1}".format(self.h5_object.file.filename, self.h5_object.name[1:])
