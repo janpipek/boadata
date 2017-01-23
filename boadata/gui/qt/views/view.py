@@ -54,7 +54,7 @@ class View(object):
         widget.show()
         widget.setWindowTitle(data_object.name or data_object.uri or "Untitled")
         # signal.signal(signal.SIGINT, lambda a1, a2: widget.close())
-        app.exec_()
+        return app.exec_()
 
     registered_views = []
 

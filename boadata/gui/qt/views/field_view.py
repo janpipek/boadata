@@ -15,50 +15,49 @@ class FieldView(View):
         self.axis2 = self.field.axes[1]
         self.value3 = self.field.get_axis_values(self.field.axes[2])[0]
         self.tolerance = 1e-6
+        self.toolBar = None
 
     supported_types = ("vector_field_map",)       # TODO: Add scalar field map
 
     def create_toolbar(self, widget):
-        self.toolBar = QtWidgets.QToolBar(widget)
-        self.toolBar.addWidget(QtWidgets.QLabel("Plane: "))
+        toolBar = QtWidgets.QToolBar(widget)
+        toolBar.addWidget(QtWidgets.QLabel("Plane: "))
 
         # Radio buttons for axes
-        self.buttonGroup = QtWidgets.QButtonGroup()
-        self.radios = {}
+        self.axisButtonGroup = QtWidgets.QButtonGroup()
+        self.axisRadios = {}
         for combination in itertools.combinations(self.field.axes, 2):
             text = "{0}{1}".format(combination[0], combination[1])
             radio = QtWidgets.QRadioButton(text)
-            self.radios[text] = radio
-            self.buttonGroup.addButton(radio)
-            self.toolBar.addWidget(radio)
+            self.axisRadios[text] = radio
+            self.axisButtonGroup.addButton(radio)
+            toolBar.addWidget(radio)
             radio.toggled[bool].connect(self.onPlaneSelected)
-        self.buttonGroup.buttons()[0].setChecked(True)
+        self.axisButtonGroup.buttons()[0].setChecked(True)
         # self.buttonGroup.buttonClicked.connect(self.onPlaneSelected)
-        self.toolBar.addSeparator()
+        toolBar.addSeparator()
 
-        self.sliceIndexSlider = QtWidgets.QSlider(QtCore.Qt.Horizontal, self.toolBar)
+        self.sliceIndexSlider = QtWidgets.QSlider(QtCore.Qt.Horizontal, toolBar)
         self.sliceIndexSlider.setTracking(False)
         # self.sliceIndexSlider.setPageStep(1)
         self.sliceIndexSlider.valueChanged.connect(self.onValueSelected)
         self.sliceIndexSlider.sliderMoved.connect(self.onSliderMoved)
         self.sliceIndexSlider.setTickPosition(QtWidgets.QSlider.TicksAbove)
 
-
-
-        self.toolBar.addWidget(self.sliceIndexSlider)
+        toolBar.addWidget(self.sliceIndexSlider)
 
         self.sliceIndexLabel = QtWidgets.QLabel()
         self.sliceIndexLabel.setAlignment(QtCore.Qt.AlignLeft)
         self.sliceIndexLabel.setFixedWidth(80)
 
-        self.toolBar.addWidget(self.sliceIndexLabel)
-        widget.layout().addWidget(self.toolBar)
+        toolBar.addWidget(self.sliceIndexLabel)
+        widget.layout().addWidget(toolBar)
 
-        self.swapAxesCheckbox = QtWidgets.QCheckBox("Swap axes", self.toolBar)
+        self.swapAxesCheckbox = QtWidgets.QCheckBox("Swap axes", toolBar)
         self.swapAxesCheckbox.stateChanged.connect(lambda _: self.redraw())
 
-        self.toolBar.addWidget(self.swapAxesCheckbox)
-        return self.toolBar
+        toolBar.addWidget(self.swapAxesCheckbox)
+        self.toolBar = toolBar
 
     def onPlaneSelected(self, _, *args):
         """
@@ -82,21 +81,22 @@ class FieldView(View):
         self.sliceIndexLabel.setText(text)
 
     def update_axes(self):
-        self.axis1, self.axis2 = self.buttonGroup.checkedButton().text()
-        self.axis3 = self.field.get_last_axis(self.axis1, self.axis2)
-        values = self.field.get_axis_values(self.axis3)
-        self.min = values[0]
-        if len(values) > 1:
-            self.step = values[1] - values[0]
-        else:
-            self.step = 0
-        self.sliceIndexSlider.setMinimum(0)
-        self.sliceIndexSlider.setMaximum(len(values) - 1)
-        self.sliceIndexSlider.setSingleStep(1)
-        self.sliceIndexSlider.setPageStep(3)
-        self.sliceIndexSlider.setValue(0)
-        self.sliceIndexLabel.setText(str(self.min))
-        self.redraw()
+        if self.toolBar:
+            self.axis1, self.axis2 = self.axisButtonGroup.checkedButton().text()
+            self.axis3 = self.field.get_last_axis(self.axis1, self.axis2)
+            values = self.field.get_axis_values(self.axis3)
+            self.min = values[0]
+            if len(values) > 1:
+                self.step = values[1] - values[0]
+            else:
+                self.step = 0
+            self.sliceIndexSlider.setMinimum(0)
+            self.sliceIndexSlider.setMaximum(len(values) - 1)
+            self.sliceIndexSlider.setSingleStep(1)
+            self.sliceIndexSlider.setPageStep(3)
+            self.sliceIndexSlider.setValue(0)
+            self.sliceIndexLabel.setText(str(self.min))
+            self.redraw()
 
     def get_value(self, index):
         return self.min + self.step * index
@@ -104,7 +104,7 @@ class FieldView(View):
     def create_widget(self, parent=None):
         widget, self.figure = MatplotlibBackend.create_figure_widget(parent=parent)
         self.create_toolbar(widget)
-        self.radios[self.axis1 + self.axis2].setChecked(True)
+        self.axisRadios[self.axis1 + self.axis2].setChecked(True)
         self.update_axes()
         return widget
 
