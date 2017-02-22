@@ -113,8 +113,6 @@ class FieldTableFile(DataObject):
 class ComsolFieldTextFile(PandasDataFrameBase):
     type_name = "comsol_field"
 
-    real_type = pd.DataFrame
-
     @classmethod
     def accepts_uri(cls, uri):
         if not os.path.isfile(uri):
@@ -141,4 +139,68 @@ class ComsolFieldTextFile(PandasDataFrameBase):
         frags = header_lines[-1][1:].strip().split()
         column_names = [ frag for frag in frags if not frag.startswith("(")]
         data = pd.read_csv(uri, skiprows=len(header_lines), index_col=False, header=None, delimiter="\\s+", engine="python", names=column_names)
+        return cls(inner_data=data, uri=uri)
+
+
+@DataObject.register_type()
+@IdentityConversion.enable_to("pandas_data_frame")
+@ChainConversion.enable_to("vector_field_map", through="pandas_data_frame")
+class OperaFieldTextFile(PandasDataFrameBase):
+    """Field maps as exported from Opera.
+
+    Note: one particular setting => may not be applicable.
+
+    The example file looks like this (not indented):
+
+         201 51 51 2
+         1 X [MM]
+         2 Y [MM]
+         3 Z [MM]
+         4 BX [TESLA]
+         5 BY [TESLA]
+         6 BZ [TESLA]
+         0
+          -50.0000000000      -50.0000000000      -200.000000000      0.182000689291E-02  0.181548320077E-02   0.00000000000
+          -50.0000000000      -50.0000000000      -198.000000000      0.182963069824E-02  0.182665326586E-02 -0.222624232502E-03
+    """
+    type_name = "opera_field"
+
+    @classmethod
+    def accepts_uri(cls, uri):
+        if not os.path.isfile(uri):
+            return False
+        return cls._parse_header(uri)[1] is not None
+
+    @classmethod
+    def _parse_header(cls, uri):
+        """
+
+        :param uri:
+        :return: (skiprows, column_names)
+        """
+        with open(uri, "rb") as f:
+            file_data = f.read(1000)
+            in_lines = file_data.decode()
+            columns = []
+            try:
+                for i, line in enumerate(in_lines.splitlines()):
+                    if i == 0:
+                        if len(line.strip().split()) != 4:
+                            break
+                    elif line.strip() == "0":
+                        return i+1, columns
+                    else:
+                        j, rest = line.strip().split(maxsplit=1)
+                        if int(j) != i:
+                            break
+                        columns.append(rest)
+            except:
+                pass
+            return 0, None
+
+    @classmethod
+    def from_uri(cls, uri, **kwargs):
+        skiprows, column_names = cls._parse_header(uri)
+        data = pd.read_csv(uri, skiprows=skiprows, index_col=False, header=None, delim_whitespace=True,
+                           engine="python", names=column_names)
         return cls(inner_data=data, uri=uri)
