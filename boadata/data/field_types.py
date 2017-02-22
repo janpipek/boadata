@@ -70,6 +70,57 @@ class VectorFieldMap(AbstractFieldMap, XarrayDatasetBase):
         data = xr.Dataset.from_dataframe(df)
         return cls(inner_data=data, source=origin)
 
+    def normalize_column_names(self, field_name, inplace=True):
+        inner_data = self.inner_data.rename(
+            dict(zip(self.axes + self.columns, ["x", "y", "z"] + [field_name + ax for ax in "xyz"])))
+        if inplace:
+            self.inner_data = inner_data
+        else:
+            return self.__class__(inner_data=inner_data, source=self)
+
+    def invert_axis(self, ax):
+        """Revert the axis and the corresponding vector component.
+
+        :type ax: int
+
+        Multiplies both entities by -1.
+        """
+        if not ax in (0, 1, 2):
+            raise RuntimeError("Cannot invert non-existent axis")
+        else:
+            self.inner_data[self.axes[ax]] *= -1
+            self.inner_data[self.columns[ax]] *= -1
+
+    def swap_axes(self, ax1, ax2, inplace=True):
+        """Swap two axes (and vector components).
+
+        swap(0, 1) means: "What was x, is now y (and vice versa)".
+
+        """
+        raise NotImplementedError("Non properly working, fix")
+
+        if {ax1, ax2}.difference({0, 1, 2}):
+            raise RuntimeError("Wrong axis id")
+        elif ax1 == ax2:
+            inner_data = self.inner_data
+        else:
+            last_axis = [ax for ax in self.axes if not ax in {self.axes[ax1], self.axes[ax2]}][0]
+            # last_column = [col for col in self.columns if not col in {self.columns[ax1], self.columns[ax2]}][0]
+            #
+            # self.rename_axes({
+            #     self.axes[ax1]: self.axes[ax2],
+            #     self.axes[ax2]: self.axes[ax1]})
+            # self.rename_columns({
+            #     self.columns[ax1]: self.columns[ax2],
+            #     self.columns[ax2]: self.columns[ax1]})
+            self.inner_data = self.inner_data.transpose(self.axes[ax1], self.axes[ax2], last_axis)
+            # self.inner_data.transpose(self.columns[ax1], self.columns[ax2], last_column)
+        # if inplace:
+        #     self.inner_data = inner_data
+        # else:
+        #     return self.__class__(inner_data=inner_data, source=self)
+
+
     # def __to_pandas_data_frame__(self):
     #     self.inner_data.to_dataframe()
 

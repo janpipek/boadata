@@ -19,6 +19,7 @@ class _XarrayBase(DataObject, GetItemMixin, StatisticsMixin, NumericalMixin):
 class XarrayDatasetBase(_XarrayBase, SetItemMixin):
     @property
     def shape(self):
+        # TODO: This is probably completely wrong!!!
         return (len(self.axes),) + self.inner_data[self.columns[0]].shape
 
     @property
@@ -35,6 +36,24 @@ class XarrayDatasetBase(_XarrayBase, SetItemMixin):
         else:
             raise RuntimeError("Cannot add column {0} from {1}".format(key, expression))
         return self
+
+    def _safe_rename(self, a_dict):
+        safe_prefix = "safe" + "_".join(self.axes + self.columns + list(a_dict.values()))
+        dict1 = {key : safe_prefix + value for key, value in a_dict.items()}
+        dict2 = {safe_prefix + value : value for _, value in a_dict.items()}
+        self.inner_data = self.inner_data.rename(dict1).rename(dict2)
+
+    def rename_columns(self, col_dict):
+        if any((col not in self.columns for col in col_dict.keys())):
+            raise RuntimeError("Column not present")
+        else:
+            self._safe_rename(col_dict)
+
+    def rename_axes(self, ax_dict):
+        if any((col not in self.axes for col in ax_dict.keys())):
+            raise RuntimeError("Column not present")
+        else:
+            self._safe_rename(ax_dict)
 
     def __repr__(self):
         return "{0}({1} -> {2}, shape={3})".format(self.__class__.__name__, ", ".join(self.axes), ", ".join(self.columns), self.shape)
