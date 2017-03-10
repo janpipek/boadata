@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 import xarray as xr
 import os
-from .xarray_types import XarrayDatasetBase
+from .xarray_types import XarrayDatasetBase, XarrayDataArrayBase
 from .pandas_types import PandasDataFrameBase
 
 
@@ -41,15 +41,38 @@ class AbstractFieldMap():
         else:
             return [float(axis_values)]
 
+    def __to_pandas_data_frame__(self):
+        df = self.inner_data.to_dataframe().reset_index()
+        return DataObject.from_native(df, source=self)
+
 
 @DataObject.register_type()
-@MethodConversion.enable_to("pandas_data_frame", method_name="to_dataframe")
-@ChainConversion.enable_to("csv", through="pandas_data_frame")
+@ChainConversion.enable_to("csv", through="pandas_data_frame", pass_kwargs=["uri"])
+@ChainConversion.enable_from("csv", through="pandas_data_frame", condition=lambda c: len(c.columns) == 4)
+class ScalarFieldMap(AbstractFieldMap, XarrayDataArrayBase):
+    """A scalar variable that is defined for each point in a 3D mesh.
+    """
+    type_name = "scalar_field_map"
+
+    @classmethod
+    @DataConversion.condition(lambda x: len(x.columns) == 4)
+    def __from_pandas_data_frame__(cls, origin, axis_columns=None, value_column=None):
+        if not axis_columns:
+            axis_columns = origin.inner_data.columns[:3]
+        if not value_column:
+            value_column = origin.inner_data.columns[3]
+        axis_columns = list(axis_columns)
+        df = origin.inner_data.set_index(axis_columns)
+        data = xr.DataArray.from_series(df[value_column])
+        return cls(inner_data=data, source=origin)
+
+
+@DataObject.register_type()
+# @MethodConversion.enable_to("pandas_data_frame", method_name="to_dataframe")
+@ChainConversion.enable_to("csv", through="pandas_data_frame", pass_kwargs=["uri"])
 @ChainConversion.enable_from("csv", through="pandas_data_frame", condition=lambda c: len(c.columns) == 6)
 class VectorFieldMap(AbstractFieldMap, XarrayDatasetBase):
     """A vector variable that is defined for each point in a 3D mesh.
-
-    The data are stored as pandas DataFrame with columns for position and field values.
     """
     type_name = "vector_field_map"
 
@@ -78,6 +101,13 @@ class VectorFieldMap(AbstractFieldMap, XarrayDatasetBase):
         else:
             return self.__class__(inner_data=inner_data, source=self)
 
+    def magnitude(self, column_name="size"):
+        magnitude_column = np.sqrt(sum([self.inner_data[self.columns[i]] ** 2 for i in range(3)]))
+        new_inner_data = xr.DataArray(magnitude_column, self.inner_data.coords, name=column_name)
+        return ScalarFieldMap(inner_data=new_inner_data, source=self)
+
+        # TODO: Implement conversion to ScalarFieldMap
+
     def invert_axis(self, ax):
         """Revert the axis and the corresponding vector component.
 
@@ -97,32 +127,24 @@ class VectorFieldMap(AbstractFieldMap, XarrayDatasetBase):
         swap(0, 1) means: "What was x, is now y (and vice versa)".
 
         """
-        raise NotImplementedError("Non properly working, fix")
-
         if {ax1, ax2}.difference({0, 1, 2}):
             raise RuntimeError("Wrong axis id")
         elif ax1 == ax2:
             inner_data = self.inner_data
         else:
-            last_axis = [ax for ax in self.axes if not ax in {self.axes[ax1], self.axes[ax2]}][0]
-            # last_column = [col for col in self.columns if not col in {self.columns[ax1], self.columns[ax2]}][0]
-            #
-            # self.rename_axes({
-            #     self.axes[ax1]: self.axes[ax2],
-            #     self.axes[ax2]: self.axes[ax1]})
-            # self.rename_columns({
-            #     self.columns[ax1]: self.columns[ax2],
-            #     self.columns[ax2]: self.columns[ax1]})
-            self.inner_data = self.inner_data.transpose(self.axes[ax1], self.axes[ax2], last_axis)
-            # self.inner_data.transpose(self.columns[ax1], self.columns[ax2], last_column)
-        # if inplace:
-        #     self.inner_data = inner_data
-        # else:
-        #     return self.__class__(inner_data=inner_data, source=self)
+            df_columns = self.axes + self.columns
 
-
-    # def __to_pandas_data_frame__(self):
-    #     self.inner_data.to_dataframe()
+            df = self.convert("pandas_data_frame")
+            df.inner_data.reset_index(inplace=True)
+            df.rename_columns({
+                self.axes[ax1]: self.axes[ax2],
+                self.axes[ax2]: self.axes[ax1],
+                self.columns[ax1]: self.columns[ax2],
+                self.columns[ax2]: self.columns[ax1]
+            })
+            df.reorder_columns(df_columns)
+            df.inner_data = df.inner_data.set_index(self.axes)
+            self.inner_data = xr.Dataset.from_dataframe(df.inner_data)
 
 
 @DataObject.register_type()

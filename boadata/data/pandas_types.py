@@ -143,6 +143,12 @@ class PandasDataFrameBase(_PandasBase):
             raise RuntimeError("Column names not understood.")
         self.inner_data.columns = new_names
 
+    def reorder_columns(self, cols):
+        # TODO: Can there be duplicates in DataFrame? Perhaps not
+        if not set(cols) == set(self.columns):
+            raise RuntimeError("The new ordering of columns must be complete.")
+        self.inner_data = self.inner_data[cols]
+
     def add_column(self, expression, name=None):
         if name in self.columns:
             raise RuntimeError("Column already exists: {0}".format(name))
