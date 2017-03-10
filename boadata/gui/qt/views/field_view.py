@@ -82,7 +82,7 @@ class FieldView(View):
 
     def update_axes(self):
         if self.toolBar:
-            self.axis1, self.axis2 = self.axisButtonGroup.checkedButton().text()
+            self.axis1, self.axis2 = list(self.axisButtonGroup.checkedButton().text())
             self.axis3 = self.field.get_last_axis(self.axis1, self.axis2)
             values = self.field.get_axis_values(self.axis3)
             self.min = values[0]
