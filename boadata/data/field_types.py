@@ -120,18 +120,23 @@ class VectorFieldMap(AbstractFieldMap, XarrayDatasetBase):
 
         # TODO: Implement conversion to ScalarFieldMap
 
-    def invert_axis(self, ax, inplace=True):
-        """Revert the axis and the corresponding vector component.
+    def mirror(self, ax, inplace=True):
+        """Mirror the axis and the corresponding vector component.
 
         :type ax: int
 
         Multiplies both entities by -1.
         """
+        if not inplace:
+            a_copy = self.copy()
+            a_copy.invert_axis(ax, inplace=True)
+            return a_copy
         if not ax in (0, 1, 2):
             raise RuntimeError("Cannot invert non-existent axis")
         else:
-            self.inner_data[self.axes[ax]] *= -1
-            self.inner_data[self.columns[ax]] *= -1
+            self.inner_data[self.axes[ax]] = self.inner_data[self.axes[ax]] * (-1)
+            self.inner_data[self.columns[ax]] = self.inner_data[self.columns[ax]] * (-1)
+
 
     def swap_axes(self, ax1, ax2, inplace=True):
         """Swap two axes (and vector components).
@@ -139,6 +144,10 @@ class VectorFieldMap(AbstractFieldMap, XarrayDatasetBase):
         swap(0, 1) means: "What was x, is now y (and vice versa)".
 
         """
+        if not inplace:
+            a_copy = self.copy()
+            a_copy.swap_axes(ax1, ax2, inplace=True)
+            return a_copy
         if {ax1, ax2}.difference({0, 1, 2}):
             raise RuntimeError("Wrong axis id")
         elif ax1 == ax2:
