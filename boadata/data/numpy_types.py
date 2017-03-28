@@ -1,11 +1,11 @@
 from boadata.core import DataObject
 from boadata.core.data_conversion import DataConversion, OdoConversion, ConstructorConversion
-from .mixins import GetItemMixin, StatisticsMixin, NumericalMixin, AsArrayMixin
+from .mixins import GetItemMixin, StatisticsMixin, NumericalMixin, AsArrayMixin, CopyableMixin
 import numpy as np
 
 
 @ConstructorConversion.enable_to("pandas_series", condition=lambda x: x.ndim == 1)
-class NumpyArrayBase(DataObject):
+class NumpyArrayBase(DataObject, CopyableMixin):
     real_type = np.ndarray
 
     @property
@@ -38,7 +38,7 @@ class NumpyArrayBase(DataObject):
         klass = DataObject.registered_types["pandas_data_frame"]
         if not name:
             name = self.name
-        return klass(inner_data=data, source=self, name=name)        
+        return klass(inner_data=data, source=self, name=name)
 
     def __repr__(self):
         return "{0}(shape={1}, dtype={2})".format(self.__class__.__name__, self.shape, self.inner_data.dtype)

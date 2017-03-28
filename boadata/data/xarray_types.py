@@ -1,9 +1,9 @@
 from boadata.core import DataObject
 import xarray as xr
-from .mixins import GetItemMixin, SetItemMixin, StatisticsMixin, NumericalMixin
+from .mixins import GetItemMixin, SetItemMixin, StatisticsMixin, NumericalMixin, CopyableMixin
 
 
-class _XarrayBase(DataObject, GetItemMixin, StatisticsMixin, NumericalMixin):
+class _XarrayBase(DataObject, GetItemMixin, StatisticsMixin, NumericalMixin, CopyableMixin):
     @property
     def axes(self):
         """
@@ -72,7 +72,7 @@ class XarrayDataArrayBase(_XarrayBase):
         return self.inner_data.data.dtype
 
     def __to_numpy_array__(self):
-        return DataObject.from_native(self.inner_data.data)        
+        return DataObject.from_native(self.inner_data.data)
 
 
 @DataObject.register_type(default=True)
@@ -107,4 +107,4 @@ class XarrayDataArray(XarrayDataArrayBase):
         axis_columns = [column for column in origin.columns if column != value_column]
         df = origin.inner_data.set_index(axis_columns)
         data = xr.Dataset.from_dataframe(df)[value_column]
-        return cls(inner_data=data, source=origin)            
+        return cls(inner_data=data, source=origin)

@@ -1,13 +1,13 @@
 from boadata.core import DataObject
 from boadata.core.data_conversion import MethodConversion, DataConversion
-from .mixins import GetItemMixin, StatisticsMixin, NumericalMixin, AsArrayMixin
+from .mixins import GetItemMixin, StatisticsMixin, NumericalMixin, AsArrayMixin, CopyableMixin
 import pandas as pd
 import numpy as np
 import types
 from .. import wrap
 
 
-class _PandasBase(DataObject, GetItemMixin, StatisticsMixin, NumericalMixin):
+class _PandasBase(DataObject, GetItemMixin, StatisticsMixin, NumericalMixin, CopyableMixin):
     """Shared behaviour for all pandas-based types.
 
     These include Series and DataFrame based types.
@@ -117,7 +117,7 @@ class PandasDataFrameBase(_PandasBase):
 
     def drop_columns(self, columns, allow_nonexistent=False):
         if isinstance(columns, str):
-            columns = [columns] 
+            columns = [columns]
         if allow_nonexistent:
             columns = [column for column in columns if column in self.columns]
         self.inner_data.drop(columns, axis=1, inplace=True)
@@ -152,7 +152,7 @@ class PandasDataFrameBase(_PandasBase):
     def add_column(self, expression, name=None):
         if name in self.columns:
             raise RuntimeError("Column already exists: {0}".format(name))
-        self._create_column(expression, name)       
+        self._create_column(expression, name)
 
     def _create_column(self, expression, name=None):
         if isinstance(expression, str):
@@ -166,7 +166,7 @@ class PandasDataFrameBase(_PandasBase):
         elif isinstance(expression, pd.Series):
             new_column = expression
             if not name:
-                name = new_column.name   
+                name = new_column.name
         self.inner_data[name] = new_column
 
     def replace_column(self, name, expression):

@@ -68,3 +68,8 @@ class AsArrayMixin(object):
 
     def astype(self, *args):
         return self.__array__().astype(*args)
+
+
+class CopyableMixin(object):
+    def copy(self, *args):
+        return self.__class__(inner_data=self.inner_data.copy(*args), source=self)
