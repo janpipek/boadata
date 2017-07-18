@@ -104,21 +104,24 @@ class VectorFieldMap(AbstractFieldMap, XarrayDatasetBase):
             return self.__class__(inner_data=inner_data, source=self)
 
     def magnitude(self, column_name="size"):
-        """Scalar field produced of vector length at each point."""
+        """Scalar field produced of vector length at each point.
+
+        :rtype: ScalarFieldMap
+        """
         magnitude_column = np.sqrt(sum([self.inner_data[self.columns[i]] ** 2 for i in range(3)]))
         new_inner_data = xr.DataArray(magnitude_column, self.inner_data.coords, name=column_name)
         return ScalarFieldMap(inner_data=new_inner_data, source=self)
 
-    def __to_opera_field__(self, path, length_unit="mm", field_unit="tesla"):
+    def __to_opera_field__(self, path, length_unit="mm", field_unit="tesla", **kwargs):
         with open(path, "w") as f:
             f.write(" {0} {1}\n".format(" ".join([str(s) for s in self.shape[1:]]), 2))
             for i, ax in enumerate(self.axes):
                 f.write(" {0} {1} [{2}]\n".format(i, ax.upper(), length_unit.upper()))
             for j, ax in enumerate(self.columns):
-                f.write(" {0} {1} [{2}]\n".format(j + 3, ax.upper(), length_unit.upper()))
+                f.write(" {0} {1} [{2}]\n".format(j + 3, ax.upper(), field_unit.upper()))
             f.write(" 0\n")
             df = self.convert("pandas_data_frame").inner_data
-            df.to_csv(f, sep=" ", index=None, header=None)
+            df.to_csv(f, sep=" ", index=None, header=None, **kwargs)
             return OperaFieldTextFile.from_uri(path, source=self)
 
         # TODO: Implement conversion to ScalarFieldMap
