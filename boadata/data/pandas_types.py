@@ -146,7 +146,8 @@ class PandasDataFrameBase(_PandasBase):
     def reorder_columns(self, cols):
         # TODO: Can there be duplicates in DataFrame? Perhaps not
         if not set(cols) == set(self.columns):
-            raise RuntimeError("The new ordering of columns must be complete.")
+            raise RuntimeError("The new ordering of columns must be complete. {0} is not {1}"
+                               .format(set(cols), set(self.columns)))
         self.inner_data = self.inner_data[cols]
 
     def add_column(self, expression, name=None):

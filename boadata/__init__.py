@@ -1,4 +1,4 @@
-__version__ = str('0.3.6')
+__version__ = str('0.3.6.1')
 
 # Suppress the unpleasant pandas/seaborn<->matplotlib warning
 import warnings

@@ -45,6 +45,8 @@ class AbstractFieldMap():
         df = self.inner_data.to_dataframe().reset_index()
         return DataObject.from_native(df, source=self)
 
+    # TODO: Some interpolation?
+
 
 @DataObject.register_type()
 @ChainConversion.enable_to("csv", through="pandas_data_frame", pass_kwargs=["uri"])
@@ -102,6 +104,7 @@ class VectorFieldMap(AbstractFieldMap, XarrayDatasetBase):
             return self.__class__(inner_data=inner_data, source=self)
 
     def magnitude(self, column_name="size"):
+        """Scalar field produced of vector length at each point."""
         magnitude_column = np.sqrt(sum([self.inner_data[self.columns[i]] ** 2 for i in range(3)]))
         new_inner_data = xr.DataArray(magnitude_column, self.inner_data.coords, name=column_name)
         return ScalarFieldMap(inner_data=new_inner_data, source=self)
@@ -137,7 +140,6 @@ class VectorFieldMap(AbstractFieldMap, XarrayDatasetBase):
             self.inner_data[self.axes[ax]] = self.inner_data[self.axes[ax]] * (-1)
             self.inner_data[self.columns[ax]] = self.inner_data[self.columns[ax]] * (-1)
 
-
     def swap_axes(self, ax1, ax2, inplace=True):
         """Swap two axes (and vector components).
 
@@ -156,7 +158,7 @@ class VectorFieldMap(AbstractFieldMap, XarrayDatasetBase):
             df_columns = self.axes + self.columns
 
             df = self.convert("pandas_data_frame")
-            df.inner_data.reset_index(inplace=True)
+            df.inner_data.reset_index(inplace=True, drop=True)
             df.rename_columns({
                 self.axes[ax1]: self.axes[ax2],
                 self.axes[ax2]: self.axes[ax1],
