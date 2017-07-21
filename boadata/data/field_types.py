@@ -1,9 +1,13 @@
-from boadata.core import DataObject
-from boadata.core.data_conversion import DataConversion, IdentityConversion, ChainConversion, MethodConversion
+import os
+from collections import OrderedDict
+
 import pandas as pd
 import numpy as np
 import xarray as xr
-import os
+
+from boadata.core import DataObject
+from boadata.core.data_conversion import DataConversion, IdentityConversion, ChainConversion, MethodConversion
+
 from .xarray_types import XarrayDatasetBase, XarrayDataArrayBase
 from .pandas_types import PandasDataFrameBase
 
@@ -116,9 +120,9 @@ class VectorFieldMap(AbstractFieldMap, XarrayDatasetBase):
         with open(path, "w") as f:
             f.write(" {0} {1}\n".format(" ".join([str(s) for s in self.shape[1:]]), 2))
             for i, ax in enumerate(self.axes):
-                f.write(" {0} {1} [{2}]\n".format(i, ax.upper(), length_unit.upper()))
+                f.write(" {0} {1} [{2}]\n".format(i + 1, ax.upper(), length_unit.upper()))
             for j, ax in enumerate(self.columns):
-                f.write(" {0} {1} [{2}]\n".format(j + 3, ax.upper(), field_unit.upper()))
+                f.write(" {0} {1} [{2}]\n".format(j + 4, ax.upper(), field_unit.upper()))
             f.write(" 0\n")
             df = self.convert("pandas_data_frame").inner_data
             df.to_csv(f, sep=" ", index=None, header=None, **kwargs)
@@ -142,6 +146,66 @@ class VectorFieldMap(AbstractFieldMap, XarrayDatasetBase):
         else:
             self.inner_data[self.axes[ax]] = self.inner_data[self.axes[ax]] * (-1)
             self.inner_data[self.columns[ax]] = self.inner_data[self.columns[ax]] * (-1)
+
+    def _make_interpolators(self, method, bounds_error, fill_value):
+        from scipy.interpolate import RegularGridInterpolator
+        points = tuple(self.inner_data[axis] for axis in self.axes)
+        interpolators = [
+            RegularGridInterpolator(points=points, values=np.asarray(self.inner_data[axis]),
+                                    method=method, bounds_error=bounds_error, fill_value=fill_value[i])
+            for i, axis in enumerate(self.columns)
+        ]
+        return interpolators
+
+    def interpolate(self, x, y, z, method="linear", bounds_error=False, fill_value=(0, 0, 0)):
+        """(Tri-)linear interpolation of the values.
+
+        :param x: coordinate or array of coordinates in x
+        :param y: coordinate or array of coordinates in y
+        :param z: coordinate or array of coordinates in z
+        :param bounds_error:
+        :param method
+        :param fill_value
+        :return:
+        """
+        # TODO: Check that the grid is regular? But maybe it is by xarray default?
+        interpolators = self._make_interpolators(method=method, bounds_error=bounds_error, fill_value=fill_value)
+
+        data = np.concatenate((np.asarray(x)[...,np.newaxis],
+                                np.asarray(y)[...,np.newaxis],
+                                np.asarray(z)[...,np.newaxis]),
+                               axis=-1)
+        # data = tuple(np.asarray(t) for t in (x,y,z))
+        from boadata import wrap
+        return [wrap(interpolators[i](data), force=False) for i in range(3)]
+        
+    def resample(self, dim1, dim2, dim3, method="linear", inplace=False):
+        """Change the grid points using linear (or other) interpolation.
+        
+        :param dim1: new number of points in x
+        :param dim2: new number of points in y
+        :param dim3: new number of points in z
+        :param method: interpolation method
+        """
+        # TODO: Include option to resample only precisely
+        dims = (dim1, dim2, dim3)
+        new_axes = [np.linspace(self[axis].min(), self[axis].max(), dims[i]) for i, axis in enumerate(self.axes)]
+        new_mesh = np.meshgrid(*new_axes, indexing="ij")
+        new_fields = self.interpolate(*new_mesh, method=method)
+        
+        print([f.shape for f in new_fields])
+        
+        coords = OrderedDict([(axis, new_axes[i]) for i, axis in enumerate(self.axes)])
+        data = OrderedDict([(column, xr.DataArray(new_fields[i].inner_data, coords=coords, dims=self.axes)) for i, column in enumerate(self.columns)])
+        inner_data = xr.Dataset(
+            data,
+            coords
+        )
+        if inplace:
+            self.inner_data = inner_data
+            return self
+        else:
+            return VectorFieldMap(inner_data=inner_data, source=self)
 
     def swap_axes(self, ax1, ax2, inplace=True):
         """Swap two axes (and vector components).
