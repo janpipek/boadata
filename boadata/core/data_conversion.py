@@ -19,6 +19,7 @@ class DataConversion(object):
     :type type_name2: str
 
     """
+
     def __init__(self, type_name1, type_name2, method=None, condition=None):
         self._type1 = None
         self._type2 = None

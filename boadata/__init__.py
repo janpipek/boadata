@@ -1,7 +1,8 @@
-__version__ = str('0.3.6.1')
+import warnings
+
+__version__ = str('0.3.7')
 
 # Suppress the unpleasant pandas/seaborn<->matplotlib warning
-import warnings
 warnings.filterwarnings("ignore", module="matplotlib")
 
 
@@ -53,6 +54,7 @@ def unwrap(boadata_object, **kwargs):
 def apply(native_object, function, *args, **kwargs):
     """Wrap an object, run something on it and then unwrap the result."""
     result = unwrap(function(wrap(native_object), *args, **kwargs))
+
 
 def tree(uri):
     """Load a tree from some URI.
