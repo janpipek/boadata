@@ -1,11 +1,14 @@
 from boadata.core import DataObject
 from boadata.core.data_conversion import DataConversion, OdoConversion, ConstructorConversion
-from .mixins import GetItemMixin, StatisticsMixin, NumericalMixin, AsArrayMixin, CopyableMixin
+from .mixins import GetItemMixin, StatisticsMixin, NumericalMixin, AsArrayMixin, CopyableMixin, IteratorMixin
 import numpy as np
 
 
 @ConstructorConversion.enable_to("pandas_series", condition=lambda x: x.ndim == 1)
-class NumpyArrayBase(DataObject, CopyableMixin):
+@DataObject.proxy_methods([
+    "__len__"
+])
+class NumpyArrayBase(DataObject, CopyableMixin, IteratorMixin):
     real_type = np.ndarray
 
     @property

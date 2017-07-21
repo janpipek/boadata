@@ -68,6 +68,13 @@ class AsArrayMixin(object):
 
     def astype(self, *args):
         return self.__array__().astype(*args)
+        
+
+class IteratorMixin(object):
+    def __iter__(self):
+        for item in self.inner_data:
+            from boadata import wrap
+            yield wrap(item, force=False)
 
 
 class CopyableMixin(object):
