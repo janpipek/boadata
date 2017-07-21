@@ -31,12 +31,15 @@ class CSVFile(PandasDataFrameBase):
 
     @classmethod
     def from_uri(cls, uri, index_col=False, source=None, **kwargs):
-        resource = odo.resource(uri)
-        if hasattr(resource, "dialect"):
-            kwargs.update(resource.dialect)
+        #resource = odo.resource(uri)
+        #if hasattr(resource, "dialect"):
+        #    kwargs.update(resource.dialect)
 
         methods = [
             # lambda: pd.read_csv(uri, index_col=index_col, parse_dates=[0], **kwargs),
+            lambda: pd.read_csv(uri, index_col=index_col, delimiter=",\s*", engine="python", **kwargs),
+            lambda: pd.read_csv(uri, index_col=index_col, delimiter=None, engine="python", **kwargs),
+            lambda: pd.read_csv(uri, index_col=index_col, delim_whitespace=True, **kwargs),
             lambda: pd.read_csv(uri, index_col=index_col, **kwargs),
             lambda: odo.odo(uri, pd.DataFrame, index_col=index_col, **kwargs),
             lambda: cls._fallback_read(uri, **kwargs)
@@ -46,8 +49,10 @@ class CSVFile(PandasDataFrameBase):
             try:
                 data = method()
                 result = cls(inner_data=data, uri=uri, source=source, **kwargs)
-                break
-            except:
+                if result.shape[1] != 1:
+                    break
+            except BaseException as ex:
+                print(ex)
                 pass
         if result:
             if not result.name:
