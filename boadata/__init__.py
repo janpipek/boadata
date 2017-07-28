@@ -1,6 +1,6 @@
 import warnings
 
-__version__ = str('0.3.7')
+__version__ = str('0.3.8')
 
 # Suppress the unpleasant pandas/seaborn<->matplotlib warning
 warnings.filterwarnings("ignore", module="matplotlib")

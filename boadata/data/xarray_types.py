@@ -3,6 +3,8 @@ import xarray as xr
 from .mixins import GetItemMixin, SetItemMixin, StatisticsMixin, NumericalMixin, CopyableMixin
 
 
+# TODO: Limit arithmetic operations where the coordinates don't match
+
 class _XarrayBase(DataObject, GetItemMixin, StatisticsMixin, NumericalMixin, CopyableMixin):
     @property
     def axes(self):

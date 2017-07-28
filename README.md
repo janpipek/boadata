@@ -50,6 +50,7 @@ Requirements
 * bokeh (to become optional instead of matplotlib)
 * seaborn
 * pandas_profiling (optional - dataframe summaries)
+* datadotworld (optional - for their datasets)
 
 * Python 3.4+
 
@@ -62,6 +63,7 @@ Supported formats and sources
 * pydataset datasets
 * seaborn datasets
 * MATLAB .fig files
+* data.world datasets/tables (that can be imported pandas dataframes)
 
 Supported GUI views
 -------------------
