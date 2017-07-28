@@ -12,6 +12,11 @@ from .xarray_types import XarrayDataArray, XarrayDataset
 from .geant4_types import Geant4Scoring
 
 try:
+    from .dw_types import DataWorldTable
+except:
+    pass
+
+try:
     # Dependence on h5py
     from .hdf5_types import Hdf5Dataset #, Hdf5Table
 except:
