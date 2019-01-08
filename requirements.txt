@@ -17,4 +17,6 @@ h5py
 pydons
 tabulate
 sqlalchemy
+networkx<2.0
 qtpy
+feather-format

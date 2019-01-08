@@ -19,7 +19,8 @@ options = dict(
         'matlab' : ['pydons'],
         'h5py' : ['h5py'],
         'pydataset' : ['pydataset'],
-        'all' : ['pydons', 'pydataset', 'h5py']
+        'all' : ['pydons', 'pydataset', 'h5py'],
+        'feather' : ['feather'],
     },
     entry_points = {
         'console_scripts' : [

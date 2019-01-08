@@ -1,3 +1,8 @@
+0.3.9 (2019-01-08)
+------------------
+* feather file format support
+* bug fixes
+
 0.3.8 (2017-07-28)
 ------------------
 * data.world datasets support (dw://)
