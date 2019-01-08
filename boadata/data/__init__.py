@@ -40,3 +40,8 @@ try:
 except:
     pass
 
+try:
+    # Dependence on feather
+    from .feather_types import FeatherFile
+except:
+    pass
