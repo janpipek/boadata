@@ -15,7 +15,7 @@ def run_app(uri, type, **kwargs):
     from boadata import load
     do = load(uri, type)
     if not do:
-        print("URI not understood: {0}").format(uri)
+        print("URI not understood: {0}".format(uri))
         sys.exit(-1)
     if "sql" in kwargs:
         do = do.sql(kwargs.get("sql"), table_name="data")    
