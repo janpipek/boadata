@@ -342,10 +342,11 @@ class OperaFieldTextFile(PandasDataFrameBase):
         :return: (skiprows, column_names)
         """
         with open(uri, "rb") as f:
-            file_data = f.read(1000)
-            in_lines = file_data.decode()
-            columns = []
             try:
+                file_data = f.read(1000)
+                in_lines = file_data.decode()
+                columns = []
+
                 for i, line in enumerate(in_lines.splitlines()):
                     if i == 0:
                         if len(line.strip().split()) != 4:
