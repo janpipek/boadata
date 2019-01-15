@@ -20,7 +20,7 @@ class DatabaseTable(OdoDataObject):
     schemas = ("sqlite", "postgresql", "mysql", "mssql", "oracle", "firebird")
 
     # Regular expressions for matching URI
-    URI_DB_PART_RE = "^{0}(\+.+)?://.+"
+    URI_DB_PART_RE = r"^{0}(\+.+)?://.+"
     URI_RE = URI_DB_PART_RE + "::.+"
 
     @classmethod
@@ -59,14 +59,14 @@ class DatabaseQuery(PandasDataFrameBase):
     URI_RE = "query@" + DatabaseTable.URI_RE
 
     @classmethod
-    def from_uri(cls, uri, **kwargs):
+    def from_uri(cls, uri: str, **kwargs) -> 'DatabaseQuery':
         constr, query = uri[6:].split("::", 1)
         con = sa.create_engine(constr)
         inner_data = pd.read_sql_query(query, con)
         return cls(inner_data=inner_data, uri=uri, **kwargs)        
 
     @classmethod
-    def accepts_uri(cls, uri):
+    def accepts_uri(cls, uri: str) -> bool:
         if not uri:
             return False
         if uri.startswith("query@"):

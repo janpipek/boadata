@@ -6,7 +6,7 @@ __version__ = str('0.3.9')
 warnings.filterwarnings("ignore", module="matplotlib")
 
 
-def load(uri, type=None, *args, **kwargs):
+def load(uri, type=None, *args, **kwargs) -> 'boadata.core.DataObject':
     """Load an object from some URI.
 
     :type uri: str
@@ -21,7 +21,7 @@ def load(uri, type=None, *args, **kwargs):
         return core.DataObject.from_uri(uri, *args, **kwargs)
 
 
-def wrap(native_object, force=True, **kwargs):
+def wrap(native_object, force=True, **kwargs) -> 'boadata.core.DataObject':
     """Change some data object into a wrapped boadata type.
 
     :param force: If false, wrapping an unsupported object will result that object.
@@ -37,7 +37,7 @@ def wrap(native_object, force=True, **kwargs):
         raise
 
 
-def unwrap(boadata_object, **kwargs):
+def unwrap(boadata_object: 'boadata.core.DataObject', **kwargs):
     """Change boadata object into its native type.
 
     :type boadata_object: boadata.core.data_object.DataObject

@@ -1,9 +1,11 @@
-# from .data_properties import DataProperties
-from collections import OrderedDict
-import odo            # Make optional?
-import blinker
 import weakref
-from .data_conversion import DataConversion, ConversionUnknown
+from collections import OrderedDict
+from typing import List, Optional, Tuple, Union
+
+import blinker
+import odo  # Make optional?
+
+from boadata.core.data_conversion import ConversionUnknown, DataConversion
 
 
 class _DataObjectRegistry():
@@ -93,7 +95,7 @@ class _DataObjectConversions():
                 return native_object.convert(cls.type_name, **kwargs)
             return cls(inner_data=native_object, **kwargs)
 
-    def is_convertible_to(self, new_type_name):
+    def is_convertible_to(self, new_type_name: Union[str, type]) -> bool:
         """
 
         :type new_type_name: str | type
@@ -113,14 +115,14 @@ class _DataObjectConversions():
         return conversion.applies(self)
 
     @classmethod
-    def is_convertible_from(cls, data_object):
+    def is_convertible_from(cls, data_object: 'DataObject') -> bool:
         return data_object.is_convertible_to(cls)
 
     @property
-    def allowed_conversions(self):
+    def allowed_conversions(self) -> List[Tuple[str, str]]:
         return [ key for (key, conversion) in DataConversion.registered_conversions.items() if key[0] == self.type_name and conversion.applies(self)]
 
-    def convert(self, new_type_name=None, **kwargs):
+    def convert(self, new_type_name: str, **kwargs) -> 'DataObject':
         """Convert to another boadata-supported type.
 
         :type new_type_name: str
@@ -129,7 +131,7 @@ class _DataObjectConversions():
         Auto-conversion returns the same object.
         Default implementation is based on odo.
         """
-        if new_type_name is None:
+        if not new_type_name:
             available = [key[1] for key in DataConversion.registered_conversions.keys() if key[0] == self.__class__.type_name]
             raise TypeError("convert() missing 1 required positional argument: 'new_type_name', available argument values: {0}".format(", ".join(available)))
         # TODO: check argument?
@@ -144,7 +146,7 @@ class _DataObjectConversions():
         return conversion.convert(self, new_type, **kwargs)
 
 
-class _DataObjectInterface():
+class _DataObjectInterface:
     """
 
     Possible methods:
@@ -152,7 +154,7 @@ class _DataObjectInterface():
     -
     """
     @property
-    def shape(self):
+    def shape(self) -> tuple:
         """Shape of the data.
 
         :rtype: tuple(int)
@@ -164,7 +166,7 @@ class _DataObjectInterface():
         return ()
 
     @property
-    def ndim(self):
+    def ndim(self) -> int:
         """Dimensionality of the data.
 
         :rtype: int
@@ -177,7 +179,7 @@ class _DataObjectInterface():
             return len(self.shape)
 
     @property
-    def size(self):
+    def size(self) -> int:
         if hasattr(self.inner_data, "size"):
             return int(self.inner_data.size)
         else:
@@ -206,11 +208,7 @@ class _DataObjectInterface():
             return None
 
     @property
-    def name(self):
-        """
-
-        :rtype: str | None
-        """
+    def name(self) -> Optional[str]:
         if hasattr(self.inner_data, "name"):
             return self.inner_data.name
         else:
@@ -317,7 +315,7 @@ class DataObject(_DataObjectRegistry, _DataObjectConversions, _DataObjectInterfa
         else:
             return result
 
-    def where(self, condition, sql=False):
+    def where(self, condition, sql=False) -> 'DataObject':
         """Choose a subset of a dataset.
 
         :param condition: a valid condition returning boolean
@@ -339,7 +337,7 @@ class DataObject(_DataObjectRegistry, _DataObjectConversions, _DataObjectInterfa
                     raise RuntimeError("The result of condition has to be a boolean array")
             return DataObject.from_native(self.inner_data[mask], source=self)
 
-    def apply_native(self, method_name, *args, **kwargs):
+    def apply_native(self, method_name: str, *args, **kwargs):
         """Apply a method defined on the native object.
 
         If possible, converts the result to DataObject.
@@ -360,5 +358,5 @@ class OdoDataObject(DataObject):
         super(OdoDataObject, self).__init__(inner_data=inner_data, uri=uri, **kwargs)
 
     @classmethod
-    def from_uri(cls, uri, **kwargs):
+    def from_uri(cls, uri, **kwargs) -> 'OdoDataObject':
         return cls(uri=uri, **kwargs)
