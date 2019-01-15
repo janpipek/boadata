@@ -17,6 +17,11 @@ class _PandasBase(DataObject, GetItemMixin, StatisticsMixin, NumericalMixin, Cop
         klass = DataObject.registered_types["csv"]
         return klass.from_uri(uri=uri, source=self)
 
+    @property
+    def name(self):
+        # Pandas objects do not have names.
+        return None
+
 
 @DataObject.proxy_methods("head")
 class PandasDataFrameBase(_PandasBase):
