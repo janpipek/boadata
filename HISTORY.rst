@@ -1,3 +1,9 @@
+0.3.10 (2019-01-15)
+-------------------
+* added boaconvert tool
+* added sql query data type
+* start using Python 3 syntax (no support for Python 2.7)
+
 0.3.9 (2019-01-08)
 ------------------
 * feather file format support
