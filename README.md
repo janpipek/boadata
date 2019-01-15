@@ -26,6 +26,7 @@ Run `command --help` to see full list of options
 * `boadata [<uri>]` - full gui with a tree
 * `boatable <uri>` - show tabular representation of a dataobject (GUI)
 * `boacat <uri>` - print tabular representation of a dataobject (command-line)
+* `boaconvert <from> <to>` - convert one data source into another
 * `boaview <uri>` - show a tabbed window with all available views for the dataobject
 
 Status
