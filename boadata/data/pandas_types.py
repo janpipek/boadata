@@ -109,7 +109,7 @@ class PandasDataFrameBase(_PandasBase):
             raise RuntimeError("Cannot specify col2 and not col1.")
         return constructor(xdata, ydata, xname=kwargs.get("xname", xname), yname=kwargs.get("yname", yname))
 
-    def __to_excel_sheet__(self, uri):
+    def __to_excel_sheet__(self, uri: str):
         if "::" in uri:
             file, sheet = uri.split("::")
         else:
@@ -119,6 +119,13 @@ class PandasDataFrameBase(_PandasBase):
         uri = "{0}::{1}".format(file, sheet)
         klass = DataObject.registered_types.get("excel_sheet")
         return klass.from_uri(uri=uri, source=self)
+
+    def __to_feather__(self, uri: str):
+        if not "feather" in DataObject.registered_types:
+            raise RuntimeError("Cannot convert to feather.")
+        import feather
+        feather.write_dataframe(self.inner_data, uri)
+        return DataObject.registered_types["feather"].from_uri(uri, source=self)
 
     def drop_columns(self, columns, allow_nonexistent=False):
         if isinstance(columns, str):
