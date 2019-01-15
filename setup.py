@@ -24,6 +24,7 @@ options = dict(
     },
     entry_points = {
         'console_scripts' : [
+            'boaconvert = boadata.commands.boaconvert:run_app',
             'boadata = boadata.commands.boadata:run_app',
             'boadescribe = boadata.commands.boadescribe:run_app',
             'boatable = boadata.commands.boatable:run_app',
