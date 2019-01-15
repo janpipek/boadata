@@ -1,8 +1,12 @@
-from boadata.core.data_object import OdoDataObject, DataObject
-from boadata.core.data_conversion import OdoConversion, ChainConversion
-import sqlalchemy as sa
-import re
 import os
+import pandas as pd
+import re
+
+import sqlalchemy as sa
+
+from boadata.core.data_conversion import ChainConversion, OdoConversion
+from boadata.core.data_object import DataObject, OdoDataObject
+from boadata.data.pandas_types import PandasDataFrameBase
 
 
 @DataObject.register_type()
@@ -15,12 +19,16 @@ class DatabaseTable(OdoDataObject):
 
     schemas = ("sqlite", "postgresql", "mysql", "mssql", "oracle", "firebird")
 
+    # Regular expressions for matching URI
+    URI_DB_PART_RE = "^{0}(\+.+)?://.+"
+    URI_RE = URI_DB_PART_RE + "::.+"
+
     @classmethod
     def accepts_uri(cls, uri):
         if not uri:
             return False
         for schema in DatabaseTable.schemas:
-            if re.match("^{0}(\+.+)?://.+::.+".format(schema), uri):
+            if re.match(cls.URI_RE.format(schema), uri):
                 return True
         if os.path.isfile(uri) and os.path.splitext(uri)[1] in (".db", ".sqlite", ".sqlite3"):
             return True
@@ -42,3 +50,26 @@ class DatabaseTable(OdoDataObject):
     @property
     def columns(self):
         return [col.name for col in self.inner_data.columns.values()]
+
+
+@DataObject.register_type()
+class DatabaseQuery(PandasDataFrameBase):
+    type_name = "db_query"
+
+    URI_RE = "query@" + DatabaseTable.URI_RE
+
+    @classmethod
+    def from_uri(cls, uri, **kwargs):
+        constr, query = uri[6:].split("::", 1)
+        con = sa.create_engine(constr)
+        inner_data = pd.read_sql_query(query, con)
+        return cls(inner_data=inner_data, uri=uri, **kwargs)        
+
+    @classmethod
+    def accepts_uri(cls, uri):
+        if not uri:
+            return False
+        if uri.startswith("query@"):
+            return DatabaseTable.accepts_uri(uri[6:])
+        else:
+            return False
