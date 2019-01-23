@@ -1,3 +1,7 @@
+0.3.11 (2019-01-23)
+-------------------
+* added DataFrame(-like) to SQL table conversion
+
 0.3.10 (2019-01-15)
 -------------------
 * added boaconvert tool
