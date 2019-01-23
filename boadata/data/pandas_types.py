@@ -1,10 +1,16 @@
-from boadata.core import DataObject
-from boadata.core.data_conversion import MethodConversion, DataConversion
-from .mixins import GetItemMixin, StatisticsMixin, NumericalMixin, AsArrayMixin, CopyableMixin
-import pandas as pd
-import numpy as np
 import types
+
+import numpy as np
+import odo
+import pandas as pd
+import sqlalchemy as sa
+
+from boadata.core import DataObject
+from boadata.core.data_conversion import DataConversion, MethodConversion
+
 from .. import wrap
+from .mixins import (AsArrayMixin, CopyableMixin, GetItemMixin, NumericalMixin,
+                     StatisticsMixin)
 
 
 class _PandasBase(DataObject, GetItemMixin, StatisticsMixin, NumericalMixin, CopyableMixin):
@@ -64,7 +70,7 @@ class PandasDataFrameBase(_PandasBase):
             table_name = self.name
         if not table_name:
             raise RuntimeError("Cannot run SQL queries on unnamed dataframe. Specify table_name argument...")
-        engine = create_engine('sqlite:///:memory:')
+        engine = sa.create_engine('sqlite:///:memory:')
         self.inner_data.to_sql(table_name, engine)
         # TODO: some clean up???
         return wrap(pd.read_sql_query(sql, engine), source=self)
@@ -126,6 +132,12 @@ class PandasDataFrameBase(_PandasBase):
         import feather
         feather.write_dataframe(self.inner_data, uri)
         return DataObject.registered_types["feather"].from_uri(uri, source=self)
+
+    def __to_db_table__(self, uri: str):
+        df = self.convert("pandas_data_frame")
+        dshape = odo.discover(df.inner_data)
+        new_inner_data = odo.odo(df.inner_data, uri, dshape=dshape)
+        return DataObject.registered_types["db_table"].from_uri(uri, source=self)
 
     def drop_columns(self, columns, allow_nonexistent=False):
         if isinstance(columns, str):

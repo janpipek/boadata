@@ -63,7 +63,7 @@ class DatabaseQuery(PandasDataFrameBase):
         constr, query = uri[6:].split("::", 1)
         con = sa.create_engine(constr)
         inner_data = pd.read_sql_query(query, con)
-        return cls(inner_data=inner_data, uri=uri, **kwargs)        
+        return cls(inner_data=inner_data, uri=uri, **kwargs)      
 
     @classmethod
     def accepts_uri(cls, uri: str) -> bool:
