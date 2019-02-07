@@ -2,13 +2,16 @@
 import click
 
 from boadata.core import DataObject
-from boadata.cli import try_load
+from boadata import __version__
+from boadata.cli import try_load, try_apply_sql, try_select_columns
 
 
 @click.command()
 @click.version_option(__version__)
 @click.argument("from_uri")
 @click.argument("to_uri", required=False, default=None)
+@click.option("-c", "--columns", required=False, help="List of columns to show")
+@click.option("-s", "--sql", required=False, help="SQL to run on the object.")
 @click.option(
     "-t", "--type", default=None, help="What type should be the destination object."
 )
@@ -17,6 +20,8 @@ def run_app(from_uri, to_uri, **kwargs):
     type = kwargs.get("type")
 
     do = try_load(from_uri)
+    do = try_apply_sql(do, kwargs)
+    do = try_select_columns(do, kwargs)
 
     if to_uri:
         if not type:
