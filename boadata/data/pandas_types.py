@@ -1,4 +1,5 @@
 import types
+from typing import List
 
 import numpy as np
 import odo
@@ -198,6 +199,12 @@ class PandasDataFrameBase(_PandasBase):
         if name not in self.columns:
             raise IndexError("The column {0} does not exist".format(name))
         self._create_column(expression, name)
+
+    def select_columns(self, names: List[str]) -> 'PandasDataFrame':
+        """Select only several columns."""
+        inner_data = self.inner_data.loc[:, names]
+        # TODO: It's actually a view, isn't it?
+        return DataObject.from_native(inner_data, source=self)
 
     def dropna(self, **kwargs):
         kwargs["inplace"] = True
