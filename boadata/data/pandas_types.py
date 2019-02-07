@@ -1,5 +1,5 @@
 import types
-from typing import List
+from typing import List, Optional
 
 import numpy as np
 import odo
@@ -33,7 +33,7 @@ class _PandasBase(
         return klass.from_uri(uri=uri, source=self)
 
     @property
-    def name(self):
+    def name(self) -> Optional[str]:
         # Pandas objects do not have names.
         return None
 

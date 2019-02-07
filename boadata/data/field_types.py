@@ -18,7 +18,7 @@ from .xarray_types import XarrayDataArrayBase, XarrayDatasetBase
 
 
 class AbstractFieldMap:
-    def get_last_axis(self, axis1, axis2):
+    def get_last_axis(self, axis1, axis2) -> SystemError:
         """Get the third axis for two selected ones.
 
         :rtype: str

@@ -1,4 +1,5 @@
 import os
+
 import pandas as pd
 import xlrd
 
@@ -13,7 +14,7 @@ class ExcelSheet(PandasDataFrameBase):
     EXTENSIONS = [".xls", ".xlsx"]
 
     @classmethod
-    def accepts_uri(cls, uri):
+    def accepts_uri(cls, uri: str) -> bool:
         if "::" in uri:
             file, sheet = uri.split("::")
         else:
@@ -24,7 +25,7 @@ class ExcelSheet(PandasDataFrameBase):
         return os.path.isdir(dir) and ext in cls.EXTENSIONS
 
     @classmethod
-    def from_uri(cls, uri, **kwargs):
+    def from_uri(cls, uri: str, **kwargs) -> "ExcelSheet":
         file, sheet = uri.split("::")
         xls = pd.ExcelFile(file)
         sheet = xls.parse(sheet)

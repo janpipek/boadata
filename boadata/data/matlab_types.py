@@ -1,5 +1,7 @@
 from boadata.core import DataObject
 
+from numpy import size
+
 from .numpy_types import NumpyArrayBase
 from .plotting_types import XYPlotDataSeriesBase
 
@@ -9,11 +11,11 @@ class MatlabFigXYData(XYPlotDataSeriesBase):
     type_name = "matlab_fig_xy"
 
     @classmethod
-    def accepts_uri(cls, uri):
+    def accepts_uri(cls, uri: str) -> bool:
         return uri and uri.endswith(".fig")
 
     @classmethod
-    def _from_matlab73(cls, uri, **kwargs):
+    def _from_matlab73(cls, uri: str, **kwargs) -> "MatlabFigXYData":
         import pydons
 
         fb = pydons.FileBrowser(uri, any_keys=True)
@@ -40,9 +42,8 @@ class MatlabFigXYData(XYPlotDataSeriesBase):
             raise RuntimeError("No suitable figures found in {0}".format(uri))
 
     @classmethod
-    def _from_oldmatlab(cls, uri, **kwargs):
+    def _from_oldmatlab(cls, uri: str, **kwargs) -> "MatlabFigXYData":
         from scipy.io import loadmat
-        from numpy import size
 
         data = loadmat(uri, squeeze_me=True, struct_as_record=False)
 
@@ -76,7 +77,7 @@ class MatlabFigXYData(XYPlotDataSeriesBase):
             raise RuntimeError("No suitable figures found in {0}".format(uri))
 
     @classmethod
-    def from_uri(cls, uri, **kwargs):
+    def from_uri(cls, uri: str, **kwargs) -> "MatlabFigXYData":
         try:
             return cls._from_oldmatlab(uri, **kwargs)
         except:

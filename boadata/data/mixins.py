@@ -1,5 +1,6 @@
 from boadata.core import DataObject
 
+import numpy as np
 
 @DataObject.proxy_methods(["__getitem__"])
 class GetItemMixin:
@@ -25,7 +26,6 @@ class StatisticsMixin:
 
     def quantile(self, n, wrap=True):
         import boadata
-        import numpy as np
 
         if hasattr(self.inner_data, "quantile"):
             result = self.inner_data.quantile(n)
@@ -39,8 +39,6 @@ class StatisticsMixin:
             return result
 
     def percentile(self, n, wrap=False):
-        import numpy as np
-
         return self.quantile(np.array(n) / 100.0, wrap=wrap)
 
     def median(self):
@@ -80,8 +78,6 @@ class AsArrayMixin:
     """
 
     def __array__(self, *args):
-        import numpy as np
-
         return np.array(self.convert("numpy_array").inner_data, *args)
 
     def astype(self, *args):

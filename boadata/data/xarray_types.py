@@ -1,3 +1,5 @@
+from typing import List, Tuple, Optional
+
 import xarray as xr
 
 from boadata.core import DataObject
@@ -17,11 +19,7 @@ class _XarrayBase(
     DataObject, GetItemMixin, StatisticsMixin, NumericalMixin, CopyableMixin
 ):
     @property
-    def axes(self):
-        """
-
-        :rtype: list[str]
-        """
+    def axes(self) -> List[str]:
         return list(self.inner_data.coords.keys())
 
     def __to_pandas_data_frame__(self):
@@ -30,7 +28,7 @@ class _XarrayBase(
 
 class XarrayDatasetBase(_XarrayBase, SetItemMixin):
     @property
-    def shape(self):
+    def shape(self) -> Tuple[int, ...]:
         # TODO: This is probably completely wrong!!!
         return (len(self.axes),) + self.inner_data[self.columns[0]].shape
 
@@ -115,14 +113,7 @@ class XarrayDataArray(XarrayDataArrayBase):
             return cls(inner_data=native_object, **kwargs)
 
     @classmethod
-    def __from_pandas_data_frame__(cls, origin, value_column=None):
-        """
-
-        :type origin: boadata.data.PandasDataFrame
-        :param axis_columns: list[str] | None
-        :param value_columns: list[str] | None
-        :return:
-        """
+    def __from_pandas_data_frame__(cls, origin: "boadata.data.PandasDataFrame", value_column: Optional[str] = None) -> "XarrayDataArray":
         if not value_column:
             value_column = origin.columns[-1]
         axis_columns = [column for column in origin.columns if column != value_column]

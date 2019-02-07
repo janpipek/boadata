@@ -1,3 +1,5 @@
+from typing import Tuple
+
 import numpy as np
 
 from boadata.core import DataObject
@@ -23,10 +25,10 @@ class NumpyArrayBase(DataObject, CopyableMixin, IteratorMixin):
     real_type = np.ndarray
 
     @property
-    def shape(self):
+    def shape(self) -> Tuple[int, ...]:
         return self.inner_data.shape
 
-    def dropna(self, flatten=False):
+    def dropna(self, flatten: bool = False) -> 'NumpyArrayBase':
         if self.ndim > 1 and not flatten:
             raise RuntimeError(
                 "dropna not allowed for multidimensional arrays. Override by flatten=True"
@@ -35,16 +37,16 @@ class NumpyArrayBase(DataObject, CopyableMixin, IteratorMixin):
         return DataObject.from_native(x[~np.isnan(x)])
 
     @property
-    def ndim(self):
+    def ndim(self) -> int:
         return self.inner_data.ndim
 
     @DataConversion.condition(lambda x: x.ndim <= 2)
-    def __to_csv__(self, uri, **kwargs):
+    def __to_csv__(self, uri: str, **kwargs):
         np.savetxt(uri, self.inner_data, delimiter=",")
         csv_type = DataObject.registered_types["csv"]
         return csv_type.from_uri(uri, source=self)
 
-    def __to_numpy_array__(self):
+    def __to_numpy_array__(self) -> 'NumpyArray':
         return NumpyArray(inner_data=self.inner_data, source=self)
 
     @DataConversion.condition(lambda x: x.ndim == 2)
@@ -62,7 +64,7 @@ class NumpyArrayBase(DataObject, CopyableMixin, IteratorMixin):
             self.__class__.__name__, self.shape, self.inner_data.dtype
         )
 
-    def histogram(self, *args, **kwargs):
+    def histogram(self, *args, **kwargs) -> "boadata.data.plotting_types.HistogramData":
         """
         :rtype: boadata.data.plotting_types.HistogramData
         """
@@ -110,6 +112,6 @@ class NumpyArray(
     type_name = "numpy_array"
 
     @classmethod
-    def random(cls, *shape):
+    def random(cls, *shape) -> "NumpyArray":
         data = np.random.rand(*shape)
         return cls(inner_data=data)
