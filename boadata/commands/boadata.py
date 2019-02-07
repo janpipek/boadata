@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import sys
 import click
 from boadata import __version__
@@ -8,9 +8,9 @@ from boadata import __version__
 @click.version_option(__version__)
 @click.argument("uri", default=None, required=False)
 def run_app(uri=None):
-    import boadata.data           # Load all types
-    import boadata.trees          # Load all trees
-    from boadata.gui import qt    # Force sip API
+    import boadata.data  # Load all types
+    import boadata.trees  # Load all trees
+    from boadata.gui import qt  # Force sip API
     from qtpy import QtGui, QtWidgets
     from boadata.core.data_tree import DataTree
     from boadata.gui.qt import MainWindow, DataTreeModel
@@ -39,5 +39,6 @@ def run_app(uri=None):
     mw.show()
     sys.exit(app.exec_())
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     run_app()

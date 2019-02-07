@@ -1,7 +1,10 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import sys
+
 import click
+
 from boadata import __version__
+from boadata.cli import try_load, try_apply_sql
 
 
 @click.command()
@@ -10,15 +13,8 @@ from boadata import __version__
 @click.option("-s", "--sql", required=False, help="SQL to run on the object.")
 @click.option("-t", "--type", default=None, help="What type is the object.")
 def run_app(uri, type, **kwargs):
-    kwargs = {key : value for key, value in kwargs.items() if value is not None}
-
-    from boadata import load
-    do = load(uri, type)
-    if not do:
-        print("URI not understood: {0}".format(uri))
-        sys.exit(-1)
-    if "sql" in kwargs:
-        do = do.sql(kwargs.get("sql"), table_name="data")    
+    do = try_load(uri, type)
+    do = try_apply_sql(do, kwargs)
 
     print("Type: {0}".format(do.type_name))
     print("Underlying type: {0}".format(do.inner_data.__class__.__name__))
@@ -33,6 +29,7 @@ def run_app(uri, type, **kwargs):
             except:
                 pass
             print(s)
+
 
 if __name__ == "__main__":
     run_app()

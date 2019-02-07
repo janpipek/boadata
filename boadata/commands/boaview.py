@@ -1,6 +1,10 @@
+#!/usr/bin/env python3
 import sys
+
 import click
-from  boadata import __version__
+
+from boadata import __version__
+from boadata.cli import try_load, try_apply_sql, qt_app
 
 
 @click.command()
@@ -9,23 +13,18 @@ from  boadata import __version__
 @click.option("-s", "--sql", required=False, help="SQL to run on the object.")
 @click.option("-t", "--type", default=None, help="What type is the object.")
 def run_app(uri, type, **kwargs):
-    kwargs = {key : value for key, value in kwargs.items() if value is not None}
+    kwargs = {key: value for key, value in kwargs.items() if value is not None}
 
-    from boadata import load
-    do = load(uri, type)
-    if "sql" in kwargs:
-        do = do.sql(kwargs.get("sql"), table_name="data")       
+    do = try_load(uri, type)
+    do = try_apply_sql(do, kwargs)
 
-    from boadata.gui import qt   # Force sip
-    from qtpy import QtWidgets
-    app = QtWidgets.QApplication(sys.argv)
-    # TODO: Think here?
-    from . import enable_ctrl_c
-    enable_ctrl_c()    
+    with qt_app():
+        from boadata.gui.qt import DataObjectWindow
 
-    from boadata.gui.qt import DataObjectWindow
-    window = DataObjectWindow(data_object=do)
-    window.show()
-    window.setWindowTitle(do.uri)
+        window = DataObjectWindow(do)
+        window.show()
+        window.setWindowTitle(do.uri)
 
-    sys.exit(app.exec_())
+
+if __name__ == "__main__":
+    run_app()

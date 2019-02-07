@@ -1,22 +1,22 @@
-from boadata import __version__, load
-from boadata.core import DataObject
-
+#!/usr/bin/env python3
 import click
+
+from boadata.core import DataObject
+from boadata.cli import try_load
 
 
 @click.command()
 @click.version_option(__version__)
 @click.argument("from_uri")
 @click.argument("to_uri", required=False, default=None)
-@click.option("-t", "--type", default=None, help="What type should be the destination object.")
+@click.option(
+    "-t", "--type", default=None, help="What type should be the destination object."
+)
 def run_app(from_uri, to_uri, **kwargs):
     kwargs = {key: value for key, value in kwargs.items() if value is not None}
     type = kwargs.get("type")
 
-    do = load(from_uri)
-    if not do:
-        print("URI not understood: {0}").format(from_uri)
-        sys.exit(-1)
+    do = try_load(from_uri)
 
     if to_uri:
         if not type:
@@ -35,3 +35,7 @@ def run_app(from_uri, to_uri, **kwargs):
         print("-------------------")
         for conversion in do.allowed_conversions:
             print(conversion[1])
+
+
+if __name__ == "__main__":
+    run_app()

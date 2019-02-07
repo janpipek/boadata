@@ -1,6 +1,10 @@
+#!/usr/bin/env python3
 import sys
+
 import click
+
 from boadata import __version__
+from boadata.cli import enable_ctrl_c
 
 
 @click.command()
@@ -8,9 +12,11 @@ from boadata import __version__
 @click.argument("uri")
 @click.argument("x", default=None, required=False)
 @click.option("-t", "--type", default=None, help="What type is the object.")
-@click.option('-n', "--bins", default=50, type=int, help="How many bins")
+@click.option("-n", "--bins", default=50, type=int, help="How many bins")
 @click.option("-s", "--sql", required=False, help="SQL to run on the object.")
-@click.option('-r', "--relative", default=False, is_flag=True, help="Show relative frequency")
+@click.option(
+    "-r", "--relative", default=False, is_flag=True, help="Show relative frequency"
+)
 # @click.option("-a", "--all", default=False, is_flag=True, help="Show histograms for all")
 @click.option("--logy", default=False, is_flag=True, help="Logarithmic scale on Y axis")
 @click.option("--xlabel", required=False, help="Label to be displayed on X axis")
@@ -20,26 +26,28 @@ from boadata import __version__
 @click.option("--hist/--no-hist", default=True, help="Show histogram boxes")
 def run_app(uri, x, bins, type, **kwargs):
     from boadata import load
+
     try:
         do = load(uri, type)
     except:
         print("URI not understood:", uri)
         sys.exit(-1)
 
-    from boadata.gui import qt   # Force sip
+    from boadata.gui import qt  # Force sip
     from qtpy import QtWidgets
+
     app = QtWidgets.QApplication(sys.argv)
-    from . import enable_ctrl_c
     enable_ctrl_c()
 
-    kwargs = {key : value for key, value in kwargs.items() if value is not None}
+    kwargs = {key: value for key, value in kwargs.items() if value is not None}
 
     from boadata.gui.qt.views import HistogramView
+
     def show(x):
-         view = HistogramView(data_object=do)
-         widget = view.create_widget(xcol=x, bins=bins, **kwargs)
-         widget.show()
-         widget.setWindowTitle(do.uri)
+        view = HistogramView(data_object=do)
+        widget = view.create_widget(xcol=x, bins=bins, **kwargs)
+        widget.show()
+        widget.setWindowTitle(do.uri)
 
     # TODO: not working properly
     if kwargs.get("all") and False:
@@ -61,6 +69,7 @@ def run_app(uri, x, bins, type, **kwargs):
         show(x)
 
     sys.exit(app.exec_())
+
 
 if __name__ == "__main__":
     run_app()
