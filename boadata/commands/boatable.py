@@ -20,10 +20,9 @@ def run_app(uri, type, **kwargs):
     do = try_apply_sql(do, kwargs)
     do = try_select_columns(do, kwargs)
 
-    from boadata.gui import qt  # Force sip
-    from qtpy import QtWidgets
-
     with qt_app():
+        from boadata.gui.qt.views import TableView
+        
         view = TableView(data_object=do)
         widget = view.create_widget(None)
         widget.show()
