@@ -25,6 +25,7 @@ def try_apply_sql(do: 'boadata.core.DataOject', kwargs: dict) -> 'boadata.core.D
 def try_select_columns(do: 'boadata.core.DataObject', kwargs: dict) -> 'boadata.core.DataObject':
     columns = kwargs.pop("columns", None)
     if columns:
+        columns = columns.split(",")
         if not hasattr(do, "select_columns"):
             print("The data object does not support column selection.")
             sys.exit(-1)

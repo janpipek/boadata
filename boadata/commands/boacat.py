@@ -4,13 +4,14 @@ import sys
 import click
 
 from boadata import __version__
-from boadata.cli import try_load, try_apply_sql
+from boadata.cli import try_load, try_apply_sql, try_select_columns
 
 
 @click.command()
 @click.version_option(__version__)
 @click.argument("uri")
 @click.option("-t", "--type", default=None, help="What type is the object.")
+@click.option("-c", "--columns", required=False, help="List of columns to show")
 @click.option("-s", "--sql", required=False, help="SQL to run on the object.")
 @click.option(
     "-l",
@@ -24,6 +25,7 @@ def run_app(uri, type, **kwargs):
 
     do = try_load(uri, type)
     do = try_apply_sql(do, kwargs)
+    do = try_select_columns(do, kwargs)
 
     do = do.convert("pandas_data_frame")
     if do.shape[0] > kwargs.get("limit", 2 ** 62):
