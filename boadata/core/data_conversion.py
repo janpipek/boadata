@@ -43,7 +43,7 @@ class DataConversion:
     def _register(self):
         DataConversion.registered_conversions[(self.type_name1, self.type_name2)] = self
 
-    def applies(self, origin):
+    def applies(self, origin) -> bool:
         # Unify arguments
         target_type_name = self.type_name2
 

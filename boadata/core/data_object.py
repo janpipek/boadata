@@ -14,7 +14,7 @@ class _DataObjectRegistry:
     registered_default_types = {}
 
     @staticmethod
-    def register_type(default=False):
+    def register_type(default: bool = False):
         """Decorator that registers the data type
 
         :param default: Whether to serve as DataObject.from_native handler
@@ -97,9 +97,6 @@ class _DataObjectConversions:
 
     def is_convertible_to(self, new_type_name: Union[str, type]) -> bool:
         """
-
-        :type new_type_name: str | type
-        :rtype: bool
         """
         if isinstance(new_type_name, type):
             new_type, new_type_name = new_type_name, new_type_name.type_name
@@ -124,9 +121,6 @@ class _DataObjectConversions:
 
     def convert(self, new_type_name: str, **kwargs) -> 'DataObject':
         """Convert to another boadata-supported type.
-
-        :type new_type_name: str
-        :rtype DataObject
 
         Auto-conversion returns the same object.
         Default implementation is based on odo.
@@ -154,10 +148,8 @@ class _DataObjectInterface:
     -
     """
     @property
-    def shape(self) -> tuple:
+    def shape(self) -> Tuple[int, ...]:
         """Shape of the data.
-
-        :rtype: tuple(int)
 
         Example: Shape of the 4x3 matrix is (4, 3)
         """
@@ -195,10 +187,8 @@ class _DataObjectInterface:
             return None
 
     @property
-    def columns(self):
+    def columns(self) -> Optional[List[str]]:
         """Column names (in multidimensional mappings, the value variables)
-
-        :rtype: list[str] | None
 
         Default variant understands pandas DataFrames
         """
@@ -292,7 +282,7 @@ class DataObject(_DataObjectRegistry, _DataObjectConversions, _DataObjectInterfa
             return boadata_type
         return wrapper
 
-    def evaluate(self, expression, wrap=True):
+    def evaluate(self, expression: str, wrap=True):
         """Do calculation on columns of the dataset.
 
         :param expression: a valid expression
@@ -315,7 +305,7 @@ class DataObject(_DataObjectRegistry, _DataObjectConversions, _DataObjectInterfa
         else:
             return result
 
-    def where(self, condition, sql=False) -> 'DataObject':
+    def where(self, condition: str, sql: bool = False) -> 'DataObject':
         """Choose a subset of a dataset.
 
         :param condition: a valid condition returning boolean
