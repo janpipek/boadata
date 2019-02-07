@@ -1,8 +1,10 @@
-import sys
-import blinker
 import logging
-from typing import Optional, Iterator
-from .data_object import DataObject
+import sys
+from typing import Iterator, List, Optional
+
+import blinker
+
+from boadata.core.data_object import DataObject
 
 
 class DataNode:
@@ -18,7 +20,7 @@ class DataNode:
     They are not emitted before children are loaded.
     '''
     
-    def __init__(self, parent=None, uri=None):
+    def __init__(self, parent: Optional['DataNode'] = None, uri: Optional[str] = None):
         self.parent = parent
         self.children_loaded = False
         self._children = []        
@@ -39,10 +41,8 @@ class DataNode:
     def has_object(self) -> bool:
         return bool(self._get_object_constructor())
 
-    def _get_object_constructor(self):
+    def _get_object_constructor(self) -> Optional[type]:
         """
-
-        :rtype: None | type
         """
         uri = self.uri
         if not uri:
@@ -66,11 +66,11 @@ class DataNode:
             return None
 
     @property
-    def uri(self):
+    def uri(self) -> Optional[str]:
         return self._uri
 
     @property
-    def children(self):
+    def children(self) -> List['DataNode']:
         return []
 
     @property
@@ -96,7 +96,7 @@ class DataNode:
         from boadata import tree
         return tree(self.uri)
 
-    def has_subtree(self):
+    def has_subtree(self) -> bool:
         '''Whether the node can serve as a root of another tree.'''
         from .data_tree import DataTree
         for cls in DataTree.registered_trees:
@@ -116,10 +116,10 @@ class DataNode:
         return self._children
 
     @property
-    def child_names(self):
+    def child_names(self) -> List[str]:
         return [child.title for child in self.children]
 
-    def add_child(self, child):
+    def add_child(self, child: 'DataNode'):
         if not child in self._children:
             child.parent = self
             self.changed.connect(self._on_changed, sender=child)
@@ -129,7 +129,7 @@ class DataNode:
                 self._on_changed()
             logging.debug("Child %s added to node %s." % (child.title, self.title))
 
-    def remove_child(self, child):
+    def remove_child(self, child: 'DataNode'):
         if child in self._children:
             self._children.remove(child)
             if self.children_loaded:

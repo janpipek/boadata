@@ -1,8 +1,10 @@
 import weakref
 from collections import OrderedDict
-from typing import List, Optional, Tuple, Union
+from typing import List, Optional, Tuple, Union, Callable
 
 import blinker
+import numexpr as ne
+import numpy as np
 import odo  # Make optional?
 
 from boadata.core.data_conversion import ConversionUnknown, DataConversion
@@ -14,7 +16,7 @@ class _DataObjectRegistry:
     registered_default_types = {}
 
     @staticmethod
-    def register_type(default: bool = False):
+    def register_type(default: bool = False) -> Callable[[type], type]:
         """Decorator that registers the data type
 
         :param default: Whether to serve as DataObject.from_native handler
@@ -26,7 +28,7 @@ class _DataObjectRegistry:
         """
         if isinstance(default, type):
             raise RuntimeError("Invalid use of decorator. Please, use DataObject.register_type() ")
-        def wrap(boadata_type):
+        def wrap(boadata_type: type) -> type:
             DataObject.registered_types[boadata_type.type_name] = boadata_type
             DataConversion.discover(boadata_type)
             if default:
@@ -37,20 +39,16 @@ class _DataObjectRegistry:
 
 
 class _DataObjectConversions:
+    """DataObject methods related to conversions."""
     @classmethod
-    def accepts_uri(cls, uri):
-        """
-
-        :type uri: str
-        """
+    def accepts_uri(cls, uri: str) -> bool:
         return False
 
     @classmethod
-    def from_uri(cls, uri, **kwargs):
+    def from_uri(cls, uri: str, **kwargs) -> 'DataObject':
         """"Create an object of this class from an URI.
 
         :param uri: URI in the odo sense
-        :type uri: str
 
         This method can be (but needn't be) overridden in daughter classes:
         By default, it uses odo to import the data.
@@ -215,7 +213,7 @@ class DataObject(_DataObjectRegistry, _DataObjectConversions, _DataObjectInterfa
 
     It is necessary to keep all arguments keyword (enforceable in Python 3).
     '''
-    def __init__(self, inner_data=None, uri=None, source=None, **kwargs):
+    def __init__(self, inner_data=None, uri: str = None, source: 'DataObject' = None, **kwargs):
         if self.real_type and not isinstance(inner_data, self.real_type):
             raise RuntimeError("Invalid type of inner data: `{0}` instead of expected `{1}`".format(
                 inner_data.__class__.__name__, self.real_type.__name__
@@ -239,7 +237,7 @@ class DataObject(_DataObjectRegistry, _DataObjectConversions, _DataObjectInterfa
         return "{0}(\"{1}\")".format(self.__class__.__name__, self.uri)
 
     @staticmethod
-    def proxy_methods(methods, wrap=True, unwrap_args=True, same_class=True, through=None):
+    def proxy_methods(methods, wrap: bool = True, unwrap_args: bool = True, same_class: bool = True, through: Optional[type] = None):
         """Decorator to apply on DataObject descendants.
 
         :param wrap: Whether to wrap result
@@ -282,16 +280,14 @@ class DataObject(_DataObjectRegistry, _DataObjectConversions, _DataObjectInterfa
             return boadata_type
         return wrapper
 
-    def evaluate(self, expression: str, wrap=True):
+    def evaluate(self, expression: str, wrap: bool = True):
         """Do calculation on columns of the dataset.
 
         :param expression: a valid expression
-        :type expression: string
+        :param wrap: whether to convert back to DataObject or return the native result
 
         Based on numexpr library
         """
-        import numexpr as ne
-        import numpy as np
         local_dict = {
             col : self[col].inner_data for col in self.columns if isinstance(col, str)
         }

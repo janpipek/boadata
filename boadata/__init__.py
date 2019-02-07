@@ -1,3 +1,4 @@
+from typing import Optional
 import warnings
 
 __version__ = str('0.3.11')
@@ -6,7 +7,7 @@ __version__ = str('0.3.11')
 warnings.filterwarnings("ignore", module="matplotlib")
 
 
-def load(uri, type=None, *args, **kwargs) -> 'boadata.core.DataObject':
+def load(uri: str, type: Optional[str] = None, *args, **kwargs) -> 'boadata.core.DataObject':
     """Load an object from some URI.
 
     :type uri: str
@@ -21,11 +22,10 @@ def load(uri, type=None, *args, **kwargs) -> 'boadata.core.DataObject':
         return core.DataObject.from_uri(uri, *args, **kwargs)
 
 
-def wrap(native_object, force=True, **kwargs) -> 'boadata.core.DataObject':
+def wrap(native_object, force: bool = True, **kwargs) -> 'boadata.core.DataObject':
     """Change some data object into a wrapped boadata type.
 
     :param force: If false, wrapping an unsupported object will result that object.
-    :type force: bool
     """
     from . import core
     from . import data     # Loads all formats
@@ -38,12 +38,7 @@ def wrap(native_object, force=True, **kwargs) -> 'boadata.core.DataObject':
 
 
 def unwrap(boadata_object: 'boadata.core.DataObject', **kwargs):
-    """Change boadata object into its native type.
-
-    :type boadata_object: boadata.core.data_object.DataObject
-    :param kwargs:
-    :return:
-    """
+    """Change boadata object into its native type."""
     from .core import DataObject
     if isinstance(boadata_object, DataObject):
         return boadata_object.inner_data
@@ -56,13 +51,9 @@ def apply(native_object, function, *args, **kwargs):
     result = unwrap(function(wrap(native_object), *args, **kwargs))
 
 
-def tree(uri):
-    """Load a tree from some URI.
-
-    :type uri: str
-    :rtpye boadata.core.DataTree
-    """
-    from . import trees
+def tree(uri: str) -> 'boadata.core.data_tree.Datatree':
+    """Load a tree from some URI."""
+    from boadata import trees  # Enforce tree loading
     from boadata.core.data_tree import DataTree
 
     tree = None
