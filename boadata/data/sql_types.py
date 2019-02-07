@@ -1,5 +1,6 @@
 import os
 import re
+from typing import List, Tuple
 
 import pandas as pd
 import sqlalchemy as sa
@@ -24,7 +25,7 @@ class DatabaseTable(OdoDataObject):
     URI_RE = URI_DB_PART_RE + "::.+"
 
     @classmethod
-    def accepts_uri(cls, uri):
+    def accepts_uri(cls, uri: str) -> bool:
         if not uri:
             return False
         for schema in DatabaseTable.schemas:
@@ -39,11 +40,11 @@ class DatabaseTable(OdoDataObject):
         return False
 
     @property
-    def ndim(self):
+    def ndim(self) -> int:
         return 2
 
     @property
-    def shape(self):
+    def shape(self) -> Tuple[int, int]:
         rows = self.inner_data.count().execute().fetchone()[0]
         cols = len(self.columns)
         return (rows, cols)
@@ -52,7 +53,7 @@ class DatabaseTable(OdoDataObject):
         return self.convert("pandas_data_frame")[item]
 
     @property
-    def columns(self):
+    def columns(self) -> List[str]:
         return [col.name for col in self.inner_data.columns.values()]
 
 

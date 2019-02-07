@@ -1,4 +1,5 @@
 import csv
+from typing import Optional
 
 import odo
 import pandas as pd
@@ -15,16 +16,16 @@ from .pandas_types import PandasDataFrameBase
 class CSVFile(PandasDataFrameBase):
     type_name = "csv"
 
-    def __to_text__(self, **kwargs):
+    def __to_text__(self, **kwargs) -> "boadata.data.text_types.TextFile":
         constructor = DataObject.registered_types["text"]
         return constructor.from_uri(self.uri, source=self, **kwargs)
 
     @classmethod
-    def accepts_uri(cls, uri):
+    def accepts_uri(cls, uri: str) -> bool:
         return uri[-4:] == ".csv"
 
     @classmethod
-    def _fallback_read(cls, uri, **kwargs):
+    def _fallback_read(cls, uri: str, **kwargs) -> pd.DataFrame:
         with open(uri, "r") as fin:
             lines = [line for line in csv.reader(fin)]
         try:
@@ -35,7 +36,7 @@ class CSVFile(PandasDataFrameBase):
             return pd.DataFrame(lines).convert_objects(convert_numeric=True)
 
     @classmethod
-    def from_uri(cls, uri, index_col=False, source=None, **kwargs):
+    def from_uri(cls, uri: str, index_col=False, source: Optional[DataObject] = None, **kwargs) -> "CSVFile":
         resource = odo.resource(uri)
         if hasattr(resource, "dialect"):
             kwargs.update(resource.dialect)
