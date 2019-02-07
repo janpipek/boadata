@@ -1,11 +1,21 @@
-from boadata.core import DataObject
 import xarray as xr
-from .mixins import GetItemMixin, SetItemMixin, StatisticsMixin, NumericalMixin, CopyableMixin
 
+from boadata.core import DataObject
+
+from .mixins import (
+    CopyableMixin,
+    GetItemMixin,
+    NumericalMixin,
+    SetItemMixin,
+    StatisticsMixin,
+)
 
 # TODO: Limit arithmetic operations where the coordinates don't match
 
-class _XarrayBase(DataObject, GetItemMixin, StatisticsMixin, NumericalMixin, CopyableMixin):
+
+class _XarrayBase(
+    DataObject, GetItemMixin, StatisticsMixin, NumericalMixin, CopyableMixin
+):
     @property
     def axes(self):
         """
@@ -32,7 +42,7 @@ class XarrayDatasetBase(_XarrayBase, SetItemMixin):
         if isinstance(expression, str):
             try:
                 result = self.evaluate(expression, wrap=False)
-                self.inner_data = self.inner_data.merge({key : (self.axes, result)})
+                self.inner_data = self.inner_data.merge({key: (self.axes, result)})
             except:
                 raise RuntimeError("Error when evaluating {0}".format(expression))
         else:
@@ -40,9 +50,11 @@ class XarrayDatasetBase(_XarrayBase, SetItemMixin):
         return self
 
     def _safe_rename(self, a_dict):
-        safe_prefix = "safe" + "_".join(self.axes + self.columns + list(a_dict.values()))
-        dict1 = {key : safe_prefix + value for key, value in a_dict.items()}
-        dict2 = {safe_prefix + value : value for _, value in a_dict.items()}
+        safe_prefix = "safe" + "_".join(
+            self.axes + self.columns + list(a_dict.values())
+        )
+        dict1 = {key: safe_prefix + value for key, value in a_dict.items()}
+        dict2 = {safe_prefix + value: value for _, value in a_dict.items()}
         self.inner_data = self.inner_data.rename(dict1).rename(dict2)
 
     def rename_columns(self, col_dict):
@@ -58,7 +70,12 @@ class XarrayDatasetBase(_XarrayBase, SetItemMixin):
             self._safe_rename(ax_dict)
 
     def __repr__(self):
-        return "{0}({1} -> {2}, shape={3})".format(self.__class__.__name__, ", ".join(self.axes), ", ".join(self.columns), self.shape)
+        return "{0}({1} -> {2}, shape={3})".format(
+            self.__class__.__name__,
+            ", ".join(self.axes),
+            ", ".join(self.columns),
+            self.shape,
+        )
 
     real_type = xr.Dataset
 
@@ -67,7 +84,9 @@ class XarrayDataArrayBase(_XarrayBase):
     real_type = xr.DataArray
 
     def __repr__(self):
-        return "{0}({1}, shape={2}, dtype={3})".format(self.__class__.__name__, ", ".join(self.axes), self.shape, self.dtype)
+        return "{0}({1}, shape={2}, dtype={3})".format(
+            self.__class__.__name__, ", ".join(self.axes), self.shape, self.dtype
+        )
 
     @property
     def dtype(self):

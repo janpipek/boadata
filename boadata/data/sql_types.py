@@ -1,7 +1,7 @@
 import os
-import pandas as pd
 import re
 
+import pandas as pd
 import sqlalchemy as sa
 
 from boadata.core.data_conversion import ChainConversion, OdoConversion
@@ -30,7 +30,11 @@ class DatabaseTable(OdoDataObject):
         for schema in DatabaseTable.schemas:
             if re.match(cls.URI_RE.format(schema), uri):
                 return True
-        if os.path.isfile(uri) and os.path.splitext(uri)[1] in (".db", ".sqlite", ".sqlite3"):
+        if os.path.isfile(uri) and os.path.splitext(uri)[1] in (
+            ".db",
+            ".sqlite",
+            ".sqlite3",
+        ):
             return True
         return False
 
@@ -59,11 +63,11 @@ class DatabaseQuery(PandasDataFrameBase):
     URI_RE = "query@" + DatabaseTable.URI_RE
 
     @classmethod
-    def from_uri(cls, uri: str, **kwargs) -> 'DatabaseQuery':
+    def from_uri(cls, uri: str, **kwargs) -> "DatabaseQuery":
         constr, query = uri[6:].split("::", 1)
         con = sa.create_engine(constr)
         inner_data = pd.read_sql_query(query, con)
-        return cls(inner_data=inner_data, uri=uri, **kwargs)      
+        return cls(inner_data=inner_data, uri=uri, **kwargs)
 
     @classmethod
     def accepts_uri(cls, uri: str) -> bool:

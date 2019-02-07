@@ -1,7 +1,11 @@
-from boadata.core import DataObject, DataConversion
-from boadata.core.data_conversion import IdentityConversion, ChainConversion
-import pandas as pd
+import csv
+
 import odo
+import pandas as pd
+
+from boadata.core import DataConversion, DataObject
+from boadata.core.data_conversion import ChainConversion, IdentityConversion
+
 from .pandas_types import PandasDataFrameBase
 
 
@@ -21,11 +25,12 @@ class CSVFile(PandasDataFrameBase):
 
     @classmethod
     def _fallback_read(cls, uri, **kwargs):
-        import csv
         with open(uri, "r") as fin:
             lines = [line for line in csv.reader(fin)]
         try:
-            return pd.DataFrame(lines[1:], columns=lines[0]).convert_objects(convert_numeric=True)
+            return pd.DataFrame(lines[1:], columns=lines[0]).convert_objects(
+                convert_numeric=True
+            )
         except:
             return pd.DataFrame(lines).convert_objects(convert_numeric=True)
 
@@ -39,7 +44,7 @@ class CSVFile(PandasDataFrameBase):
             # lambda: pd.read_csv(uri, index_col=index_col, parse_dates=[0], **kwargs),
             lambda: pd.read_csv(uri, index_col=index_col, **kwargs),
             lambda: odo.odo(uri, pd.DataFrame, index_col=index_col, **kwargs),
-            lambda: cls._fallback_read(uri, **kwargs)
+            lambda: cls._fallback_read(uri, **kwargs),
         ]
         result = None
         for method in methods:
@@ -52,6 +57,9 @@ class CSVFile(PandasDataFrameBase):
         if result:
             if not result.name:
                 import os
+
                 result.inner_data.name = os.path.splitext(os.path.basename(uri))[0]
             return result
-        raise RuntimeError("No CSV reading method understands the file: {0}".format(uri))
+        raise RuntimeError(
+            "No CSV reading method understands the file: {0}".format(uri)
+        )

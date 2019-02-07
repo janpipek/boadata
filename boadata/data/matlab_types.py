@@ -1,6 +1,7 @@
 from boadata.core import DataObject
-from  .plotting_types import XYPlotDataSeriesBase
+
 from .numpy_types import NumpyArrayBase
+from .plotting_types import XYPlotDataSeriesBase
 
 
 @DataObject.register_type()
@@ -14,6 +15,7 @@ class MatlabFigXYData(XYPlotDataSeriesBase):
     @classmethod
     def _from_matlab73(cls, uri, **kwargs):
         import pydons
+
         fb = pydons.FileBrowser(uri, any_keys=True)
         x = None
         y = None
@@ -24,7 +26,11 @@ class MatlabFigXYData(XYPlotDataSeriesBase):
             if not isinstance(value, pydons.MatStruct):
                 continue
             if "properties" in value:
-                if "XData" in value.properties and "YData" in value.properties and "ZData" not in value.properties:
+                if (
+                    "XData" in value.properties
+                    and "YData" in value.properties
+                    and "ZData" not in value.properties
+                ):
                     x = value.properties.XData
                     y = value.properties.YData
 
@@ -37,9 +43,10 @@ class MatlabFigXYData(XYPlotDataSeriesBase):
     def _from_oldmatlab(cls, uri, **kwargs):
         from scipy.io import loadmat
         from numpy import size
+
         data = loadmat(uri, squeeze_me=True, struct_as_record=False)
 
-        ax1 = data['hgS_070000'].children
+        ax1 = data["hgS_070000"].children
         if size(ax1) > 1:
             ax1 = ax1[0]
 
@@ -50,10 +57,10 @@ class MatlabFigXYData(XYPlotDataSeriesBase):
 
         counter = 0
         for line in ax1.children:
-            if line.type == 'graph2d.lineseries':
+            if line.type == "graph2d.lineseries":
                 x = line.properties.XData
                 y = line.properties.YData
-            elif line.type == 'text':
+            elif line.type == "text":
                 if counter == 0:
                     # name of the plot?
                     pass
@@ -96,6 +103,7 @@ class OldMatlabData(NumpyArrayBase):
     @classmethod
     def from_uri(cls, uri, **kwargs):
         from scipy.io import loadmat
+
         file, key = uri.split("::")
         data = loadmat(file)
         inner_path = key.split("/")

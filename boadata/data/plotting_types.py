@@ -1,15 +1,20 @@
-from boadata.core import DataObject
-import pandas as pd
-import numpy as np
-from boadata import unwrap
 import numbers
+
+import numpy as np
+import pandas as pd
+
 import physt.histogram1d
+from boadata import unwrap
+from boadata.core import DataObject
+
 from .mixins import NumericalMixin
 
 
 class XYPlotDataSeriesBase(DataObject):
     def __init__(self, x, y, xname="x", yname="y", **kwargs):
-        super(XYPlotDataSeriesBase, self).__init__(inner_data=[np.array(unwrap(x)), np.array(unwrap(y))], **kwargs)
+        super(XYPlotDataSeriesBase, self).__init__(
+            inner_data=[np.array(unwrap(x)), np.array(unwrap(y))], **kwargs
+        )
         self.xname = xname
         self.yname = yname
 
@@ -26,10 +31,14 @@ class XYPlotDataSeriesBase(DataObject):
         return (self.xname, self.yname)
 
     def __repr__(self):
-        return "{0}({1} -> {2}, length={3})".format(self.__class__.__name__, self.xname, self.yname, len(self.x))
+        return "{0}({1} -> {2}, length={3})".format(
+            self.__class__.__name__, self.xname, self.yname, len(self.x)
+        )
 
     def __to_xy_dataseries__(self, **kwargs):
-        return XYPlotDataSeries(x=self.x, y=self.y, xname=self.xname, yname=self.yname, source=self)
+        return XYPlotDataSeries(
+            x=self.x, y=self.y, xname=self.xname, yname=self.yname, source=self
+        )
 
     def __to_pandas_data_frame__(self, **kwargs):
         data = pd.DataFrame()
@@ -44,7 +53,9 @@ class XYPlotDataSeriesBase(DataObject):
 
     def where(self, condition):
         """Run a condition on the data."""
-        return self.convert("pandas_data_frame").where(condition).convert("xy_dataseries")
+        return (
+            self.convert("pandas_data_frame").where(condition).convert("xy_dataseries")
+        )
 
 
 @DataObject.register_type()
@@ -63,4 +74,3 @@ class HistogramData(DataObject, NumericalMixin):
         y = self.inner_data.frequencies
         xname = self.inner_data.axis_name
         return XYPlotDataSeries(x=x, y=y, xname=xname)
-

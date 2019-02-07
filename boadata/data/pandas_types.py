@@ -10,15 +10,23 @@ from boadata.core import DataObject
 from boadata.core.data_conversion import DataConversion, MethodConversion
 
 from .. import wrap
-from .mixins import (AsArrayMixin, CopyableMixin, GetItemMixin, NumericalMixin,
-                     StatisticsMixin)
+from .mixins import (
+    AsArrayMixin,
+    CopyableMixin,
+    GetItemMixin,
+    NumericalMixin,
+    StatisticsMixin,
+)
 
 
-class _PandasBase(DataObject, GetItemMixin, StatisticsMixin, NumericalMixin, CopyableMixin):
+class _PandasBase(
+    DataObject, GetItemMixin, StatisticsMixin, NumericalMixin, CopyableMixin
+):
     """Shared behaviour for all pandas-based types.
 
     These include Series and DataFrame based types.
     """
+
     def __to_csv__(self, uri, **kwargs):
         self.inner_data.to_csv(uri, **kwargs)
         klass = DataObject.registered_types["csv"]
@@ -49,13 +57,18 @@ class PandasDataFrameBase(_PandasBase):
         """
         if not columns:
             # All numeric
-            columns = [col for col in self.columns if self.inner_data[col].dtype.kind in "iuf"]
+            columns = [
+                col for col in self.columns if self.inner_data[col].dtype.kind in "iuf"
+            ]
         if isinstance(columns, str):
             columns = [columns]
         if isinstance(weights, str):
             columns = [col for col in columns if col != weights]
         weights = self[weights]
-        return {col: self[col].histogram(bins=bins, weights=weights, **kwargs) for col in columns}
+        return {
+            col: self[col].histogram(bins=bins, weights=weights, **kwargs)
+            for col in columns
+        }
 
     def sql(self, sql, table_name=None):
         """Run SQL query on columns of the table.
@@ -70,8 +83,10 @@ class PandasDataFrameBase(_PandasBase):
         if not table_name:
             table_name = self.name
         if not table_name:
-            raise RuntimeError("Cannot run SQL queries on unnamed dataframe. Specify table_name argument...")
-        engine = sa.create_engine('sqlite:///:memory:')
+            raise RuntimeError(
+                "Cannot run SQL queries on unnamed dataframe. Specify table_name argument..."
+            )
+        engine = sa.create_engine("sqlite:///:memory:")
         self.inner_data.to_sql(table_name, engine)
         # TODO: some clean up???
         return wrap(pd.read_sql_query(sql, engine), source=self)
@@ -98,7 +113,7 @@ class PandasDataFrameBase(_PandasBase):
                     ydata = self.evaluate(x)
                 except:
                     ydata = self[x]
-                xdata = range(ydata.shape[0])       # TODO: proper index???
+                xdata = range(ydata.shape[0])  # TODO: proper index???
                 xname = "x"
                 yname = x
             else:
@@ -114,7 +129,12 @@ class PandasDataFrameBase(_PandasBase):
                 yname = y
         else:
             raise RuntimeError("Cannot specify col2 and not col1.")
-        return constructor(xdata, ydata, xname=kwargs.get("xname", xname), yname=kwargs.get("yname", yname))
+        return constructor(
+            xdata,
+            ydata,
+            xname=kwargs.get("xname", xname),
+            yname=kwargs.get("yname", yname),
+        )
 
     def __to_excel_sheet__(self, uri: str):
         if "::" in uri:
@@ -131,6 +151,7 @@ class PandasDataFrameBase(_PandasBase):
         if not "feather" in DataObject.registered_types:
             raise RuntimeError("Cannot convert to feather.")
         import feather
+
         feather.write_dataframe(self.inner_data, uri)
         return DataObject.registered_types["feather"].from_uri(uri, source=self)
 
@@ -171,8 +192,11 @@ class PandasDataFrameBase(_PandasBase):
     def reorder_columns(self, cols):
         # TODO: Can there be duplicates in DataFrame? Perhaps not
         if not set(cols) == set(self.columns):
-            raise RuntimeError("The new ordering of columns must be complete. {0} is not {1}"
-                               .format(set(cols), set(self.columns)))
+            raise RuntimeError(
+                "The new ordering of columns must be complete. {0} is not {1}".format(
+                    set(cols), set(self.columns)
+                )
+            )
         self.inner_data = self.inner_data[cols]
 
     def add_column(self, expression, name=None):
@@ -200,7 +224,7 @@ class PandasDataFrameBase(_PandasBase):
             raise IndexError("The column {0} does not exist".format(name))
         self._create_column(expression, name)
 
-    def select_columns(self, names: List[str]) -> 'PandasDataFrame':
+    def select_columns(self, names: List[str]) -> "PandasDataFrame":
         """Select only several columns."""
         inner_data = self.inner_data.loc[:, names]
         # TODO: It's actually a view, isn't it?
@@ -239,12 +263,13 @@ class PandasSeriesBase(_PandasBase, AsArrayMixin):
         return 1
 
     def __repr__(self):
-        return "{0} (name={1}, shape={2}, dtype={3})".format(self.__class__.__name__,
-                                                             self.inner_data.name, self.shape, self.dtype)
+        return "{0} (name={1}, shape={2}, dtype={3})".format(
+            self.__class__.__name__, self.inner_data.name, self.shape, self.dtype
+        )
 
     def __to_xy_dataseries__(self, **kwargs):
         constructor = DataObject.registered_types["xy_dataseries"]
-        x = range(self.shape[0])     # TODO: Change to proper index
+        x = range(self.shape[0])  # TODO: Change to proper index
         y = self
         if self.inner_data.name:
             name = self.inner_data.name
@@ -276,7 +301,9 @@ class PandasDataFrame(PandasDataFrameBase):
         super(PandasDataFrame, self).__init__(inner_data, *args, **kwargs)
 
     def __repr__(self):
-        return "{0} (name={1}, shape={2})".format(self.__class__.__name__, self.name, self.shape)
+        return "{0} (name={1}, shape={2})".format(
+            self.__class__.__name__, self.name, self.shape
+        )
 
 
 @DataObject.register_type(default=True)

@@ -5,9 +5,14 @@ from .numpy_types import NumpyArray
 from .csv_types import CSVFile
 from .json_types import JsonFileDataset
 from .text_types import TextFile
-from .field_types import VectorFieldMap, FieldTableFile, ComsolFieldTextFile, OperaFieldTextFile
+from .field_types import (
+    VectorFieldMap,
+    FieldTableFile,
+    ComsolFieldTextFile,
+    OperaFieldTextFile,
+)
 from .sql_types import DatabaseTable
-from .plotting_types import XYPlotDataSeries, HistogramData #, XYPlotDataSet
+from .plotting_types import XYPlotDataSeries, HistogramData  # , XYPlotDataSet
 from .xarray_types import XarrayDataArray, XarrayDataset
 from .geant4_types import Geant4Scoring
 
@@ -18,7 +23,7 @@ except:
 
 try:
     # Dependence on h5py
-    from .hdf5_types import Hdf5Dataset #, Hdf5Table
+    from .hdf5_types import Hdf5Dataset  # , Hdf5Table
 except:
     pass
 

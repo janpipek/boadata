@@ -1,11 +1,14 @@
 import pandas as pd
-from boadata.core import DataObject
-from boadata.core.data_conversion import IdentityConversion, ChainConversion
-from .pandas_types import PandasDataFrameBase
 import seaborn as sns
+
+from boadata.core import DataObject
+from boadata.core.data_conversion import ChainConversion, IdentityConversion
+
+from .pandas_types import PandasDataFrameBase
 
 try:
     import pydataset
+
     @DataObject.register_type()
     @IdentityConversion.enable_to("pandas_data_frame")
     class PyDataSet(PandasDataFrameBase):
@@ -23,6 +26,8 @@ try:
             dataset_name = uri.split("://")[1]
             data = pydataset.data(dataset_name)
             return PyDataSet(inner_data=data, uri=uri)
+
+
 except:
     pass
 

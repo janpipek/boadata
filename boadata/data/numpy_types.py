@@ -1,13 +1,24 @@
-from boadata.core import DataObject
-from boadata.core.data_conversion import DataConversion, OdoConversion, ConstructorConversion
-from .mixins import GetItemMixin, StatisticsMixin, NumericalMixin, AsArrayMixin, CopyableMixin, IteratorMixin
 import numpy as np
+
+from boadata.core import DataObject
+from boadata.core.data_conversion import (
+    ConstructorConversion,
+    DataConversion,
+    OdoConversion,
+)
+
+from .mixins import (
+    AsArrayMixin,
+    CopyableMixin,
+    GetItemMixin,
+    IteratorMixin,
+    NumericalMixin,
+    StatisticsMixin,
+)
 
 
 @ConstructorConversion.enable_to("pandas_series", condition=lambda x: x.ndim == 1)
-@DataObject.proxy_methods([
-    "__len__"
-])
+@DataObject.proxy_methods(["__len__"])
 class NumpyArrayBase(DataObject, CopyableMixin, IteratorMixin):
     real_type = np.ndarray
 
@@ -17,7 +28,9 @@ class NumpyArrayBase(DataObject, CopyableMixin, IteratorMixin):
 
     def dropna(self, flatten=False):
         if self.ndim > 1 and not flatten:
-            raise RuntimeError("dropna not allowed for multidimensional arrays. Override by flatten=True")
+            raise RuntimeError(
+                "dropna not allowed for multidimensional arrays. Override by flatten=True"
+            )
         x = self.inner_data
         return DataObject.from_native(x[~np.isnan(x)])
 
@@ -37,6 +50,7 @@ class NumpyArrayBase(DataObject, CopyableMixin, IteratorMixin):
     @DataConversion.condition(lambda x: x.ndim == 2)
     def __to_pandas_data_frame__(self, name=None, columns=None, **kwargs):
         import pandas as pd
+
         data = pd.DataFrame(data=self.inner_data, columns=columns, **kwargs)
         klass = DataObject.registered_types["pandas_data_frame"]
         if not name:
@@ -44,7 +58,9 @@ class NumpyArrayBase(DataObject, CopyableMixin, IteratorMixin):
         return klass(inner_data=data, source=self, name=name)
 
     def __repr__(self):
-        return "{0}(shape={1}, dtype={2})".format(self.__class__.__name__, self.shape, self.inner_data.dtype)
+        return "{0}(shape={1}, dtype={2})".format(
+            self.__class__.__name__, self.shape, self.inner_data.dtype
+        )
 
     def histogram(self, *args, **kwargs):
         """
@@ -61,13 +77,16 @@ class NumpyArrayBase(DataObject, CopyableMixin, IteratorMixin):
             # return collections.OrderedDict(pairs)
         else:
             from physt import h1
+
             inner_data = h1(data, **kwargs)
             from .plotting_types import HistogramData
+
             return HistogramData(inner_data=inner_data, source=self)
 
     def mode(self):
         """Mode interpreted as in scipy.mode"""
         import scipy
+
         result = scipy.stats.mode(self.inner_data, axis=None)[0]
         return result[0]
 
@@ -85,7 +104,9 @@ class NumpyArrayBase(DataObject, CopyableMixin, IteratorMixin):
 
 @DataObject.register_type(default=True)
 @DataObject.proxy_methods("flatten")
-class NumpyArray(NumpyArrayBase, GetItemMixin, StatisticsMixin, NumericalMixin, AsArrayMixin):
+class NumpyArray(
+    NumpyArrayBase, GetItemMixin, StatisticsMixin, NumericalMixin, AsArrayMixin
+):
     type_name = "numpy_array"
 
     @classmethod

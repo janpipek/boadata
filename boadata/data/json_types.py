@@ -29,7 +29,13 @@ class JsonFileDataset(PandasDataFrameBase):
         return pd.DataFrame(normalized_objects, **kwargs)
 
     @classmethod
-    def from_uri(cls, uri: str, index_col: bool = False, source: Optional[DataObject] = None, **kwargs) -> "JsonFileDataset":
+    def from_uri(
+        cls,
+        uri: str,
+        index_col: bool = False,
+        source: Optional[DataObject] = None,
+        **kwargs
+    ) -> "JsonFileDataset":
         resource = odo.resource(uri)
         methods = [
             lambda: pd.read_json(uri, **kwargs),
@@ -46,9 +52,9 @@ class JsonFileDataset(PandasDataFrameBase):
                 break
             except:
                 pass
-        
+
         if result:
             if not result.name:
                 result.inner_data.name = os.path.splitext(os.path.basename(uri))[0]
             return result
-        raise RuntimeError("No JSON reading method understands the file.")    
+        raise RuntimeError("No JSON reading method understands the file.")

@@ -1,18 +1,23 @@
 import os
 from collections import OrderedDict
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 import xarray as xr
 
 from boadata.core import DataObject
-from boadata.core.data_conversion import DataConversion, IdentityConversion, ChainConversion, MethodConversion
+from boadata.core.data_conversion import (
+    ChainConversion,
+    DataConversion,
+    IdentityConversion,
+    MethodConversion,
+)
 
-from .xarray_types import XarrayDatasetBase, XarrayDataArrayBase
 from .pandas_types import PandasDataFrameBase
+from .xarray_types import XarrayDataArrayBase, XarrayDatasetBase
 
 
-class AbstractFieldMap():
+class AbstractFieldMap:
     def get_last_axis(self, axis1, axis2):
         """Get the third axis for two selected ones.
 
@@ -27,11 +32,7 @@ class AbstractFieldMap():
         return self.columns[i]
 
     def get_slice(self, axis, value, tolerance=1e-6):
-        kwargs = {
-            "method": "nearest",
-            axis: value,
-            "tolerance": tolerance
-        }
+        kwargs = {"method": "nearest", axis: value, "tolerance": tolerance}
         return self.__class__(self.inner_data.sel(**kwargs))
 
     def get_axis_values(self, axis):
@@ -54,10 +55,13 @@ class AbstractFieldMap():
 
 @DataObject.register_type()
 @ChainConversion.enable_to("csv", through="pandas_data_frame", pass_kwargs=["uri"])
-@ChainConversion.enable_from("csv", through="pandas_data_frame", condition=lambda c: len(c.columns) == 4)
+@ChainConversion.enable_from(
+    "csv", through="pandas_data_frame", condition=lambda c: len(c.columns) == 4
+)
 class ScalarFieldMap(AbstractFieldMap, XarrayDataArrayBase):
     """A scalar variable that is defined for each point in a 3D mesh.
     """
+
     type_name = "scalar_field_map"
 
     @classmethod
@@ -76,10 +80,13 @@ class ScalarFieldMap(AbstractFieldMap, XarrayDataArrayBase):
 @DataObject.register_type()
 # @MethodConversion.enable_to("pandas_data_frame", method_name="to_dataframe")
 @ChainConversion.enable_to("csv", through="pandas_data_frame", pass_kwargs=["uri"])
-@ChainConversion.enable_from("csv", through="pandas_data_frame", condition=lambda c: len(c.columns) == 6)
+@ChainConversion.enable_from(
+    "csv", through="pandas_data_frame", condition=lambda c: len(c.columns) == 6
+)
 class VectorFieldMap(AbstractFieldMap, XarrayDatasetBase):
     """A vector variable that is defined for each point in a 3D mesh.
     """
+
     type_name = "vector_field_map"
 
     @classmethod
@@ -101,7 +108,13 @@ class VectorFieldMap(AbstractFieldMap, XarrayDatasetBase):
 
     def normalize_column_names(self, field_name, inplace=True):
         inner_data = self.inner_data.rename(
-            dict(zip(self.axes + self.columns, ["x", "y", "z"] + [field_name + ax for ax in "xyz"])))
+            dict(
+                zip(
+                    self.axes + self.columns,
+                    ["x", "y", "z"] + [field_name + ax for ax in "xyz"],
+                )
+            )
+        )
         if inplace:
             self.inner_data = inner_data
         else:
@@ -112,17 +125,25 @@ class VectorFieldMap(AbstractFieldMap, XarrayDatasetBase):
 
         :rtype: ScalarFieldMap
         """
-        magnitude_column = np.sqrt(sum([self.inner_data[self.columns[i]] ** 2 for i in range(3)]))
-        new_inner_data = xr.DataArray(magnitude_column, self.inner_data.coords, name=column_name)
+        magnitude_column = np.sqrt(
+            sum([self.inner_data[self.columns[i]] ** 2 for i in range(3)])
+        )
+        new_inner_data = xr.DataArray(
+            magnitude_column, self.inner_data.coords, name=column_name
+        )
         return ScalarFieldMap(inner_data=new_inner_data, source=self)
 
     def __to_opera_field__(self, path, length_unit="mm", field_unit="tesla", **kwargs):
         with open(path, "w") as f:
             f.write(" {0} {1}\n".format(" ".join([str(s) for s in self.shape[1:]]), 2))
             for i, ax in enumerate(self.axes):
-                f.write(" {0} {1} [{2}]\n".format(i + 1, ax.upper(), length_unit.upper()))
+                f.write(
+                    " {0} {1} [{2}]\n".format(i + 1, ax.upper(), length_unit.upper())
+                )
             for j, ax in enumerate(self.columns):
-                f.write(" {0} {1} [{2}]\n".format(j + 4, ax.upper(), field_unit.upper()))
+                f.write(
+                    " {0} {1} [{2}]\n".format(j + 4, ax.upper(), field_unit.upper())
+                )
             f.write(" 0\n")
             df = self.convert("pandas_data_frame").inner_data
             df.to_csv(f, sep=" ", index=None, header=None, **kwargs)
@@ -149,15 +170,23 @@ class VectorFieldMap(AbstractFieldMap, XarrayDatasetBase):
 
     def _make_interpolators(self, method, bounds_error, fill_value):
         from scipy.interpolate import RegularGridInterpolator
+
         points = tuple(self.inner_data[axis] for axis in self.axes)
         interpolators = [
-            RegularGridInterpolator(points=points, values=np.asarray(self.inner_data[axis]),
-                                    method=method, bounds_error=bounds_error, fill_value=fill_value[i])
+            RegularGridInterpolator(
+                points=points,
+                values=np.asarray(self.inner_data[axis]),
+                method=method,
+                bounds_error=bounds_error,
+                fill_value=fill_value[i],
+            )
             for i, axis in enumerate(self.columns)
         ]
         return interpolators
 
-    def interpolate(self, x, y, z, method="linear", bounds_error=False, fill_value=(0, 0, 0)):
+    def interpolate(
+        self, x, y, z, method="linear", bounds_error=False, fill_value=(0, 0, 0)
+    ):
         """(Tri-)linear interpolation of the values.
 
         :param x: coordinate or array of coordinates in x
@@ -169,16 +198,23 @@ class VectorFieldMap(AbstractFieldMap, XarrayDatasetBase):
         :return:
         """
         # TODO: Check that the grid is regular? But maybe it is by xarray default?
-        interpolators = self._make_interpolators(method=method, bounds_error=bounds_error, fill_value=fill_value)
+        interpolators = self._make_interpolators(
+            method=method, bounds_error=bounds_error, fill_value=fill_value
+        )
 
-        data = np.concatenate((np.asarray(x)[...,np.newaxis],
-                                np.asarray(y)[...,np.newaxis],
-                                np.asarray(z)[...,np.newaxis]),
-                               axis=-1)
+        data = np.concatenate(
+            (
+                np.asarray(x)[..., np.newaxis],
+                np.asarray(y)[..., np.newaxis],
+                np.asarray(z)[..., np.newaxis],
+            ),
+            axis=-1,
+        )
         # data = tuple(np.asarray(t) for t in (x,y,z))
         from boadata import wrap
+
         return [wrap(interpolators[i](data), force=False) for i in range(3)]
-        
+
     def resample(self, dim1, dim2, dim3, method="linear", inplace=False):
         """Change the grid points using linear (or other) interpolation.
         
@@ -189,18 +225,28 @@ class VectorFieldMap(AbstractFieldMap, XarrayDatasetBase):
         """
         # TODO: Include option to resample only precisely
         dims = (dim1, dim2, dim3)
-        new_axes = [np.linspace(self[axis].min(), self[axis].max(), dims[i]) for i, axis in enumerate(self.axes)]
+        new_axes = [
+            np.linspace(self[axis].min(), self[axis].max(), dims[i])
+            for i, axis in enumerate(self.axes)
+        ]
         new_mesh = np.meshgrid(*new_axes, indexing="ij")
         new_fields = self.interpolate(*new_mesh, method=method)
-        
+
         print([f.shape for f in new_fields])
-        
+
         coords = OrderedDict([(axis, new_axes[i]) for i, axis in enumerate(self.axes)])
-        data = OrderedDict([(column, xr.DataArray(new_fields[i].inner_data, coords=coords, dims=self.axes)) for i, column in enumerate(self.columns)])
-        inner_data = xr.Dataset(
-            data,
-            coords
+        data = OrderedDict(
+            [
+                (
+                    column,
+                    xr.DataArray(
+                        new_fields[i].inner_data, coords=coords, dims=self.axes
+                    ),
+                )
+                for i, column in enumerate(self.columns)
+            ]
         )
+        inner_data = xr.Dataset(data, coords)
         if inplace:
             self.inner_data = inner_data
             return self
@@ -226,12 +272,14 @@ class VectorFieldMap(AbstractFieldMap, XarrayDatasetBase):
 
             df = self.convert("pandas_data_frame")
             df.inner_data.reset_index(inplace=True, drop=True)
-            df.rename_columns({
-                self.axes[ax1]: self.axes[ax2],
-                self.axes[ax2]: self.axes[ax1],
-                self.columns[ax1]: self.columns[ax2],
-                self.columns[ax2]: self.columns[ax1]
-            })
+            df.rename_columns(
+                {
+                    self.axes[ax1]: self.axes[ax2],
+                    self.axes[ax2]: self.axes[ax1],
+                    self.columns[ax1]: self.columns[ax2],
+                    self.columns[ax2]: self.columns[ax1],
+                }
+            )
             df.reorder_columns(df_columns)
             df.inner_data = df.inner_data.set_index(self.axes)
             self.inner_data = xr.Dataset.from_dataframe(df.inner_data)
@@ -250,7 +298,13 @@ class FieldTableFile(DataObject):
         super(FieldTableFile, self).__init__(**kwargs)
 
     def _read_pandas(self):
-        return pd.read_table(self.uri, names=["x", "y", "z", "Bx", "By", "Bz"], index_col=False, delim_whitespace=True, skiprows=2)
+        return pd.read_table(
+            self.uri,
+            names=["x", "y", "z", "Bx", "By", "Bz"],
+            index_col=False,
+            delim_whitespace=True,
+            skiprows=2,
+        )
 
     def __to_pandas_data_frame__(self, **kwargs):
         data = self._read_pandas()
@@ -300,8 +354,16 @@ class ComsolFieldTextFile(PandasDataFrameBase):
                 else:
                     break
         frags = header_lines[-1][1:].strip().split()
-        column_names = [ frag for frag in frags if not frag.startswith("(")]
-        data = pd.read_csv(uri, skiprows=len(header_lines), index_col=False, header=None, delimiter="\\s+", engine="python", names=column_names)
+        column_names = [frag for frag in frags if not frag.startswith("(")]
+        data = pd.read_csv(
+            uri,
+            skiprows=len(header_lines),
+            index_col=False,
+            header=None,
+            delimiter="\\s+",
+            engine="python",
+            names=column_names,
+        )
         return cls(inner_data=data, uri=uri)
 
 
@@ -326,6 +388,7 @@ class OperaFieldTextFile(PandasDataFrameBase):
           -50.0000000000      -50.0000000000      -200.000000000      0.182000689291E-02  0.181548320077E-02   0.00000000000
           -50.0000000000      -50.0000000000      -198.000000000      0.182963069824E-02  0.182665326586E-02 -0.222624232502E-03
     """
+
     type_name = "opera_field"
 
     @classmethod
@@ -352,7 +415,7 @@ class OperaFieldTextFile(PandasDataFrameBase):
                         if len(line.strip().split()) != 4:
                             break
                     elif line.strip() == "0":
-                        return i+1, columns
+                        return i + 1, columns
                     else:
                         j, rest = line.strip().split(maxsplit=1)
                         if int(j) != i:
@@ -365,6 +428,13 @@ class OperaFieldTextFile(PandasDataFrameBase):
     @classmethod
     def from_uri(cls, uri, **kwargs):
         skiprows, column_names = cls._parse_header(uri)
-        data = pd.read_csv(uri, skiprows=skiprows, index_col=False, header=None, delim_whitespace=True,
-                           engine="python", names=column_names)
+        data = pd.read_csv(
+            uri,
+            skiprows=skiprows,
+            index_col=False,
+            header=None,
+            delim_whitespace=True,
+            engine="python",
+            names=column_names,
+        )
         return cls(inner_data=data, uri=uri)
