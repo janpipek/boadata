@@ -4,12 +4,12 @@ from boadata.core import DataObject
 @DataObject.proxy_methods([
     "__getitem__"
 ])
-class GetItemMixin(object):
+class GetItemMixin:
     """Enable proxing of GetItem."""
     pass
 
 
-class SetItemMixin(object):
+class SetItemMixin:
     def __setitem__(self, key, value, unwrap=True):
         import boadata
         if unwrap:
@@ -20,7 +20,7 @@ class SetItemMixin(object):
 @DataObject.proxy_methods([
     "sum", "std", "max", "mean", "min"
 ])
-class StatisticsMixin(object):
+class StatisticsMixin:
     """
 
     """
@@ -53,11 +53,11 @@ class StatisticsMixin(object):
     "__mod__", "__rmod__", "__divmod__", "__rdivmod__",
     "__pow__", "__rpow__"
 ])
-class NumericalMixin(object):
+class NumericalMixin:
     pass
 
 
-class AsArrayMixin(object):
+class AsArrayMixin:
     """Enable the object to be converted to native numpy array.
 
     Including this mixin, you can use the object in matplotlib and seaborn
@@ -70,13 +70,13 @@ class AsArrayMixin(object):
         return self.__array__().astype(*args)
         
 
-class IteratorMixin(object):
+class IteratorMixin:
     def __iter__(self):
         for item in self.inner_data:
             from boadata import wrap
             yield wrap(item, force=False)
 
 
-class CopyableMixin(object):
+class CopyableMixin:
     def copy(self, *args):
         return self.__class__(inner_data=self.inner_data.copy(*args), source=self)

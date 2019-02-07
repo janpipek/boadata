@@ -1,7 +1,7 @@
 import logging
 
 
-class View(object):
+class View:
     """
 
     :type title: string

@@ -8,7 +8,7 @@ import odo  # Make optional?
 from boadata.core.data_conversion import ConversionUnknown, DataConversion
 
 
-class _DataObjectRegistry():
+class _DataObjectRegistry:
     registered_types = OrderedDict()
 
     registered_default_types = {}
@@ -36,7 +36,7 @@ class _DataObjectRegistry():
         return wrap
 
 
-class _DataObjectConversions():
+class _DataObjectConversions:
     @classmethod
     def accepts_uri(cls, uri):
         """

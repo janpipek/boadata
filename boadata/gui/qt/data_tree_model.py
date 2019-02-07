@@ -89,7 +89,7 @@ class DataTreeModel(QtCore.QAbstractItemModel):
         return self.data_node.title
 
 
-class DataTreeItem(object):
+class DataTreeItem:
     def __init__(self, data_node, parent=None, subtrees=True):
         self.parent = parent
         self.data_node = data_node

@@ -14,7 +14,7 @@ from qtpy import QtGui, QtCore, QtWidgets
 
 import seaborn as sns   # To style it a bit
 
-class MatplotlibBackend(object):
+class MatplotlibBackend:
     @classmethod
     def create_figure_widget(cls, parent=None):
         """

@@ -5,7 +5,7 @@ from six import text_type
 from .data_object import DataObject
 
 
-class DataNode(object):
+class DataNode:
     '''A branch/leaf in a data tree.
 
     Signals:

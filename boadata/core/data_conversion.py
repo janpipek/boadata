@@ -10,7 +10,7 @@ class ConversionConditionFailed(RuntimeError):
     pass
 
 
-class DataConversion(object):
+class DataConversion:
     """
 
     :type _type1: type

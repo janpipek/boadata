@@ -1,7 +1,7 @@
 from collections import OrderedDict
 
 
-class DataProperties(object):
+class DataProperties:
     '''Data object properties.
 
     There can be a single list of properties (default),

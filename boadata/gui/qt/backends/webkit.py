@@ -1,7 +1,7 @@
 from qtpy import QtWebKit, QtCore
 
 
-class WebkitBackend(object):
+class WebkitBackend:
     @classmethod
     def create_widget(self, html=None, uri=None):
         webview = QtWebKit.QWebView()

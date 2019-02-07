@@ -37,7 +37,7 @@ class DataTreeView(QtWidgets.QTreeView):
         '''Build context menu from available views of a node.
         '''
 
-        class ViewAction(object):
+        class ViewAction:
             '''A Qt action resulting in showing a view for the object.'''
             def __init__(self, view, data_object, main_window):
                 self.view = view
