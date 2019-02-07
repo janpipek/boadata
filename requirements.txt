@@ -3,7 +3,6 @@
 pandas
 numpy
 blinker
-six
 odo
 matplotlib
 numexpr

@@ -1,6 +1,5 @@
 from qtpy import QtCore, QtGui, QtWidgets
 # from .views import registered_views
-from six import text_type
 import logging
 
 
@@ -52,7 +51,7 @@ class DataTreeView(QtWidgets.QTreeView):
                     message_box = QtGui.QMessageBox()
                     message_box.setWindowTitle("Error initializing "
                                                + self.view.title)
-                    message_box.setText(text_type(exc))
+                    message_box.setText(str(exc))
                     message_box.setDetailedText(traceback.format_exc())
                     message_box.setIcon(QtGui.QMessageBox.Warning)
                     message_box.exec_()

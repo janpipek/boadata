@@ -1,7 +1,7 @@
 import sys
 import blinker
 import logging
-from six import text_type
+from typing import Optional, Iterator
 from .data_object import DataObject
 
 
@@ -36,7 +36,7 @@ class DataNode:
     def icon(self):
         return None
 
-    def has_object(self):
+    def has_object(self) -> bool:
         return bool(self._get_object_constructor())
 
     def _get_object_constructor(self):
@@ -53,10 +53,8 @@ class DataNode:
                 return type_
 
     @property
-    def data_object(self):
+    def data_object(self) -> Optional[DataObject]:
         """The data object
-
-        :rtype: None | boadata.core.DataObject
 
         This is the default, relatively inefficient variant, based on URI.
         If there is no object, returns None:
@@ -77,7 +75,7 @@ class DataNode:
 
     @property
     def title(self):
-        return text_type(self)
+        return str(self)
 
     @property
     def full_title(self):

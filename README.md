@@ -42,7 +42,6 @@ Requirements
 * numexpr
 * click
 * tabulate
-* six (perhaps to be removed)
 * blinker (perhaps to be removed)
 * h5py (optional)
 * sqlalchemy (optional)

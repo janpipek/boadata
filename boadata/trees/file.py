@@ -1,7 +1,6 @@
 from ..core import DataNode, DataTree
 import os
 import mimetypes
-from six import text_type
 import logging
 
 
@@ -12,7 +11,7 @@ class PathNode(DataNode):
     
     @property
     def title(self):
-        return text_type(os.path.basename(self.path))
+        return str(os.path.basename(self.path))
 
     @property
     def mime_type(self):

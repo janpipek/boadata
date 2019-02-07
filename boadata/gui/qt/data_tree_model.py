@@ -106,7 +106,7 @@ class DataTreeItem:
         elif self.data_node.has_object():
             if column == 2:
                 if self.data_node.data_object.shape:
-                    return " x ".join(text_type(dim) for dim in self.data_node.data_object.shape)
+                    return " x ".join(str(dim) for dim in self.data_node.data_object.shape)
         return ""
 
     def row(self):
