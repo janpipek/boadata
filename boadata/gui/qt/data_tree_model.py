@@ -1,5 +1,4 @@
 from qtpy import QtCore, QtGui
-from six import text_type
 
 
 class DataTreeModel(QtCore.QAbstractItemModel):
