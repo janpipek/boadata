@@ -4,7 +4,7 @@ import sys
 import click
 
 from boadata import __version__
-from boadata.cli import try_load, try_apply_sql, try_select_columns, qt_app
+from boadata.cli import try_load, try_apply_sql, try_select_columns, try_select_rows, qt_app
 
 
 @click.command()
@@ -13,12 +13,14 @@ from boadata.cli import try_load, try_apply_sql, try_select_columns, qt_app
 @click.option("-s", "--sql", required=False, help="SQL to run on the object.")
 @click.option("-c", "--columns", required=False, help="List of columns to show")
 @click.option("-t", "--type", default=None, help="What type is the object.")
+@click.option("-l", "--lines", required=False, help="Lines (use slice notation)")
 def run_app(uri, type, **kwargs):
     kwargs = {key: value for key, value in kwargs.items() if value is not None}
 
     do = try_load(uri)
     do = try_apply_sql(do, kwargs)
     do = try_select_columns(do, kwargs)
+    do = try_select_rows(do, kwargs)
 
     with qt_app():
         from boadata.gui.qt.views import TableView

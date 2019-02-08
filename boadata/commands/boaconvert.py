@@ -3,7 +3,7 @@ import click
 
 from boadata.core import DataObject
 from boadata import __version__
-from boadata.cli import try_load, try_apply_sql, try_select_columns
+from boadata.cli import try_load, try_apply_sql, try_select_columns, try_select_rows
 
 
 @click.command()
@@ -15,6 +15,8 @@ from boadata.cli import try_load, try_apply_sql, try_select_columns
 @click.option(
     "-t", "--type", default=None, help="What type should be the destination object."
 )
+@click.option("-l", "--lines", required=False, help="Lines (as range)")
+# @click.option("-S", "--sort", required=False, help="Sort by column.")
 def run_app(from_uri, to_uri, **kwargs):
     kwargs = {key: value for key, value in kwargs.items() if value is not None}
     type = kwargs.get("type")
@@ -22,6 +24,7 @@ def run_app(from_uri, to_uri, **kwargs):
     do = try_load(from_uri)
     do = try_apply_sql(do, kwargs)
     do = try_select_columns(do, kwargs)
+    do = try_select_rows(do, kwargs)
 
     if to_uri:
         if not type:

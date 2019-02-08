@@ -33,6 +33,14 @@ def try_select_columns(do: 'boadata.core.DataObject', kwargs: dict) -> 'boadata.
     return do
 
 
+def try_select_rows(do: 'boadata.core.DataObject', kwargs: dict) -> 'boadata.core.DataObject':
+    lines = kwargs.pop("lines", None)
+    if lines:
+        indexer = slice(*(int(l) if l else None for l in lines.split(":")))
+        do = do.select_rows(indexer)
+    return do
+
+
 def enable_ctrl_c():
 	"""Enable Ctrl-C in the console."""
 	signal.signal(signal.SIGINT, signal.SIG_DFL)
