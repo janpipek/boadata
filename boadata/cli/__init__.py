@@ -41,6 +41,13 @@ def try_select_rows(do: 'boadata.core.DataObject', kwargs: dict) -> 'boadata.cor
     return do
 
 
+def try_sort(do: 'boadata.core.DataObject', kwargs: dict) -> 'boadata.core.DataObject':
+    sortby = kwargs.pop("sortby", None)
+    if sortby:
+        columns = sortby.split(",")
+        do = do.sort_by(columns)
+    return do
+
 def enable_ctrl_c():
 	"""Enable Ctrl-C in the console."""
 	signal.signal(signal.SIGINT, signal.SIG_DFL)

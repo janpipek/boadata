@@ -1,5 +1,5 @@
 import types
-from typing import List, Optional
+from typing import List, Optional, Iterable
 
 import numpy as np
 import odo
@@ -37,6 +37,14 @@ class _PandasBase(
         # Pandas objects do not have names.
         return None
 
+    def select_rows(self, indexer) -> '_PandasBase':
+        inner_data = self.inner_data.iloc[indexer]
+        return DataObject.from_native(inner_data, source=self)
+
+    def concat(self, *others: Iterable["_PandasBase"], **kwargs) -> "_PandasBase":
+        inner_data = pd.concat(
+            [self.inner_data, *(o.inner_data for o in others)], **kwargs)
+        return DataObject.from_native(inner_data)
 
 @DataObject.proxy_methods("head")
 class PandasDataFrameBase(_PandasBase):
@@ -228,13 +236,19 @@ class PandasDataFrameBase(_PandasBase):
         """Select only several columns."""
         inner_data = self.inner_data.loc[:, names]
         # TODO: It's actually a view, isn't it?
+        # TODO: Enable regexes
         return DataObject.from_native(inner_data, source=self)
 
     def dropna(self, **kwargs):
         kwargs["inplace"] = True
         self.inner_data.dropna(**kwargs)
 
+    def sort_by(self, names: List[str]) -> "PandasDataFrame":
+        inner_data = self.inner_data.sort_values(by=names)
+        return DataObject.from_native(inner_data, source=self)
+
     def append(self, other, **kwargs):
+        # TODO: Is used? Concat may be better
         other = wrap(other)
         if not isinstance(other, PandasDataFrameBase):
             try:

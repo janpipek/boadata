@@ -4,7 +4,7 @@ import sys
 import click
 
 from boadata import __version__
-from boadata.cli import try_load, try_apply_sql, try_select_columns, try_select_rows
+from boadata.cli import try_load, try_apply_sql, try_select_columns, try_select_rows, try_sort
 
 
 @click.command()
@@ -13,6 +13,7 @@ from boadata.cli import try_load, try_apply_sql, try_select_columns, try_select_
 @click.option("-t", "--type", default=None, help="What type is the object.")
 @click.option("-c", "--columns", required=False, help="List of columns to show")
 @click.option("-s", "--sql", required=False, help="SQL to run on the object.")
+@click.option("-S", "--sortby", required=False, help="Sort by column(s).")
 # @click.option(
 #     "-l",
 #     "--limit",
@@ -27,6 +28,7 @@ def run_app(uri, type, **kwargs):
     do = try_load(uri, type)
     do = try_apply_sql(do, kwargs)
     do = try_select_columns(do, kwargs)
+    do = try_sort(do, kwargs)
     do = try_select_rows(do, kwargs)
 
     do = do.convert("pandas_data_frame")

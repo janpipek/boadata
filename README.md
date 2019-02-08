@@ -7,6 +7,8 @@ to browse and plot various data sources in one simple environment.
 
 It's a library, as well as a set of tools.
 
+Most focus is placed on table-like pandas-based objects.
+
 Concepts
 --------
 * uri - boadata tries to support odo URIs
@@ -26,7 +28,7 @@ Run `command --help` to see full list of options
 * `boadata [<uri>]` - full gui with a tree
 * `boatable <uri>` - show tabular representation of a dataobject (GUI)
 * `boacat <uri>` - print tabular representation of a dataobject (command-line)
-* `boaconvert <from> <to>` - convert one data source into another
+* `boaconvert <from+> <to>` - convert one data source into another
 * `boaview <uri>` - show a tabbed window with all available views for the dataobject
 
 Status
