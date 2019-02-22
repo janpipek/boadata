@@ -28,6 +28,13 @@ class JsonFileDataset(PandasDataFrameBase):
         normalized_objects = pd.io.json.json_normalize(objects)
         return pd.DataFrame(normalized_objects, **kwargs)
 
+    @staticmethod
+    def _read_normalized(uri: str, **kwargs) -> pd.DataFrame:
+        with open(uri, "r") as infile:
+            objects = json.load(infile)
+        normalized_objects = pd.io.json.json_normalize(objects)
+        return pd.DataFrame(normalized_objects, **kwargs)
+
     @classmethod
     def from_uri(
         cls,
@@ -38,7 +45,7 @@ class JsonFileDataset(PandasDataFrameBase):
     ) -> "JsonFileDataset":
         resource = odo.resource(uri)
         methods = [
-            lambda: pd.read_json(uri, **kwargs),
+            lambda: JsonFileDataset._read_normalized(uri, **kwargs),
             lambda: JsonFileDataset._read_normalized_lines(uri, **kwargs),
             lambda: pd.read_json(uri, lines=True, **kwargs),
             lambda: odo.odo(uri, pd.DataFrame, index_col=index_col, **kwargs),
