@@ -22,7 +22,7 @@ class CSVFile(PandasDataFrameBase):
 
     @classmethod
     def accepts_uri(cls, uri: str) -> bool:
-        return uri[-4:] == ".csv"
+        return uri[-4:] == ".csv" or uri[-7:] == ".csv.gz"
 
     @classmethod
     def _fallback_read(cls, uri: str, **kwargs) -> pd.DataFrame:
