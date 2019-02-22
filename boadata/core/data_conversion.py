@@ -1,4 +1,6 @@
 from collections import OrderedDict
+from typing import Union
+
 import odo
 
 
@@ -20,7 +22,7 @@ class DataConversion:
 
     """
 
-    def __init__(self, type_name1, type_name2, method=None, condition=None):
+    def __init__(self, type_name1: Union[str, 'DataObject'], type_name2: Union[str, 'DataObject'], method=None, condition=None):
         self._type1 = None
         self._type2 = None
 
@@ -191,6 +193,7 @@ class ConstructorConversion(DataConversion):
     def _convert(self, origin, **kwargs):
         new_inner_data = self.type2.real_type(origin.inner_data)
         return self.type2(inner_data=new_inner_data, source=origin)
+
 
 class MethodConversion(DataConversion):
     """Conversion that uses a method of the origin class."""

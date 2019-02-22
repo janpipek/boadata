@@ -9,7 +9,7 @@ class DataTree(DataNode):
 
     # TODO: Reconsider
     @property
-    def menu_title(self):
+    def menu_title(self) -> str:
         '''Title of the menu displayed in main menu bar.
 
         Override if not equal to title.
@@ -24,7 +24,7 @@ class DataTree(DataNode):
         return []
 
     @classmethod
-    def accepts_uri(cls, uri):
+    def accepts_uri(cls, uri: str) -> bool:
         return False
 
     @staticmethod
@@ -33,7 +33,7 @@ class DataTree(DataNode):
         return cls
 
     @classmethod
-    def from_uri(cls, uri):
+    def from_uri(cls, uri: str) -> 'DataTree':
         """Load a tree from some URI.
 
         :type uri: str

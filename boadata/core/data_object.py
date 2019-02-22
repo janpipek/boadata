@@ -10,6 +10,18 @@ import odo  # Make optional?
 from boadata.core.data_conversion import ConversionUnknown, DataConversion
 
 
+class UnknownDataObjectError(Exception):
+    """"""
+
+
+class InvalidDataObjectError(Exception):
+    """"""
+
+
+class UnsupportedDataOperationError(Exception):
+    """"""
+
+
 class _DataObjectRegistry:
     registered_types = OrderedDict()
 
@@ -66,7 +78,7 @@ class _DataObjectConversions:
                         last_exception = exc
             if last_exception:
                 raise last_exception
-            raise BaseException("Cannot interpret " + uri + ".")
+            raise UnknownDataObjectError("Cannot interpret " + uri + ".")
         else:
             inner_data = odo.odo(uri, cls.real_type, **kwargs)
             return cls(inner_data=inner_data, uri=uri, **kwargs)
@@ -86,7 +98,7 @@ class _DataObjectConversions:
                 return native_object
             boadata_type = DataObject.registered_default_types.get(type(native_object))
             if not boadata_type:
-                raise RuntimeError("Native object of the type {0} not understood.".format(type(native_object)))
+                raise UnknownDataObjectError("Cannot interpret native object of the type {0}.".format(type(native_object)))
             return boadata_type.from_native(native_object, **kwargs)
         else:
             if isinstance(native_object, DataObject):
@@ -215,7 +227,7 @@ class DataObject(_DataObjectRegistry, _DataObjectConversions, _DataObjectInterfa
     '''
     def __init__(self, inner_data=None, uri: str = None, source: 'DataObject' = None, **kwargs):
         if self.real_type and not isinstance(inner_data, self.real_type):
-            raise RuntimeError("Invalid type of inner data: `{0}` instead of expected `{1}`".format(
+            raise InvalidDataObjectError("Invalid type of inner data: `{0}` instead of expected `{1}`".format(
                 inner_data.__class__.__name__, self.real_type.__name__
             ))
         self.inner_data = inner_data
@@ -320,7 +332,7 @@ class DataObject(_DataObjectRegistry, _DataObjectConversions, _DataObjectInterfa
             else:
                 mask = self.evaluate(condition, wrap=False)
                 if mask.dtype != np.dtype(bool):
-                    raise RuntimeError("The result of condition has to be a boolean array")
+                    raise UnsupportedDataOperationError("The result of condition has to be a boolean array")
             return DataObject.from_native(self.inner_data[mask], source=self)
 
     def apply_native(self, method_name: str, *args, **kwargs):
