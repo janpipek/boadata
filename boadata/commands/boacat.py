@@ -2,9 +2,34 @@
 import sys
 
 import click
+from tabulate import tabulate
 
 from boadata import __version__
 from boadata.cli import try_load, try_apply_sql, try_select_columns, try_select_rows, try_sort
+from boadata.core import DataObject
+
+
+def show_table(do: DataObject):
+    print(tabulate(do.inner_data, do.columns, tablefmt="orgtbl"))
+
+
+def show_expanded(do: DataObject):
+    try:
+        import colorama
+        highlight = colorama.Fore.LIGHTGREEN_EX
+        normal = colorama.Fore.LIGHTBLUE_EX
+        reset = colorama.Fore.RESET
+    except ImportError:
+        highlight = ""
+        normal = ""
+        reset = ""
+
+    for i in range(do.shape[0]):
+        for column in do.columns:
+            value = do.inner_data.iloc[i][column]
+            line = (normal + column + reset + ": " + highlight + str(value) + reset)
+            print(line)
+        print("--------------------------------- " + str(i))
 
 
 @click.command()
@@ -14,16 +39,12 @@ from boadata.cli import try_load, try_apply_sql, try_select_columns, try_select_
 @click.option("-c", "--columns", required=False, help="List of columns to show")
 @click.option("-s", "--sql", required=False, help="SQL to run on the object.")
 @click.option("-S", "--sortby", required=False, help="Sort by column(s).")
-# @click.option(
-#     "-l",
-#     "--limit",
-#     required=False,
-#     default=1000,
-#     help="Limit the number of rows to be printed.",
-#)
+@click.option("-x", "--expand", is_flag=True, default=False, help="Show each row expanded.")
 @click.option("-l", "--lines", required=False, help="Lines (as range)")
 def run_app(uri, type, **kwargs):
     kwargs = {key: value for key, value in kwargs.items() if value is not None}
+
+    expand = kwargs.pop("expand", False)
 
     do = try_load(uri, type)
     do = try_apply_sql(do, kwargs)
@@ -40,9 +61,10 @@ def run_app(uri, type, **kwargs):
         )
         do = do.head(kwargs.get("limit"))
 
-    from tabulate import tabulate
-
-    print(tabulate(do.inner_data, do.columns, tablefmt="orgtbl"))
+    if expand:
+        show_expanded(do)
+    else:
+        show_table(do)
 
 
 if __name__ == "__main__":
