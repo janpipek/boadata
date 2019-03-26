@@ -16,6 +16,7 @@ import click
 )  # , help="Column or expression to be displayed on y axis.")
 @click.option("-q", "--sql", required=False, help="SQL to run on the object.")
 @click.option("-t", "--type", default=None, help="What type is the object.")
+@click.option("-p", "--parameter", help="Additional parameters for loader, specified as key=value", multiple=True)
 @click.option(
     "-s",
     "--scatter",
@@ -35,10 +36,10 @@ import click
 @click.option("--logy", default=False, is_flag=True, help="Logarithmic scale on Y axis")
 @click.option("--xlabel", help="Title for x axis", required=False)
 @click.option("--ylabel", help="Title for y axis", required=False)
-def run_app(uri, x, y, type, **kwargs):
+def run_app(uri, x, y, type, parameter, **kwargs):
     kwargs = {key: value for key, value in kwargs.items() if value is not None}
 
-    do = try_load(uri, type)
+    do = try_load(uri, type, parameters=parameter)
     do = try_apply_sql(do, kwargs)
 
     if y:

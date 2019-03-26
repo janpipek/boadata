@@ -9,19 +9,19 @@ from boadata.cli import try_load, try_apply_sql, try_select_columns, try_select_
 @click.command()
 @click.version_option(__version__)
 @click.argument("from_uri", nargs=-1)
+@click.option("-T", "--in-type", default=None, help="What type is the object.")
 @click.option("-o", "--output-uri", required=False, help="Where to write")
 @click.option("-c", "--columns", required=False, help="List of columns to show")
 @click.option("-s", "--sql", required=False, help="SQL to run on the object.")
-@click.option(
-    "-t", "--type", default=None, help="What type should be the destination object."
-)
+@click.option("-t", "--type", default=None, help="What type should be the destination object.")
 @click.option("-l", "--lines", required=False, help="Lines (as range)")
+@click.option("-p", "--parameter", help="Additional parameters for loader, specified as key=value", multiple=True)
 @click.option("-S", "--sortby", required=False, help="Sort by column(s).")
-def run_app(from_uri, output_uri, **kwargs):
+def run_app(from_uri, output_uri, in_type, parameter, **kwargs):
     kwargs = {key: value for key, value in kwargs.items() if value is not None}
     type = kwargs.get("type")
 
-    do = try_load(from_uri[0])
+    do = try_load(from_uri[0], type=in_type, parameters=parameter)
     if len(from_uri) > 1:
         others = (try_load(from_uri[i]) for i in range(1, len(from_uri)))
         do = do.concat(*others)        

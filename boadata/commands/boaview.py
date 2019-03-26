@@ -12,10 +12,11 @@ from boadata.cli import try_load, try_apply_sql, qt_app
 @click.argument("uri")
 @click.option("-s", "--sql", required=False, help="SQL to run on the object.")
 @click.option("-t", "--type", default=None, help="What type is the object.")
-def run_app(uri, type, **kwargs):
+@click.option("-p", "--parameter", help="Additional parameters for loader, specified as key=value", multiple=True)
+def run_app(uri, type, parameter, **kwargs):
     kwargs = {key: value for key, value in kwargs.items() if value is not None}
 
-    do = try_load(uri, type)
+    do = try_load(uri, type, parameters=parameter)
     do = try_apply_sql(do, kwargs)
 
     with qt_app():
