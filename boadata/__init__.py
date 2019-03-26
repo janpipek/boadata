@@ -1,7 +1,7 @@
 from typing import Optional
 import warnings
 
-__version__ = str('0.3.11')
+__version__ = str('0.3.12')
 
 # Suppress the unpleasant pandas/seaborn<->matplotlib warning
 warnings.filterwarnings("ignore", module="matplotlib")
@@ -9,7 +9,7 @@ warnings.filterwarnings("ignore", module="matplotlib")
 
 def load(uri: str, type: Optional[str] = None, *args, **kwargs) -> 'boadata.core.DataObject':
     """Load an object from some URI.
-    
+
     :param type: If present, forces this type to be used.
     """
     from . import core

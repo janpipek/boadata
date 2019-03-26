@@ -1,3 +1,8 @@
+0.3.12 (2019-03-26)
+-------------------
+* added -p key=value parameter to command-line tools
+* several bug fixes in CSV reading
+
 0.3.11 (2019-01-23)
 -------------------
 * added DataFrame(-like) to SQL table conversion
