@@ -80,8 +80,9 @@ class _DataObjectConversions:
                 raise last_exception
             raise UnknownDataObjectError("Cannot interpret " + uri + ".")
         else:
+            source = kwargs.pop("source", None)
             inner_data = odo.odo(uri, cls.real_type, **kwargs)
-            return cls(inner_data=inner_data, uri=uri, **kwargs)
+            return cls(inner_data=inner_data, uri=uri, source=source, **kwargs)
 
     @classmethod
     def from_native(cls, native_object, **kwargs):
