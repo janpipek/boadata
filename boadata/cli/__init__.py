@@ -2,13 +2,20 @@
 import contextlib
 import signal
 import sys
-from typing import Dict, Optional
+from typing import Dict, List, Optional
 
 from boadata import load
 
 
-def try_load(uri: str, type: Optional[str] = None) -> 'boadata.core.DataObject':
-    do = load(uri, type)
+def try_load(uri: str, type: Optional[str] = None, parameters: List[str] = None) -> 'boadata.core.DataObject':
+    """Use parameters from command-line to load the data object.
+
+    :param uri: URI of the object
+    :param type: Force a type
+    :param parameters: collection of "key=value" strings
+    """
+    parameters = dict([param.split("=", 1) for param in parameters]) if parameters else {}
+    do = load(uri, type, **parameters)
     if not do:
         print("URI not understood: {0}").format(uri)
         sys.exit(-1)
@@ -47,6 +54,7 @@ def try_sort(do: 'boadata.core.DataObject', kwargs: dict) -> 'boadata.core.DataO
         columns = sortby.split(",")
         do = do.sort_by(columns)
     return do
+
 
 def enable_ctrl_c():
 	"""Enable Ctrl-C in the console."""

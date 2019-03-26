@@ -9,9 +9,7 @@ warnings.filterwarnings("ignore", module="matplotlib")
 
 def load(uri: str, type: Optional[str] = None, *args, **kwargs) -> 'boadata.core.DataObject':
     """Load an object from some URI.
-
-    :type uri: str
-    :type type: str
+    
     :param type: If present, forces this type to be used.
     """
     from . import core
