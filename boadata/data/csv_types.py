@@ -29,11 +29,11 @@ class CSVFile(PandasDataFrameBase):
         with open(uri, "r") as fin:
             lines = [line for line in csv.reader(fin)]
         try:
-            return pd.DataFrame(lines[1:], columns=lines[0]).convert_objects(
-                convert_numeric=True
+            return pd.DataFrame(lines[1:], columns=lines[0]).infer_objects(
+                # convert_numeric=True
             )
         except:
-            return pd.DataFrame(lines).convert_objects(convert_numeric=True)
+            return pd.DataFrame(lines).infer_objects() # convert_numeric=True)
 
     @classmethod
     def from_uri(cls, uri: str, index_col=False, source: Optional[DataObject] = None, **kwargs) -> "CSVFile":
@@ -42,8 +42,8 @@ class CSVFile(PandasDataFrameBase):
             kwargs.update(resource.dialect)
 
         methods = [
-            # lambda: pd.read_csv(uri, index_col=index_col, parse_dates=[0], **kwargs),
             lambda: pd.read_csv(uri, index_col=index_col, **kwargs),
+            lambda: pd.read_csv(uri, index_col=index_col, engine="python", sep=None, **kwargs),
             lambda: odo.odo(uri, pd.DataFrame, index_col=index_col, **kwargs),
             lambda: cls._fallback_read(uri, **kwargs),
         ]
