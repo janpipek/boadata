@@ -27,7 +27,7 @@ def show_expanded(do: DataObject):
     for i in range(do.shape[0]):
         for column in do.columns:
             value = do.inner_data.iloc[i][column]
-            line = (normal + column + reset + ": " + highlight + str(value) + reset)
+            line = (normal + str(column) + reset + ": " + highlight + str(value) + reset)
             print(line)
         print("--------------------------------- " + str(i))
 
