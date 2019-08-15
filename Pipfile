@@ -1,0 +1,31 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+boadata = {path = ".",editable = true}
+
+[packages]
+pandas = "*"
+numpy = "*"
+blinker = "*"
+odo = "*"
+matplotlib = "*"
+numexpr = "*"
+click = "*"
+xarray = "*"
+scipy = "*"
+pyqtgraph = "*"
+seaborn = "*"
+pydataset = "*"
+h5py = "*"
+pydons = "*"
+tabulate = "*"
+networkx = "<2.0"
+feather-format = "*"
+SQLAlchemy = "*"
+QtPy = "*"
+
+[requires]
+python_version = "3.7"
