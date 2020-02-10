@@ -43,10 +43,12 @@ class Hdf5Dataset(DataObject):
 
     @classmethod
     def accepts_uri(cls, uri):
-        import odo
-
+        
         if not (".h5::" in uri or ".hdf5::" in uri):
             return False
+        return True
+        
+        # TODO: Fix the following
         try:
             candidate = odo.odo(uri, cls.real_type)
             if candidate.attrs.get(b"CLASS") != b"TABLE":
@@ -65,7 +67,9 @@ class Hdf5Table(DataObject, GetItemMixin):
 
     @classmethod
     def accepts_uri(cls, uri):
-        import odo
+        return False
+
+        # TODO: Fix not supported
 
         if not (".h5::" in uri or ".hdf5::" in uri):
             return False
