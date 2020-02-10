@@ -1,3 +1,9 @@
+0.3.13 (2020-02-10)
+-------------------
+* removed dependency and functionality of odo
+* added parquet data type
+* Python dependency raised to 3.6
+
 0.3.12 (2019-03-26)
 -------------------
 * added -p key=value parameter to command-line tools
