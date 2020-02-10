@@ -50,3 +50,9 @@ try:
     from .feather_types import FeatherFile
 except:
     pass
+
+
+try: 
+    from .parquet_types import ParquetFile
+except:
+    pass
