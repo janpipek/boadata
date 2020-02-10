@@ -38,7 +38,6 @@ Status
 Requirements
 ------------
 * PyQt4 (to become optional / replaceable with PySide/PyQt5)
-* odo
 * pandas
 * numpy
 * numexpr
@@ -54,7 +53,7 @@ Requirements
 * pandas_profiling (optional - dataframe summaries)
 * datadotworld (optional - for their datasets)
 
-* Python 3.4+
+* Python 3.6+
 
 Supported formats and sources
 -----------------------------

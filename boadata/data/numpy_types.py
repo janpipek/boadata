@@ -6,7 +6,6 @@ from boadata.core import DataObject
 from boadata.core.data_conversion import (
     ConstructorConversion,
     DataConversion,
-    OdoConversion,
 )
 
 from .mixins import (

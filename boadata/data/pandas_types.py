@@ -2,7 +2,6 @@ import types
 from typing import List, Optional, Iterable
 
 import numpy as np
-import odo
 import pandas as pd
 import sqlalchemy as sa
 
@@ -163,11 +162,11 @@ class PandasDataFrameBase(_PandasBase):
         feather.write_dataframe(self.inner_data, uri)
         return DataObject.registered_types["feather"].from_uri(uri, source=self)
 
-    def __to_db_table__(self, uri: str):
-        df = self.convert("pandas_data_frame")
-        dshape = odo.discover(df.inner_data)
-        new_inner_data = odo.odo(df.inner_data, uri, dshape=dshape)
-        return DataObject.registered_types["db_table"].from_uri(uri, source=self)
+    # def __to_db_table__(self, uri: str):
+    #     df = self.convert("pandas_data_frame")
+    #     dshape = odo.discover(df.inner_data)
+    #     new_inner_data = odo.odo(df.inner_data, uri, dshape=dshape)
+    #     return DataObject.registered_types["db_table"].from_uri(uri, source=self)
 
     def drop_columns(self, columns, allow_nonexistent=False):
         if isinstance(columns, str):

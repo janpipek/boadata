@@ -5,7 +5,6 @@ from typing import List, Optional, Tuple, Union, Callable
 import blinker
 import numexpr as ne
 import numpy as np
-import odo  # Make optional?
 
 from boadata.core.data_conversion import ConversionUnknown, DataConversion
 
@@ -62,8 +61,7 @@ class _DataObjectConversions:
 
         :param uri: URI in the odo sense
 
-        This method can be (but needn't be) overridden in daughter classes:
-        By default, it uses odo to import the data.
+        This method should be overridden in daughter classes.
 
         When called as DataObject.from_uri, it first tries to find an appropriate class
         by checking all registered types.
@@ -78,11 +76,9 @@ class _DataObjectConversions:
                         last_exception = exc
             if last_exception:
                 raise last_exception
-            raise UnknownDataObjectError("Cannot interpret " + uri + ".")
+            raise UnknownDataObjectError(f"Cannot interpret '{uri}'.")
         else:
-            source = kwargs.pop("source", None)
-            inner_data = odo.odo(uri, cls.real_type, **kwargs)
-            return cls(inner_data=inner_data, uri=uri, source=source, **kwargs)
+            raise UnknownDataObjectError(f"Cannot interpret '{uri}' as {cls.__name__}.")
 
     @classmethod
     def from_native(cls, native_object, **kwargs):
@@ -350,12 +346,3 @@ class DataObject(_DataObjectRegistry, _DataObjectConversions, _DataObjectInterfa
             pass
         return result
 
-
-class OdoDataObject(DataObject):
-    def __init__(self, uri, **kwargs):
-        inner_data = odo.resource(uri)
-        super(OdoDataObject, self).__init__(inner_data=inner_data, uri=uri, **kwargs)
-
-    @classmethod
-    def from_uri(cls, uri, **kwargs) -> 'OdoDataObject':
-        return cls(uri=uri, **kwargs)

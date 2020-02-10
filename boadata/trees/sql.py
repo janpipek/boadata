@@ -1,5 +1,4 @@
 from ..core import DataNode, DataObject, DataProperties, DataTree
-import odo
 import os
 
 

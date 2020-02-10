@@ -5,15 +5,15 @@ from typing import List, Tuple
 import pandas as pd
 import sqlalchemy as sa
 
-from boadata.core.data_conversion import ChainConversion, OdoConversion
-from boadata.core.data_object import DataObject, OdoDataObject
+from boadata.core.data_conversion import ChainConversion
+from boadata.core.data_object import DataObject
 from boadata.data.pandas_types import PandasDataFrameBase
 
 
 @DataObject.register_type()
-@OdoConversion.enable_to("pandas_data_frame")
+# @OdoConversion.enable_to("pandas_data_frame")
 @ChainConversion.enable_to("csv", through="pandas_data_frame", pass_kwargs=("uri",))
-class DatabaseTable(OdoDataObject):
+class DatabaseTable(DataObject):
     type_name = "db_table"
 
     real_type = sa.Table

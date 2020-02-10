@@ -2,7 +2,7 @@ import h5py
 import numpy as np
 
 from boadata.core import DataObject
-from boadata.core.data_conversion import ChainConversion, DataConversion, OdoConversion
+from boadata.core.data_conversion import ChainConversion, DataConversion
 from boadata.data.mixins import GetItemMixin
 
 

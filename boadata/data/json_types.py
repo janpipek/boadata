@@ -2,7 +2,6 @@ import json
 import os
 from typing import Optional
 
-import odo
 import pandas as pd
 
 from boadata.core import DataConversion, DataObject
@@ -43,12 +42,10 @@ class JsonFileDataset(PandasDataFrameBase):
         source: Optional[DataObject] = None,
         **kwargs
     ) -> "JsonFileDataset":
-        resource = odo.resource(uri)
         methods = [
             lambda: JsonFileDataset._read_normalized(uri, **kwargs),
             lambda: JsonFileDataset._read_normalized_lines(uri, **kwargs),
             lambda: pd.read_json(uri, lines=True, **kwargs),
-            lambda: odo.odo(uri, pd.DataFrame, index_col=index_col, **kwargs),
         ]
 
         result = None

@@ -1,8 +1,6 @@
 from collections import OrderedDict
 from typing import Union
 
-import odo
-
 
 class ConversionUnknown(RuntimeError):
     pass
@@ -150,19 +148,6 @@ class DataConversion:
             conversion._register()
             return type2
         return wrap
-
-
-class OdoConversion(DataConversion):
-    """Conversion based on odo.convert."""
-    def __init__(self, type_name1, type_name2, condition=None):
-        super(OdoConversion, self).__init__(type_name1=type_name1, type_name2=type_name2, condition=condition)
-        if (self.type1.real_type != self.type2.real_type) and not bool(odo.convert.path(self.type1.real_type, self.type2.real_type)):
-            raise RuntimeError("Odo cannot convert the types {0} and {1}.".format(self.type1.real_type.__name__, self.type2.real_type.__name__))
-
-    def _convert(self, origin, **kwargs):
-        # print("Converting {0} to {1}".format(origin.inner_data.__class__, self.type2.real_type))
-        new_inner_data = odo.odo(origin.inner_data, self.type2.real_type, **kwargs)
-        return self.type2(inner_data=new_inner_data, source=origin)
 
 
 class ChainConversion(DataConversion):

@@ -1,7 +1,6 @@
 import csv
 from typing import Optional
 
-import odo
 import pandas as pd
 
 from boadata.core import DataConversion, DataObject
@@ -37,14 +36,9 @@ class CSVFile(PandasDataFrameBase):
 
     @classmethod
     def from_uri(cls, uri: str, index_col=False, source: Optional[DataObject] = None, **kwargs) -> "CSVFile":
-        resource = odo.resource(uri)
-        if hasattr(resource, "dialect"):
-            kwargs.update(resource.dialect)
-
         methods = [
             lambda: pd.read_csv(uri, index_col=index_col, **kwargs),
             lambda: pd.read_csv(uri, index_col=index_col, engine="python", sep=None, **kwargs),
-            lambda: odo.odo(uri, pd.DataFrame, index_col=index_col, **kwargs),
             lambda: cls._fallback_read(uri, **kwargs),
         ]
         result = None
