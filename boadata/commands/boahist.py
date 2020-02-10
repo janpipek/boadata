@@ -24,7 +24,7 @@ from boadata.cli import enable_ctrl_c
 @click.option("--kde", is_flag=True, default=False, help="Include smooth KDE line")
 @click.option("--rug", is_flag=True, default=False, help="Include rugs")
 @click.option("--hist/--no-hist", default=True, help="Show histogram boxes")
-def run_app(uri, x, bins, type, parameter, **kwargs):
+def run_app(uri, x, bins, type, **kwargs):
     # TODO: Implement parameters
     from boadata import load
 
