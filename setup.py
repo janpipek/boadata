@@ -15,7 +15,7 @@ options = dict(
     url='https://github.com/janpipek/boadata',
     python_requires='>=3.6',
     install_requires = ['clevercsv', 'numpy', 'pandas', 'blinker', 'sqlalchemy', 'numexpr', 'click', 'xarray', 'scipy',
-        'matplotlib', 'pyqtgraph', 'seaborn', 'tabulate', 'physt'],
+        'matplotlib', 'orange3', 'seaborn', 'tabulate', 'physt'],
     extras_require = {
         'matlab' : ['pydons'],
         'h5py' : ['h5py'],

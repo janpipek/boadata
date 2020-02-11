@@ -8,7 +8,6 @@ numexpr
 click
 xarray
 scipy
-pyqtgraph
 seaborn
 pydataset
 h5py
@@ -18,3 +17,4 @@ sqlalchemy
 qtpy
 feather-format
 clevercsv
+orange3

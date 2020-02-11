@@ -1,5 +1,8 @@
+from Orange.data.table import Table
+from Orange.data.pandas_compat import table_from_frame
+from Orange.widgets.data.owtable import OWDataTable
+
 from .view import View
-import pyqtgraph as pg
 
 
 @View.register_view
@@ -9,9 +12,9 @@ class TableView(View):
     supported_types = ("pandas_data_frame",)
 
     def create_widget(self, parent=None):
+        ow = OWDataTable()
         df = self.data_object.convert("pandas_data_frame").inner_data
-        data = df.to_records(index=False)
-        data = data[:1000]
-        pw = pg.TableWidget(parent)
-        pw.setData(data)
-        return pw
+        table = table_from_frame(df)
+        ow.set_dataset(table, self.data_object.name)
+        ow.left_side.hide()
+        return ow
