@@ -2,6 +2,7 @@
 import sys
 
 import click
+from pandas import RangeIndex
 
 from boadata import __version__
 from boadata.cli import try_load, try_apply_sql
@@ -27,7 +28,13 @@ def run_app(uri, type, parameter, **kwargs):
         index = do.inner_data.index
         s = f"  - {index.name or '<no name>'}"
         try:
-            s += " (dtype={0})".format(index.dtype)
+            if isinstance(index, RangeIndex):
+                s += f" ({index.start}..{index.stop}"
+                if index.step != 1:
+                    s += f", step={step}"
+                s += ")"
+            else:
+                s += " (dtype={0})".format(index.dtype)
         except:
             pass
         print(s)
