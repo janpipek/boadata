@@ -1,3 +1,7 @@
+0.3.15 (2020-??-??)
+-------------------
+* replaced pyqtgraph table widget with Orange3's
+
 0.3.14 (2020-02-11)
 -------------------
 * added (as default) clevercsv to parse CSVs
