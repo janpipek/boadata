@@ -1,6 +1,9 @@
 import csv
+import logging
+import re
 from typing import Optional
 
+from clevercsv.wrappers import csv2df
 import pandas as pd
 
 from boadata.core import DataConversion, DataObject
@@ -36,16 +39,21 @@ class CSVFile(PandasDataFrameBase):
 
     @classmethod
     def from_uri(cls, uri: str, index_col=False, source: Optional[DataObject] = None, **kwargs) -> "CSVFile":
-        methods = [
-            lambda: pd.read_csv(uri, index_col=index_col, **kwargs),
-            lambda: pd.read_csv(uri, index_col=index_col, engine="python", sep=None, **kwargs),
-            lambda: cls._fallback_read(uri, **kwargs),
-        ]
+        def _clever_csv_read():
+            return csv2df(uri, **kwargs)
+
+        methods = {
+            "clevercsv": _clever_csv_read,
+            "pandas_c": lambda: pd.read_csv(uri, index_col=index_col, **kwargs),
+            "pandas_python": lambda: pd.read_csv(uri, index_col=index_col, engine="python", sep=None, **kwargs),
+            "stdlib_csv": lambda: cls._fallback_read(uri, **kwargs),
+        }
         result = None
-        for method in methods:
+        for name, method in methods.items():
             try:
                 data = method()
                 result = cls(inner_data=data, uri=uri, source=source, **kwargs)
+                logging.debug(f"Used {name} method to parse the CSV file '{uri}'.")
                 break
             except:
                 pass
