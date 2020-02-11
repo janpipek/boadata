@@ -13,13 +13,13 @@ options = dict(
     author='Jan Pipek',
     author_email='jan.pipek@gmail.com',
     url='https://github.com/janpipek/boadata',
+    python_requires='>=3.6',
     install_requires = ['clevercsv', 'numpy', 'pandas', 'blinker', 'sqlalchemy', 'numexpr', 'click', 'xarray', 'scipy',
         'matplotlib', 'pyqtgraph', 'seaborn', 'tabulate', 'physt'],
     extras_require = {
         'matlab' : ['pydons'],
         'h5py' : ['h5py'],
         'pydataset' : ['pydataset'],
-        'all' : ['pydons', 'pydataset', 'h5py'],
         'feather' : ['feather'],
     },
     entry_points = {
@@ -36,8 +36,9 @@ options = dict(
         ]
     },
     classifiers=[
-        "Programming Language :: Python :: 3.4",
-        "Programming Language :: Python :: 3.5",
+        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
         "Development Status :: 3 - Alpha",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
@@ -50,5 +51,5 @@ options = dict(
 )
 
 extras = options['extras_require']
-extras['full'] = list(set(itertools.chain.from_iterable(extras.values())))
+extras['all'] = list(set(itertools.chain.from_iterable(extras.values())))
 setup(**options)

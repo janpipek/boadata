@@ -1,3 +1,8 @@
+0.3.14 (2020-02-11)
+-------------------
+* added (as default) clevercsv to parse CSVs
+* added automatic suppot for TSVs
+
 0.3.13 (2020-02-10)
 -------------------
 * removed dependency and functionality of odo

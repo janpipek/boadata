@@ -1,7 +1,7 @@
 from typing import Optional
 import warnings
 
-__version__ = '0.3.13'
+__version__ = '0.3.14'
 
 # Suppress the unpleasant pandas/seaborn<->matplotlib warning
 warnings.filterwarnings("ignore", module="matplotlib")
