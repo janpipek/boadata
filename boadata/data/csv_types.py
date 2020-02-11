@@ -24,7 +24,7 @@ class CSVFile(PandasDataFrameBase):
 
     @classmethod
     def accepts_uri(cls, uri: str) -> bool:
-        return uri[-4:] == ".csv" or uri[-7:] == ".csv.gz"
+        return bool(re.search("\\.[tc]sv(\\.gz)?$", uri.lower()))
 
     @classmethod
     def _fallback_read(cls, uri: str, **kwargs) -> pd.DataFrame:
@@ -39,6 +39,9 @@ class CSVFile(PandasDataFrameBase):
 
     @classmethod
     def from_uri(cls, uri: str, index_col=False, source: Optional[DataObject] = None, **kwargs) -> "CSVFile":
+        if not "sep" in kwargs and re.search("\\.tsv(\\.gz)?", uri.lower()):
+            kwargs["sep"] = "\\t"
+
         def _clever_csv_read():
             return csv2df(uri, **kwargs)
 
