@@ -2,7 +2,7 @@
 import sys
 
 import click
-from pandas import RangeIndex
+from pandas import DataFrame, RangeIndex
 
 from boadata import __version__
 from boadata.cli import try_load, try_apply_sql
@@ -14,6 +14,7 @@ from boadata.cli import try_load, try_apply_sql
 @click.option("-s", "--sql", required=False, help="SQL to run on the object.")
 @click.option("-t", "--type", default=None, help="What type is the object.")
 @click.option("-p", "--parameter", help="Additional parameters for loader, specified as key=value", multiple=True)
+@click.option("-S", "--summary", help="Include summary using pandas describe.", is_flag=True)
 def run_app(uri, type, parameter, **kwargs):
     do = try_load(uri, type, parameters=parameter)
     do = try_apply_sql(do, kwargs)
@@ -47,7 +48,13 @@ def run_app(uri, type, parameter, **kwargs):
             except:
                 pass
             print(s)
-    
+    if kwargs.get("summary"):
+        print("Summary (DataFrame.describe()):")
+        if isinstance(do.inner_data, DataFrame):
+            df: DataFrame = do.inner_data
+            print("\n".join("  " + line for line in str(df.describe()).splitlines()))
+        else:
+            print("  Not supported :-(")
 
 
 if __name__ == "__main__":
