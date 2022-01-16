@@ -32,10 +32,10 @@ class SelectableMixin:
         '''A safe list of selected items.'''
         return [ item for item in self._selected_items if item in self ]
 
-    def select(self, item):
+    def select(self, item) -> bool:
         '''Select an item.'''
         if not item in self:
-            raise KeyError('"%s" not in container, cannot select.' % item)
+            raise KeyError(f'"{item}" not in container, cannot select.')
         if not self.is_selected(item):
             self._selected_items.add(item)
             self.item_selected.send(self, item=item)
@@ -43,7 +43,7 @@ class SelectableMixin:
         else:
             return False
 
-    def deselect(self, item):
+    def deselect(self, item) -> bool:
         '''Deselect an item.'''
         if not item in self:
             raise KeyError('"%s" not in container, cannot deselect.' % item)
@@ -54,12 +54,12 @@ class SelectableMixin:
         else:
             return False
 
-    def select_all(self):
+    def select_all(self) -> None:
         '''Select all items at once.'''
         for item in self:
             self.select(item)
 
-    def deselect_all(self):
+    def deselect_all(self) -> None:
         for item in self:
             self.deselect(item)
 
@@ -72,10 +72,10 @@ class DictionaryNotifierMixin:
 
     def __setitem__(self, key, *args, **kwargs):
         notify = not (key in self)
-        super(DictionaryNotifierMixin, self).__setitem__(key, *args, **kwargs)
+        super().__setitem__(key, *args, **kwargs)
         if notify:
             self.item_added.send(self, key=key)
 
     def __delitem__(self, key):
-        super(DictionaryNotifierMixin, self).__delitem__(item)
+        super().__delitem__(key)
         self.item_removed.send(self, key=key)

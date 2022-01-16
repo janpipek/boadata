@@ -3,7 +3,7 @@ import logging
 import re
 from typing import Optional
 
-from clevercsv.wrappers import csv2df
+from clevercsv.wrappers import read_dataframe
 import pandas as pd
 
 from boadata.core import DataConversion, DataObject
@@ -43,7 +43,7 @@ class CSVFile(PandasDataFrameBase):
             kwargs["sep"] = "\\t"
 
         def _clever_csv_read():
-            return csv2df(uri, **kwargs)
+            return read_dataframe(uri, **kwargs)
 
         methods = {
             "clevercsv": _clever_csv_read,
