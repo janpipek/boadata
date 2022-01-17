@@ -1,15 +1,22 @@
+from __future__ import annotations
+
 import csv
 import logging
+import os
 import re
-from typing import Optional
+from typing import  TYPE_CHECKING
 
 from clevercsv.wrappers import read_dataframe
 import pandas as pd
 
-from boadata.core import DataConversion, DataObject
+from boadata.core import DataObject
 from boadata.core.data_conversion import ChainConversion, IdentityConversion
 
 from .pandas_types import PandasDataFrameBase
+
+if TYPE_CHECKING:
+    from typing import Optional
+    from boadata.data.text_types import TextFile
 
 
 @DataObject.register_type()
@@ -18,7 +25,7 @@ from .pandas_types import PandasDataFrameBase
 class CSVFile(PandasDataFrameBase):
     type_name = "csv"
 
-    def __to_text__(self, **kwargs) -> "boadata.data.text_types.TextFile":
+    def __to_text__(self, **kwargs) -> TextFile:
         constructor = DataObject.registered_types["text"]
         return constructor.from_uri(self.uri, source=self, **kwargs)
 
@@ -62,10 +69,8 @@ class CSVFile(PandasDataFrameBase):
                 pass
         if result:
             if not result.name:
-                import os
-
                 result.inner_data.name = os.path.splitext(os.path.basename(uri))[0]
             return result
         raise RuntimeError(
-            "No CSV reading method understands the file: {0}".format(uri)
+            f"No CSV reading method understands the file: {uri}"
         )

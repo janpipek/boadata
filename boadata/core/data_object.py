@@ -1,12 +1,17 @@
+from __future__ import annotations
+
 import weakref
 from collections import OrderedDict
-from typing import List, Optional, Tuple, Union, Callable
+from typing import TYPE_CHECKING, Final
 
 import blinker
 import numexpr as ne
 import numpy as np
 
 from boadata.core.data_conversion import ConversionUnknown, DataConversion
+
+if TYPE_CHECKING:
+    from typing import Any, ClassVar, List, Optional, Tuple, Type, Union, Callable
 
 
 class UnknownDataObjectError(Exception):
@@ -22,7 +27,7 @@ class UnsupportedDataOperationError(Exception):
 
 
 class _DataObjectRegistry:
-    registered_types = OrderedDict()
+    registered_types: Final[OrderedDict] = OrderedDict()
 
     registered_default_types = {}
 
@@ -32,7 +37,6 @@ class _DataObjectRegistry:
 
         :param default: Whether to serve as DataObject.from_native handler
            for the real type of the data object.
-        :return:
 
         Automatically discovers conversion in the form of __to_type__ and __from_type__
         (see DataConversion.discover)
@@ -56,7 +60,7 @@ class _DataObjectConversions:
         return False
 
     @classmethod
-    def from_uri(cls, uri: str, **kwargs) -> 'DataObject':
+    def from_uri(cls, uri: str, **kwargs) -> DataObject:
         """"Create an object of this class from an URI.
 
         :param uri: URI in the odo sense
@@ -81,7 +85,7 @@ class _DataObjectConversions:
             raise UnknownDataObjectError(f"Cannot interpret '{uri}' as {cls.__name__}.")
 
     @classmethod
-    def from_native(cls, native_object, **kwargs):
+    def from_native(cls, native_object: Any, **kwargs) -> DataObject:
         """
 
         :param native_object:
@@ -119,14 +123,14 @@ class _DataObjectConversions:
         return conversion.applies(self)
 
     @classmethod
-    def is_convertible_from(cls, data_object: 'DataObject') -> bool:
+    def is_convertible_from(cls, data_object: DataObject) -> bool:
         return data_object.is_convertible_to(cls)
 
     @property
     def allowed_conversions(self) -> List[Tuple[str, str]]:
         return [ key for (key, conversion) in DataConversion.registered_conversions.items() if key[0] == self.type_name and conversion.applies(self)]
 
-    def convert(self, new_type_name: str, **kwargs) -> 'DataObject':
+    def convert(self, new_type_name: str, **kwargs) -> DataObject:
         """Convert to another boadata-supported type.
 
         Auto-conversion returns the same object.
@@ -167,8 +171,6 @@ class _DataObjectInterface:
     @property
     def ndim(self) -> int:
         """Dimensionality of the data.
-
-        :rtype: int
 
         Example: A 4x3 matrix has dimensionality 2.
         """
@@ -216,13 +218,11 @@ class DataObject(_DataObjectRegistry, _DataObjectConversions, _DataObjectInterfa
     '''A basic object that contains data representable by boadata.
 
     :type registered_types: OrderedDict[str, type]
-    :type real_type: type | None
-    :type type_name: str
     :param source: From where we obtained the object (kept as weak reference)
 
     It is necessary to keep all arguments keyword (enforceable in Python 3).
     '''
-    def __init__(self, inner_data=None, uri: str = None, source: 'DataObject' = None, **kwargs):
+    def __init__(self, inner_data: Any = None, uri: str = None, source: 'DataObject' = None, **kwargs):
         if self.real_type and not isinstance(inner_data, self.real_type):
             raise InvalidDataObjectError("Invalid type of inner data: `{0}` instead of expected `{1}`".format(
                 inner_data.__class__.__name__, self.real_type.__name__
@@ -234,12 +234,12 @@ class DataObject(_DataObjectRegistry, _DataObjectConversions, _DataObjectInterfa
 
     changed = blinker.Signal("changed")    # For dynamic data objects
 
-    real_type = None
+    real_type: ClassVar[Type] = None
 
-    type_name = None
+    type_name: ClassVar[str] = None
 
     @property
-    def title(self):
+    def title(self) -> str:
         return repr(self)
 
     def __repr__(self):
@@ -289,7 +289,7 @@ class DataObject(_DataObjectRegistry, _DataObjectConversions, _DataObjectInterfa
             return boadata_type
         return wrapper
 
-    def evaluate(self, expression: str, wrap: bool = True):
+    def evaluate(self, expression: str, wrap: bool = True) -> Any:
         """Do calculation on columns of the dataset.
 
         :param expression: a valid expression

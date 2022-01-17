@@ -1,7 +1,8 @@
+from __future__ import annotations
+
 import os
 
 import pandas as pd
-import xlrd
 
 from boadata.core import DataObject
 from boadata.data.pandas_types import PandasDataFrameBase
@@ -25,7 +26,7 @@ class ExcelSheet(PandasDataFrameBase):
         return os.path.isdir(dir) and ext in cls.EXTENSIONS
 
     @classmethod
-    def from_uri(cls, uri: str, **kwargs) -> "ExcelSheet":
+    def from_uri(cls, uri: str, **kwargs) -> ExcelSheet:
         file, sheet = uri.split("::")
         xls = pd.ExcelFile(file)
         sheet = xls.parse(sheet)
