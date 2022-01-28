@@ -41,6 +41,7 @@ def show_expanded(do: DataObject):
 @click.option("-S", "--sortby", required=False, help="Sort by column(s).")
 @click.option("-x", "--expand", is_flag=True, default=False, help="Show each row expanded.")
 @click.option("-l", "--lines", required=False, help="Lines (as range)")
+@click.option("--sample", required=False, help="Sample lines", type=int)
 @click.option("-p", "--parameter", help="Additional parameters for loader, specified as key=value", multiple=True)
 def run_app(uri, type, parameter, **kwargs):
     kwargs = {key: value for key, value in kwargs.items() if value is not None}

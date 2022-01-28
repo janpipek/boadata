@@ -1,13 +1,20 @@
 """Command-line interface utility functions."""
+from __future__ import annotations
 import contextlib
 import signal
 import sys
-from typing import Dict, List, Optional
+from typing import Dict, TYPE_CHECKING
 
 from boadata import load
 
+if TYPE_CHECKING:
+    from typing import List, Optional
 
-def try_load(uri: str, type: Optional[str] = None, parameters: List[str] = None) -> 'boadata.core.DataObject':
+    from boadata.core import DataObject
+    import boadata
+
+
+def try_load(uri: str, type: Optional[str] = None, parameters: List[str] = None) -> DataObject:
     """Use parameters from command-line to load the data object.
 
     :param uri: URI of the object
@@ -22,14 +29,14 @@ def try_load(uri: str, type: Optional[str] = None, parameters: List[str] = None)
     return do
 
 
-def try_apply_sql(do: 'boadata.core.DataOject', kwargs: dict) -> 'boadata.core.DataObject':
+def try_apply_sql(do: DataObject, kwargs: dict) -> DataObject:
     sql = kwargs.pop("sql", None)
     if sql:
         do = do.sql(sql, table_name="data")
     return do
 
 
-def try_select_columns(do: 'boadata.core.DataObject', kwargs: dict) -> 'boadata.core.DataObject':
+def try_select_columns(do: DataObject, kwargs: dict) -> DataObject:
     columns = kwargs.pop("columns", None)
     if columns:
         columns = columns.split(",")
@@ -40,15 +47,18 @@ def try_select_columns(do: 'boadata.core.DataObject', kwargs: dict) -> 'boadata.
     return do
 
 
-def try_select_rows(do: 'boadata.core.DataObject', kwargs: dict) -> 'boadata.core.DataObject':
+def try_select_rows(do: DataObject, kwargs: dict) -> DataObject:
     lines = kwargs.pop("lines", None)
+    sample = kwargs.pop("sample", None)
     if lines:
         indexer = slice(*(int(l) if l else None for l in lines.split(":")))
         do = do.select_rows(indexer)
+    if sample:
+        do = do.sample_rows(sample)
     return do
 
 
-def try_sort(do: 'boadata.core.DataObject', kwargs: dict) -> 'boadata.core.DataObject':
+def try_sort(do: DataObject, kwargs: dict) -> DataObject:
     sortby = kwargs.pop("sortby", None)
     if sortby:
         columns = sortby.split(",")

@@ -40,6 +40,10 @@ class _PandasBase(
         inner_data = self.inner_data.iloc[indexer]
         return DataObject.from_native(inner_data, source=self)
 
+    def sample_rows(self, number: int) -> '_PandasBase':
+        inner_data = self.inner_data.sample(number)
+        return DataObject.from_native(inner_data)
+
     def concat(self, *others: Iterable["_PandasBase"], **kwargs) -> "_PandasBase":
         inner_data = pd.concat(
             [self.inner_data, *(o.inner_data for o in others)], **kwargs)
