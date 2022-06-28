@@ -1,11 +1,11 @@
-#!/usr/bin/env python3
-import sys
-
-import click
+import typer
 from pandas import DataFrame, RangeIndex
 
 from boadata import __version__
 from boadata.cli import try_load, try_apply_sql
+
+
+run_app = typer.Typer()
 
 
 @click.command()

@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 from typing import List, Optional
 import typer
 
@@ -36,10 +35,8 @@ def main(
 
     do = do.convert("pandas_data_frame")
     if do.shape[0] > kwargs.get("limit", 2 ** 62):
-        print(
-            "The row count is higher than the limit ({0}), dropping lines after that...".format(
-                do.shape[0]
-            )
+        typer.echo(
+            f"The row count is higher than the limit ({do.shape[0]}), dropping lines after that..."
         )
         do = do.head(kwargs.get("limit"))
 
