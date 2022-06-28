@@ -2,7 +2,7 @@
 from __future__ import annotations
 import signal
 import sys
-from typing import Dict, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
 from tabulate import tabulate
 
@@ -42,7 +42,6 @@ def try_filter(do: DataObject, filter: Optional[str]) -> DataObject:
 
 def try_select_columns(do: DataObject, columns: Optional[List[str]]) -> DataObject:
     if columns:
-        columns = columns.split(",")
         if not hasattr(do, "select_columns"):
             print("The data object does not support column selection.")
             sys.exit(-1)

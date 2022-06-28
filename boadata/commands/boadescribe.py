@@ -1,3 +1,5 @@
+from typing import List, Optional
+
 import typer
 from pandas import DataFrame, RangeIndex
 
@@ -8,18 +10,18 @@ from boadata.cli import try_load, try_apply_sql
 run_app = typer.Typer()
 
 
-@click.command()
-@click.version_option(__version__)
-@click.argument("uri")
-@click.option("-s", "--sql", required=False, help="SQL to run on the object.")
-@click.option("-t", "--type", default=None, help="What type is the object.")
-@click.option("-p", "--parameter", help="Additional parameters for loader, specified as key=value", multiple=True)
-@click.option("-S", "--summary", help="Include summary using pandas describe.", is_flag=True)
-def run_app(uri, type, parameter, **kwargs):
+@run_app.command()
+def run_app(
+    uri: str,
+    type: Optional[str] = typer.Option(None, help="The type of the object."),
+    sql: Optional[str] = typer.Option(None, help="SQL to run on the object."),    
+    summary: bool = typer.Option(False, help="Include summary using pandas describe."),
+    parameter: Optional[List[str]] = typer.Option(None, help="Additional parameters for loader, specified as key=value"),
+):
     """Show information about a particular data object."""
 
     do = try_load(uri, type, parameters=parameter)
-    do = try_apply_sql(do, kwargs)
+    do = try_apply_sql(do, sql=sql)
 
     print("Type: {0}".format(do.type_name))
     print("Underlying type: {0}".format(do.inner_data.__class__.__name__))
@@ -44,13 +46,13 @@ def run_app(uri, type, parameter, **kwargs):
     if columns:
         print("Columns:")
         for name in columns:
-            s = "  - {0}".format(name)
+            s = f"  - {name}"
             try:
                 s += " (dtype={0})".format(do[name].dtype)
             except:
                 pass
             print(s)
-    if kwargs.get("summary"):
+    if summary:
         print("Summary (DataFrame.describe()):")
         if isinstance(do.inner_data, DataFrame):
             df: DataFrame = do.inner_data
