@@ -11,7 +11,7 @@ run_app = typer.Typer()
 
 
 @run_app.command()
-def run_app(
+def main(
     uri: str,
     type: Optional[str] = typer.Option(None, help="The type of the object."),
     sql: Optional[str] = typer.Option(None, help="SQL to run on the object."),    
@@ -62,4 +62,4 @@ def run_app(
 
 
 if __name__ == "__main__":
-    run_app()
+    main()

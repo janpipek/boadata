@@ -1,49 +1,51 @@
-#!/usr/bin/env python3
-import click
+from typing import List, Optional
+import typer
 
 from boadata.core import DataObject
 from boadata import __version__
-from boadata.cli import try_load, try_apply_sql, try_select_columns, try_select_rows, try_sort
+from boadata.cli import try_filter, try_load, try_apply_sql, try_select_columns, try_select_rows, try_sort
 
 
-@click.command()
-@click.version_option(__version__)
-@click.argument("from_uri", nargs=-1)
-@click.option("-T", "--in-type", default=None, help="What type is the object.")
-@click.option("-o", "--output-uri", required=False, help="Where to write")
-@click.option("-c", "--columns", required=False, help="List of columns to show")
-@click.option("-s", "--sql", required=False, help="SQL to run on the object.")
-@click.option("-t", "--type", default=None, help="What type should be the destination object.")
-@click.option("-l", "--lines", required=False, help="Lines (as range)")
-@click.option("-p", "--parameter", help="Additional parameters for loader, specified as key=value", multiple=True)
-@click.option("-S", "--sortby", required=False, help="Sort by column(s).")
-def run_app(from_uri, output_uri, in_type, parameter, **kwargs):
+run_app = typer.Typer()
+
+@run_app.command()
+def main(
+    from_uri: List[str],
+    output_uri: Optional[str] = typer.Option(None),
+    in_type: Optional[str] = typer.Option(None, help="The type of the input object."),
+    out_type: Optional[str] = typer.Option(None, help="The type of the output object."),
+    columns: Optional[List[str]] = typer.Option(None, help="List of columns to show"),
+    filter: Optional[str] = typer.Option(None, help="Query to run (as in pandas query)"),
+    sql: Optional[str] = typer.Option(None, help="SQL to run on the object."),
+    sortby: Optional[str] = typer.Option(None, help="Sort by column(s)."),    
+    lines: Optional[str] = typer.Option(None, help="Lines (as range)"),
+    sample: Optional[int] = typer.Option(None, help="Sample a number of lines randomly"),
+    parameter: Optional[List[str]] = typer.Option(None, help="Additional parameters for loader, specified as key=value"),
+):
     """Convert a data object to another type."""
-    kwargs = {key: value for key, value in kwargs.items() if value is not None}
-    type = kwargs.get("type")
-
     do = try_load(from_uri[0], type=in_type, parameters=parameter)
     if len(from_uri) > 1:
         others = (try_load(from_uri[i]) for i in range(1, len(from_uri)))
-        do = do.concat(*others)        
+        do = do.concat(*others)       
     
-    do = try_apply_sql(do, kwargs)
-    do = try_select_columns(do, kwargs)
-    do = try_sort(do, kwargs)
-    do = try_select_rows(do, kwargs)
+    do = try_apply_sql(do, sql=sql)
+    do = try_filter(do, filter=filter)
+    do = try_select_columns(do, columns=columns)
+    do = try_sort(do, sortby=sortby)
+    do = try_select_rows(do, lines=lines, sample=sample)
 
     if output_uri:
-        if not type:
+        if not out_type:
             for conversion in do.allowed_conversions:
                 type_candidate = DataObject.registered_types[conversion[1]]
                 if type_candidate.accepts_uri(output_uri):
-                    type = conversion[1]
+                    out_type = conversion[1]
                     break
-        if not type:
+        if not out_type:
             print("No suitable output type found.")
             exit(-1)
 
-        do.convert(type, uri=output_uri)
+        do.convert(out_type, uri=output_uri)
     else:
         print("Allowed conversions")
         print("-------------------")
