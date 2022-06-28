@@ -34,7 +34,7 @@ def run_app(uri, type, parameter, **kwargs):
             if isinstance(index, RangeIndex):
                 s += f" ({index.start}..{index.stop}"
                 if index.step != 1:
-                    s += f", step={step}"
+                    s += f", step={index.step}"
                 s += ")"
             else:
                 s += " (dtype={0})".format(index.dtype)

@@ -81,7 +81,7 @@ class PandasDataFrameBase(_PandasBase):
             for col in columns
         }
 
-    def sql(self, sql, table_name=None):
+    def sql(self, sql, table_name=None) -> DataObject:
         """Run SQL query on columns of the table.
 
         :param table_name: name of the temporary table (default is the name of the dataframe)
@@ -101,6 +101,11 @@ class PandasDataFrameBase(_PandasBase):
         self.inner_data.to_sql(table_name, engine)
         # TODO: some clean up???
         return wrap(pd.read_sql_query(sql, engine), source=self)
+
+    def query(self, query: str) -> DataObject:
+        from boadata import wrap
+
+        return wrap(self.inner_data.query(query))
 
     def __to_pandas_data_frame__(self):
         return PandasDataFrame(inner_data=self.inner_data, source=self)

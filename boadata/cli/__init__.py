@@ -20,8 +20,8 @@ def try_load(uri: str, type: Optional[str] = None, parameters: List[str] = None)
     :param type: Force a type
     :param parameters: collection of "key=value" strings
     """
-    parameters = dict([param.split("=", 1) for param in parameters]) if parameters else {}
-    do = load(uri, type, **parameters)
+    kwargs = dict([param.split("=", 1) for param in parameters]) if parameters else {}
+    do = load(uri, type, **kwargs)
     if not do:
         raise RuntimeError(f"URI not understood: {uri}")
     return do
@@ -31,6 +31,12 @@ def try_apply_sql(do: DataObject, kwargs: dict) -> DataObject:
     sql = kwargs.pop("sql", None)
     if sql:
         do = do.sql(sql, table_name="data")
+    return do
+
+def try_filter(do: DataObject, kwargs: dict) -> DataObject:
+    query = kwargs.pop("filter", None)
+    if query:
+        do = do.query(query)
     return do
 
 

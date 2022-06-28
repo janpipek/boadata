@@ -5,7 +5,7 @@ import click
 from tabulate import tabulate
 
 from boadata import __version__
-from boadata.cli import try_load, try_apply_sql, try_select_columns, try_select_rows, try_sort
+from boadata.cli import try_load, try_apply_sql, try_filter, try_select_columns, try_select_rows, try_sort
 from boadata.core import DataObject
 
 
@@ -37,6 +37,7 @@ def show_expanded(do: DataObject):
 @click.argument("uri")
 @click.option("-t", "--type", default=None, help="What type is the object.")
 @click.option("-c", "--columns", required=False, help="List of columns to show")
+@click.option("-f", "--filter", required=False, help="Query to run (as in pandas query)")
 @click.option("-s", "--sql", required=False, help="SQL to run on the object.")
 @click.option("-S", "--sortby", required=False, help="Sort by column(s).")
 @click.option("-x", "--expand", is_flag=True, default=False, help="Show each row expanded.")
@@ -50,6 +51,7 @@ def run_app(uri, type, parameter, **kwargs):
 
     do = try_load(uri, type, parameters=parameter)
     do = try_apply_sql(do, kwargs)
+    do = try_filter(do, kwargs)
     do = try_select_columns(do, kwargs)
     do = try_sort(do, kwargs)
     do = try_select_rows(do, kwargs)
