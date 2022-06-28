@@ -242,7 +242,7 @@ class PandasDataFrameBase(_PandasBase):
 
     def select_columns(self, names: List[str]) -> "PandasDataFrame":
         """Select only several columns."""
-        inner_data = self.inner_data.loc[:, names]
+        inner_data = self.inner_data[names]
         # TODO: It's actually a view, isn't it?
         # TODO: Enable regexes
         return DataObject.from_native(inner_data, source=self)

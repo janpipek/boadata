@@ -47,7 +47,7 @@ class CSVFile(PandasDataFrameBase):
             return pd.DataFrame(lines).infer_objects() # convert_numeric=True)
 
     @classmethod
-    def from_uri(cls, uri: str, index_col=False, source: Optional[DataObject] = None, **kwargs) -> "CSVFile":
+    def from_uri(cls, uri: str, index_col=False, source: Optional[DataObject] = None, **kwargs) -> CSVFile:
         if not "sep" in kwargs and re.search("\\.tsv(\\.gz)?", uri.lower()):
             kwargs["sep"] = "\\t"
 

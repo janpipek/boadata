@@ -10,7 +10,7 @@ from boadata.core import DataObject
 
 
 def show_table(do: DataObject):
-    print(tabulate(do.inner_data, do.columns, tablefmt="orgtbl"))
+    print(tabulate(do.inner_data, do.columns, tablefmt="orgtbl", showindex=False, missingval="?"))
 
 
 def show_expanded(do: DataObject):
