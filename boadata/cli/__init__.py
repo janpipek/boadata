@@ -11,7 +11,6 @@ if TYPE_CHECKING:
     from typing import List, Optional
 
     from boadata.core import DataObject
-    import boadata
 
 
 def try_load(uri: str, type: Optional[str] = None, parameters: List[str] = None) -> DataObject:
@@ -24,8 +23,7 @@ def try_load(uri: str, type: Optional[str] = None, parameters: List[str] = None)
     parameters = dict([param.split("=", 1) for param in parameters]) if parameters else {}
     do = load(uri, type, **parameters)
     if not do:
-        print("URI not understood: {0}").format(uri)
-        sys.exit(-1)
+        raise RuntimeError(f"URI not understood: {uri}")
     return do
 
 

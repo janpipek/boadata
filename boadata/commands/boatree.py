@@ -13,7 +13,7 @@ def run_app(uri, **kwargs):
     try:
         the_tree = tree(uri)
     except:
-        print("URI not understood: {0}".format(uri))
+        click.secho(f"URI not understood: {uri}", color="red")
         sys.exit(-1)
     else:
         the_tree.dump(

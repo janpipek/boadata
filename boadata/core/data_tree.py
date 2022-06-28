@@ -1,11 +1,18 @@
-from .data_node import DataNode
+from __future__ import annotations
+
 import os
+from typing import TYPE_CHECKING
+
+from .data_node import DataNode
+
+if TYPE_CHECKING:
+    from typing import List, Type
 
 
 class DataTree(DataNode):
     """A node that forms the top in the tree view."""
 
-    registered_trees = []
+    registered_trees: List[Type[DataTree]] = []
 
     # TODO: Reconsider
     @property
@@ -28,12 +35,12 @@ class DataTree(DataNode):
         return False
 
     @staticmethod
-    def register_tree(cls):
+    def register_tree(cls: Type[DataTree]) -> None:
         DataTree.registered_trees += [cls]
         return cls
 
     @classmethod
-    def from_uri(cls, uri: str) -> 'DataTree':
+    def from_uri(cls, uri: str) -> DataTree:
         """Load a tree from some URI.
 
         :type uri: str

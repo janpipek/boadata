@@ -9,9 +9,9 @@ class GenericTree(DataTree):
         self.children_loaded = True  # Empty by default
 
     @property
-    def title(self):
+    def title(self) -> str:
         return self._title
 
     @title.setter
-    def title(self, new_title):
+    def title(self, new_title: str):
         self._title = new_title

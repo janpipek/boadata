@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 import logging
 import sys
-from typing import Iterator, List, Optional
+from typing import Iterator, List, Optional, TYPE_CHECKING
 
 import blinker
 

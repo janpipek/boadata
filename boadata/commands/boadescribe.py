@@ -16,6 +16,8 @@ from boadata.cli import try_load, try_apply_sql
 @click.option("-p", "--parameter", help="Additional parameters for loader, specified as key=value", multiple=True)
 @click.option("-S", "--summary", help="Include summary using pandas describe.", is_flag=True)
 def run_app(uri, type, parameter, **kwargs):
+    """Show information about a particular data object."""
+
     do = try_load(uri, type, parameters=parameter)
     do = try_apply_sql(do, kwargs)
 

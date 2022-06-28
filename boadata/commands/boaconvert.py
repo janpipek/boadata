@@ -18,6 +18,7 @@ from boadata.cli import try_load, try_apply_sql, try_select_columns, try_select_
 @click.option("-p", "--parameter", help="Additional parameters for loader, specified as key=value", multiple=True)
 @click.option("-S", "--sortby", required=False, help="Sort by column(s).")
 def run_app(from_uri, output_uri, in_type, parameter, **kwargs):
+    """Convert a data object to another type."""
     kwargs = {key: value for key, value in kwargs.items() if value is not None}
     type = kwargs.get("type")
 
