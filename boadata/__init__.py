@@ -1,5 +1,11 @@
-from typing import Optional
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
 import warnings
+
+if TYPE_CHECKING:
+    from typing import Any, Optional
+    from boadata.core import DataObject, DataTree
 
 __version__ = '0.3.14'
 
@@ -7,7 +13,7 @@ __version__ = '0.3.14'
 warnings.filterwarnings("ignore", module="matplotlib")
 
 
-def load(uri: str, type: Optional[str] = None, *args, **kwargs) -> 'boadata.core.DataObject':
+def load(uri: str, type: Optional[str] = None, *args, **kwargs) -> DataObject:
     """Load an object from some URI.
 
     :param type: If present, forces this type to be used.
@@ -20,7 +26,7 @@ def load(uri: str, type: Optional[str] = None, *args, **kwargs) -> 'boadata.core
         return core.DataObject.from_uri(uri, *args, **kwargs)
 
 
-def wrap(native_object, force: bool = True, **kwargs) -> 'boadata.core.DataObject':
+def wrap(native_object, force: bool = True, **kwargs) -> DataObject:
     """Change some data object into a wrapped boadata type.
 
     :param force: If false, wrapping an unsupported object will result that object.
@@ -35,7 +41,7 @@ def wrap(native_object, force: bool = True, **kwargs) -> 'boadata.core.DataObjec
         raise
 
 
-def unwrap(boadata_object: 'boadata.core.DataObject', **kwargs):
+def unwrap(boadata_object: DataObject, **kwargs) -> Any:
     """Change boadata object into its native type."""
     from .core import DataObject
     if isinstance(boadata_object, DataObject):
@@ -47,9 +53,10 @@ def unwrap(boadata_object: 'boadata.core.DataObject', **kwargs):
 def apply(native_object, function, *args, **kwargs):
     """Wrap an object, run something on it and then unwrap the result."""
     result = unwrap(function(wrap(native_object), *args, **kwargs))
+    return result
 
 
-def tree(uri: str) -> 'boadata.core.data_tree.Datatree':
+def tree(uri: str) -> DataTree:
     """Load a tree from some URI."""
     from boadata import trees  # Enforce tree loading
     from boadata.core.data_tree import DataTree

@@ -23,6 +23,8 @@ if TYPE_CHECKING:
 @IdentityConversion.enable_to("pandas_data_frame")
 @ChainConversion.enable_to("numpy_array", through="pandas_data_frame")
 class CSVFile(PandasDataFrameBase):
+    """Comma-separated values file (or similar)"""
+
     type_name = "csv"
 
     def __to_text__(self, **kwargs) -> TextFile:
