@@ -73,18 +73,3 @@ def try_sort(do: DataObject, kwargs: dict) -> DataObject:
 def enable_ctrl_c():
 	"""Enable Ctrl-C in the console."""
 	signal.signal(signal.SIGINT, signal.SIG_DFL)
-
-
-@contextlib.contextmanager
-def qt_app():
-    from boadata.gui import qt  # Force sip
-    from qtpy import QtWidgets
-
-    app = QtWidgets.QApplication(sys.argv)
-    enable_ctrl_c()
-    
-    try:
-        yield app
-        sys.exit(app.exec_())
-    finally:
-        sys.exit(-1)

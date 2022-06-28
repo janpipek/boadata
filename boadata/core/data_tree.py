@@ -14,22 +14,6 @@ class DataTree(DataNode):
 
     registered_trees: List[Type[DataTree]] = []
 
-    # TODO: Reconsider
-    @property
-    def menu_title(self) -> str:
-        '''Title of the menu displayed in main menu bar.
-
-        Override if not equal to title.
-        '''
-        return self.title
-
-    # TODO: Reconsider
-    @property
-    def menu_actions(self):
-        '''Qt actions that should be put into the menu in main menu bar.'''
-        # TODO: Move elsewhere?
-        return []
-
     @classmethod
     def accepts_uri(cls, uri: str) -> bool:
         return False
