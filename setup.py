@@ -20,7 +20,8 @@ options = dict(
         'matlab' : ['pydons'],
         'h5py' : ['h5py'],
         'pydataset' : ['pydataset'],
-        'feather' : ['feather'],
+        'feather': ['feather'],
+        'excel': ['openpyxl', 'xlrd']
     },
     entry_points = {
         'console_scripts' : [
