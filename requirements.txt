@@ -17,3 +17,4 @@ sqlalchemy
 qtpy
 feather-format
 clevercsv
+typer

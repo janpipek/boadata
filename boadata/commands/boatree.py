@@ -1,25 +1,30 @@
 #!/usr/bin/env python3
 import sys
-import click
+
+import typer
+
 from boadata import __version__, tree
 
 
-@click.command()
-@click.version_option(__version__)
-@click.argument("uri")
-@click.option("-f", "--full-title", default=False, is_flag=True, help="Show full path")
-@click.option("-i", "--info", default=False, is_flag=True, help="Show data info")
-def run_app(uri, **kwargs):
+run_app = typer.Typer()
+
+
+@run_app.command()
+def main(
+    uri: str,
+    full_title: bool = False,
+    info: bool = False,
+):
     try:
         the_tree = tree(uri)
     except:
-        click.secho(f"URI not understood: {uri}", color="red")
+        typer.secho(f"URI not understood: {uri}", color="red")
         sys.exit(-1)
     else:
         the_tree.dump(
-            full_title=kwargs.get("full_title"), data_object_info=kwargs.get("info")
+            full_title=full_title, data_object_info=info
         )
 
 
 if __name__ == "__main__":
-    run_app()
+    main()

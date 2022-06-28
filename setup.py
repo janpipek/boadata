@@ -13,9 +13,9 @@ options = dict(
     author='Jan Pipek',
     author_email='jan.pipek@gmail.com',
     url='https://github.com/janpipek/boadata',
-    python_requires='>=3.6',
+    python_requires='>=3.8',
     install_requires = ['clevercsv', 'numpy', 'pandas', 'blinker', 'sqlalchemy', 'numexpr', 'click', 'xarray', 'scipy',
-        'matplotlib', 'orange3', 'seaborn', 'tabulate', 'physt'],
+        'matplotlib', 'orange3', 'seaborn', 'tabulate', 'physt', 'typer'],
     extras_require = {
         'matlab' : ['pydons'],
         'h5py' : ['h5py'],
@@ -24,16 +24,17 @@ options = dict(
     },
     entry_points = {
         'console_scripts' : [
-            'boaconvert = boadata.commands.boaconvert:run_app',
-            'boadescribe = boadata.commands.boadescribe:run_app',
-            'boatree = boadata.commands.boatree:run_app',
-            'boacat = boadata.commands.boacat:run_app'
+            'boa = boadata.commands:run_app',
+            'boa-convert = boadata.commands.boaconvert:run_app',
+            'boa-describe = boadata.commands.boadescribe:run_app',
+            'boa-tree = boadata.commands.boatree:run_app',
+            'boa-cat = boadata.commands.boacat:run_app'
         ]
     },
     classifiers=[
-        "Programming Language :: Python :: 3.6",
-        "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
         "Development Status :: 3 - Alpha",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",

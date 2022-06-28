@@ -21,15 +21,11 @@ Executables
 ------------
 Run `command --help` to see full list of options
 
-* `boadescribe <uri>` - show basic info about a data object (in command-line)
-* `boatree <uri>` - list nodes in a data tree
-* `boaplot <uri> <colx> <coly>` - scatter plot of two columns (colx,y can be expressions like x**2, sqrt(y+2*exp(-x)) etc.)
-* `boahist <uri> <col>` - histogram of a column
-* `boadata [<uri>]` - full gui with a tree
-* `boatable <uri>` - show tabular representation of a dataobject (GUI)
-* `boacat <uri>` - print tabular representation of a dataobject (command-line)
-* `boaconvert <from+> <to>` - convert one data source into another
-* `boaview <uri>` - show a tabbed window with all available views for the dataobject
+* `boa` - 
+* `boa-describe <uri>` - show basic info about a data object (in command-line)
+* `boa-tree <uri>` - list nodes in a data tree
+* `boa-cat <uri>` - print tabular representation of a dataobject (command-line)
+* `boa-convert <from+> <to>` - convert one data source into another
 
 Status
 ------

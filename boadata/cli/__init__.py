@@ -1,6 +1,5 @@
 """Command-line interface utility functions."""
 from __future__ import annotations
-import contextlib
 import signal
 import sys
 from typing import Dict, TYPE_CHECKING
@@ -32,6 +31,7 @@ def try_apply_sql(do: DataObject, kwargs: dict) -> DataObject:
     if sql:
         do = do.sql(sql, table_name="data")
     return do
+
 
 def try_filter(do: DataObject, kwargs: dict) -> DataObject:
     query = kwargs.pop("filter", None)
