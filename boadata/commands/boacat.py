@@ -1,60 +1,38 @@
 #!/usr/bin/env python3
-import sys
-
-import click
-from tabulate import tabulate
+from typing import List, Optional
+import typer
 
 from boadata import __version__
 from boadata.cli import try_load, try_apply_sql, try_filter, try_select_columns, try_select_rows, try_sort
-from boadata.core import DataObject
+from boadata.cli import show_expanded, show_table
 
 
-def show_table(do: DataObject):
-    print(tabulate(do.inner_data, do.columns, tablefmt="orgtbl", showindex=False, missingval="?"))
+run_app = typer.Typer()
 
 
-def show_expanded(do: DataObject):
-    try:
-        import colorama
-        highlight = colorama.Fore.LIGHTGREEN_EX
-        normal = colorama.Fore.LIGHTBLUE_EX
-        reset = colorama.Fore.RESET
-    except ImportError:
-        highlight = ""
-        normal = ""
-        reset = ""
-
-    for i in range(do.shape[0]):
-        for column in do.columns:
-            value = do.inner_data.iloc[i][column]
-            line = (normal + str(column) + reset + ": " + highlight + str(value) + reset)
-            print(line)
-        print("--------------------------------- " + str(i))
-
-
-@click.command()
-@click.version_option(__version__)
-@click.argument("uri")
-@click.option("-t", "--type", default=None, help="What type is the object.")
-@click.option("-c", "--columns", required=False, help="List of columns to show")
-@click.option("-f", "--filter", required=False, help="Query to run (as in pandas query)")
-@click.option("-s", "--sql", required=False, help="SQL to run on the object.")
-@click.option("-S", "--sortby", required=False, help="Sort by column(s).")
-@click.option("-x", "--expand", is_flag=True, default=False, help="Show each row expanded.")
-@click.option("-l", "--lines", required=False, help="Lines (as range)")
-@click.option("--sample", required=False, help="Sample lines", type=int)
-@click.option("-p", "--parameter", help="Additional parameters for loader, specified as key=value", multiple=True)
-def run_app(uri, type, parameter, **kwargs):
+@run_app.command()
+def main(
+    uri: str,
+    type: Optional[str] = typer.Option(None, help="The type of the object."),
+    columns: Optional[List[str]] = typer.Option(None, help="List of columns to show"),
+    filter: Optional[str] = typer.Option(None, help="Query to run (as in pandas query)"),
+    sql: Optional[str] = typer.Option(None, help="SQL to run on the object."),
+    sortby: Optional[str] = typer.Option(None, help="Sort by column(s)."),
+    expand: bool = typer.Option(False, help="Show each row expanded."),
+    lines: Optional[str] = typer.Option(None, help="Lines (as range)"),
+    sample: Optional[int] = typer.Option(None, help="Sample a number of lines randomly"),
+    parameter: Optional[List[str]] = typer.Option(None, help="Additional parameters for loader, specified as key=value"),
+):
     kwargs = {key: value for key, value in kwargs.items() if value is not None}
 
     expand = kwargs.pop("expand", False)
 
-    do = try_load(uri, type, parameters=parameter)
-    do = try_apply_sql(do, kwargs)
-    do = try_filter(do, kwargs)
-    do = try_select_columns(do, kwargs)
-    do = try_sort(do, kwargs)
-    do = try_select_rows(do, kwargs)
+    do = try_load(uri, type=type, parameters=parameter)
+    do = try_apply_sql(do, sql=sql)
+    do = try_filter(do, filter=filter)
+    do = try_select_columns(do, columns=columns)
+    do = try_sort(do, sortby=sortby)
+    do = try_select_rows(do, lines=lines, sample=sample)
 
     do = do.convert("pandas_data_frame")
     if do.shape[0] > kwargs.get("limit", 2 ** 62):
@@ -69,6 +47,8 @@ def run_app(uri, type, parameter, **kwargs):
         show_expanded(do)
     else:
         show_table(do)
+
+run_app.command()(main)
 
 
 if __name__ == "__main__":

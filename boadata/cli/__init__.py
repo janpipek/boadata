@@ -4,6 +4,8 @@ import signal
 import sys
 from typing import Dict, TYPE_CHECKING
 
+from tabulate import tabulate
+
 from boadata import load
 
 if TYPE_CHECKING:
@@ -26,22 +28,19 @@ def try_load(uri: str, type: Optional[str] = None, parameters: List[str] = None)
     return do
 
 
-def try_apply_sql(do: DataObject, kwargs: dict) -> DataObject:
-    sql = kwargs.pop("sql", None)
+def try_apply_sql(do: DataObject, sql: Optional[str]) -> DataObject:
     if sql:
         do = do.sql(sql, table_name="data")
     return do
 
 
-def try_filter(do: DataObject, kwargs: dict) -> DataObject:
-    query = kwargs.pop("filter", None)
-    if query:
-        do = do.query(query)
+def try_filter(do: DataObject, filter: Optional[str]) -> DataObject:
+    if filter:
+        do = do.query(filter)
     return do
 
 
-def try_select_columns(do: DataObject, kwargs: dict) -> DataObject:
-    columns = kwargs.pop("columns", None)
+def try_select_columns(do: DataObject, columns: Optional[List[str]]) -> DataObject:
     if columns:
         columns = columns.split(",")
         if not hasattr(do, "select_columns"):
@@ -51,19 +50,16 @@ def try_select_columns(do: DataObject, kwargs: dict) -> DataObject:
     return do
 
 
-def try_select_rows(do: DataObject, kwargs: dict) -> DataObject:
-    lines = kwargs.pop("lines", None)
-    sample = kwargs.pop("sample", None)
-    if lines:
+def try_select_rows(do: DataObject, lines: Optional[str], sample: Optional[int]) -> DataObject:
+    if lines is not None:
         indexer = slice(*(int(l) if l else None for l in lines.split(":")))
         do = do.select_rows(indexer)
-    if sample:
+    if sample is not None:
         do = do.sample_rows(sample)
     return do
 
 
-def try_sort(do: DataObject, kwargs: dict) -> DataObject:
-    sortby = kwargs.pop("sortby", None)
+def try_sort(do: DataObject, sortby: Optional[str]) -> DataObject:
     if sortby:
         columns = sortby.split(",")
         do = do.sort_by(columns)
@@ -73,3 +69,27 @@ def try_sort(do: DataObject, kwargs: dict) -> DataObject:
 def enable_ctrl_c():
 	"""Enable Ctrl-C in the console."""
 	signal.signal(signal.SIGINT, signal.SIG_DFL)
+
+
+def show_table(do: DataObject):
+    print(tabulate(do.inner_data, do.columns, tablefmt="orgtbl", showindex=False, missingval="?"))
+
+
+def show_expanded(do: DataObject):
+    try:
+        # TODO: Rewrite in terms of typer
+        import colorama
+        highlight = colorama.Fore.LIGHTGREEN_EX
+        normal = colorama.Fore.LIGHTBLUE_EX
+        reset = colorama.Fore.RESET
+    except ImportError:
+        highlight = ""
+        normal = ""
+        reset = ""
+
+    for i in range(do.shape[0]):
+        for column in do.columns:
+            value = do.inner_data.iloc[i][column]
+            line = (normal + str(column) + reset + ": " + highlight + str(value) + reset)
+            print(line)
+        print("--------------------------------- " + str(i))
