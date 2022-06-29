@@ -29,7 +29,7 @@ def main(
         do = do.concat(*others)       
     
     do = try_apply_sql(do, sql=sql)
-    do = try_query(do, filter=filter)
+    do = try_query(do, query=filter)
     do = try_select_columns(do, columns=columns)
     do = try_sort(do, sortby=sortby)
     do = try_select_rows(do, lines=lines, sample=sample)
