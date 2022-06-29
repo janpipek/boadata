@@ -1,5 +1,12 @@
+from __future__ import annotations
+
 from collections import OrderedDict
-from typing import Union
+from typing import Union, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from typing import Type, Union
+
+    from boadata.core import DataObject
 
 
 class ConversionUnknown(RuntimeError):
@@ -20,7 +27,7 @@ class DataConversion:
 
     """
 
-    def __init__(self, type_name1: Union[str, 'DataObject'], type_name2: Union[str, 'DataObject'], method=None, condition=None):
+    def __init__(self, type_name1: Union[str, Type[DataObject]], type_name2: Union[str, Type[DataObject]], method=None, condition=None):
         self._type1 = None
         self._type2 = None
 
@@ -40,7 +47,7 @@ class DataConversion:
 
     registered_conversions = OrderedDict()
 
-    def _register(self):
+    def _register(self) -> None:
         DataConversion.registered_conversions[(self.type_name1, self.type_name2)] = self
 
     def applies(self, origin) -> bool:
@@ -71,14 +78,14 @@ class DataConversion:
     #     return OrderedDict()
 
     @property
-    def type1(self):
+    def type1(self) -> DataObject:
         from .data_object import DataObject
         if not self._type1:
             self._type1 = DataObject.registered_types[self.type_name1]
         return self._type1
 
     @property
-    def type2(self):
+    def type2(self) -> DataObject:
         from .data_object import DataObject
         if not self._type2:
             self._type2 = DataObject.registered_types[self.type_name2]
