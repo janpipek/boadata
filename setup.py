@@ -25,9 +25,6 @@ options = dict(
     },
     entry_points = {
         'console_scripts' : [
-            'boa = boadata.commands:run_app',
-
-            # TODO: Remove the following?
             'boa-convert = boadata.commands.boaconvert:run_app',
             'boa-describe = boadata.commands.boadescribe:run_app',
             'boa-tree = boadata.commands.boatree:run_app',

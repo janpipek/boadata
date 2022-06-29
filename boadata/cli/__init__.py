@@ -34,9 +34,9 @@ def try_apply_sql(do: DataObject, sql: Optional[str]) -> DataObject:
     return do
 
 
-def try_filter(do: DataObject, filter: Optional[str]) -> DataObject:
-    if filter:
-        do = do.query(filter)
+def try_query(do: DataObject, query: Optional[str]) -> DataObject:
+    if query:
+        do = do.query(query)
     return do
 
 

@@ -3,7 +3,7 @@ import typer
 
 from boadata.core import DataObject
 from boadata import __version__
-from boadata.cli import try_filter, try_load, try_apply_sql, try_select_columns, try_select_rows, try_sort
+from boadata.cli import try_query, try_load, try_apply_sql, try_select_columns, try_select_rows, try_sort
 
 
 run_app = typer.Typer()
@@ -29,7 +29,7 @@ def main(
         do = do.concat(*others)       
     
     do = try_apply_sql(do, sql=sql)
-    do = try_filter(do, filter=filter)
+    do = try_query(do, filter=filter)
     do = try_select_columns(do, columns=columns)
     do = try_sort(do, sortby=sortby)
     do = try_select_rows(do, lines=lines, sample=sample)
