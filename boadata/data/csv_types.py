@@ -70,8 +70,8 @@ class CSVFile(PandasDataFrameBase):
             except:
                 pass
         if result:
-            if not result.name:
-                result.inner_data.name = os.path.splitext(os.path.basename(uri))[0]
+            if not result.title:
+                result.title = os.path.splitext(os.path.basename(uri))[0]
             return result
         raise RuntimeError(
             f"No CSV reading method understands the file: {uri}"
