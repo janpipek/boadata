@@ -19,7 +19,7 @@ from .mixins import (
 
 
 @ConstructorConversion.enable_to("pandas_series", condition=lambda x: x.ndim == 1)
-@DataObject.proxy_methods(["__len__"])
+@DataObject.proxy_methods("__len__")
 class NumpyArrayBase(DataObject, CopyableMixin, IteratorMixin):
     real_type = np.ndarray
 

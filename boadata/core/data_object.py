@@ -246,7 +246,7 @@ class DataObject(_DataObjectRegistry, _DataObjectConversions, _DataObjectInterfa
         return "{0}(\"{1}\")".format(self.__class__.__name__, self.uri)
 
     @staticmethod
-    def proxy_methods(methods, wrap: bool = True, unwrap_args: bool = True, same_class: bool = True, through: Optional[type] = None):
+    def proxy_methods(*methods: str, wrap: bool = True, unwrap_args: bool = True, same_class: bool = True, through: Optional[type] = None):
         """Decorator to apply on DataObject descendants.
 
         :param wrap: Whether to wrap result
@@ -258,10 +258,7 @@ class DataObject(_DataObjectRegistry, _DataObjectConversions, _DataObjectInterfa
         """
         import boadata
         def wrapper(boadata_type):
-            if isinstance(methods, str):
-                method_names = [methods]
-            else:
-                method_names = methods
+            method_names = methods
 
             def make_method(method_name):
                 def proxied_method(self, *args, **kwargs):

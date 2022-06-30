@@ -2,7 +2,7 @@ from boadata.core import DataObject
 
 import numpy as np
 
-@DataObject.proxy_methods(["__getitem__"])
+@DataObject.proxy_methods("__getitem__")
 class GetItemMixin:
     """Enable proxing of GetItem."""
 
@@ -18,7 +18,7 @@ class SetItemMixin:
         self.inner_data[key] = value
 
 
-@DataObject.proxy_methods(["sum", "std", "max", "mean", "min"])
+@DataObject.proxy_methods("sum", "std", "max", "mean", "min")
 class StatisticsMixin:
     """
 
@@ -46,7 +46,6 @@ class StatisticsMixin:
 
 
 @DataObject.proxy_methods(
-    [
         "__add__",
         "__radd__",
         "__sub__",
@@ -65,7 +64,6 @@ class StatisticsMixin:
         "__rdivmod__",
         "__pow__",
         "__rpow__",
-    ]
 )
 class NumericalMixin:
     pass

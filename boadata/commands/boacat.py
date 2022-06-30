@@ -17,7 +17,7 @@ def main(
     query: Optional[str] = typer.Option(None, "--query", "-q", help="Query to run (as in pandas query)"),
     sql: Optional[str] = typer.Option(None, help="SQL to run on the object."),
     sortby: Optional[str] = typer.Option(None, help="Sort by column(s)."),
-    expand: bool = typer.Option(False, help="Show each row expanded."),
+    expand: bool = typer.Option(False, "--expand", "-x", help="Show each row expanded."),
     lines: Optional[str] = typer.Option(None, "--lines", "-l", help="Lines (as range)"),
     limit: Optional[int] = typer.Option(None, help="Maximum number of lines to show"),
     sample: Optional[int] = typer.Option(None, help="Sample a number of lines randomly"),

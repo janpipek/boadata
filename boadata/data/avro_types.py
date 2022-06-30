@@ -12,6 +12,7 @@ from boadata.core.data_conversion import ChainConversion
 
 
 @DataObject.register_type()
+@DataObject.proxy_methods("select_rows", "select_columns", "sample_rows", "query", through="pandas_data_frame", same_class = False)
 @ChainConversion.enable_to("csv", through="pandas_data_frame", pass_kwargs=["uri"])
 class AvroFile(DataObject):
     type_name = "avro"
