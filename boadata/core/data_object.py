@@ -222,7 +222,7 @@ class DataObject(_DataObjectRegistry, _DataObjectConversions, _DataObjectInterfa
 
     It is necessary to keep all arguments keyword (enforceable in Python 3).
     '''
-    def __init__(self, inner_data: Any = None, uri: str = None, source: 'DataObject' = None, **kwargs):
+    def __init__(self, inner_data: Any = None, uri: Optional[str] = None, source: Optional[DataObject] = None, **kwargs):
         if self.real_type and not isinstance(inner_data, self.real_type):
             raise InvalidDataObjectError("Invalid type of inner data: `{0}` instead of expected `{1}`".format(
                 inner_data.__class__.__name__, self.real_type.__name__

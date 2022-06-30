@@ -11,7 +11,7 @@ run_app = typer.Typer()
 @run_app.command()
 def main(
     from_uri: List[str],
-    output_uri: Optional[str] = typer.Option(None),
+    output_uri: Optional[str] = typer.Option(None, "--output-uri", "-o"),
     in_type: Optional[str] = typer.Option(None, help="The type of the input object."),
     out_type: Optional[str] = typer.Option(None, help="The type of the output object."),
     columns: Optional[List[str]] = typer.Option(None, help="List of columns to show"),

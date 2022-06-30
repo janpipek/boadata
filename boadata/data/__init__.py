@@ -42,17 +42,23 @@ except:
 try:
     # Dependence on xlrd...
     from .excel_types import ExcelSheet
-except:
+except ImportError:
     pass
 
 try:
     # Dependence on feather
     from .feather_types import FeatherFile
-except:
+except ImportError:
     pass
 
 
 try: 
     from .parquet_types import ParquetFile
-except:
+except ImportError:
+    pass
+
+
+try:
+    from .avro_types import AvroFile
+except ImportError:
     pass

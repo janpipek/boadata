@@ -17,6 +17,7 @@ options = dict(
     install_requires = ['clevercsv', 'numpy', 'pandas', 'blinker', 'sqlalchemy', 'numexpr', 'click', 'xarray', 'scipy',
         'matplotlib', 'seaborn', 'tabulate', 'physt', 'typer'],
     extras_require = {
+        'avro': ['fastavro'],
         'matlab' : ['pydons'],
         'h5py' : ['h5py'],
         'pydataset' : ['pydataset'],
