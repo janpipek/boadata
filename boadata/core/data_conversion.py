@@ -115,7 +115,13 @@ class DataConversion:
         return wrap
 
     @staticmethod
-    def discover(cls):
+    def discover(cls: Type[DataObject]) -> None:
+        """Automatically find and register conversions in an object.
+        
+        These might be defined in both directions as methods:
+        - __to_another_type__
+        - __from_another_type__
+        """
         for key in dir(cls):
             if key.startswith("__to_") and key.endswith("__"):
                 other_type = key[5:-2]
