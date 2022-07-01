@@ -338,7 +338,7 @@ class ComsolFieldTextFile(PandasDataFrameBase):
                 for line in in_lines.splitlines():
                     if line.startswith("% Version") and "COMSOL" in line:
                         return True
-        except IOError:
+        except (IOError, UnicodeDecodeError):
             return False
 
     @classmethod
@@ -418,7 +418,7 @@ class OperaFieldTextFile(PandasDataFrameBase):
                         if int(j) != i:
                             break
                         columns.append(rest)
-            except RuntimeError:
+            except (RuntimeError, UnicodeDecodeError):
                 pass
             return 0, None
 
