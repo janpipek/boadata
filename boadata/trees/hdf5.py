@@ -1,15 +1,14 @@
-from boadata.core import DataNode, DataTree
-from .file import FileNode
-import h5py
+from __future__ import annotations
+
 import logging
 import os
 
+import h5py
 
-def create_hdf_node(h5_object):
-    """
-    :type h5_object: h5py.highlevel.HLObject
-    :rtype Hdf5Node
-    """
+from boadata.core import DataNode, DataTree
+
+
+def create_hdf_node(h5_object: h5py.highlevel.HLObject) -> Hdf5Node:
     if isinstance(h5_object, h5py.Group):
         return GroupNode(h5_object)
     elif isinstance(h5_object, h5py.Dataset):

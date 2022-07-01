@@ -1,7 +1,7 @@
 from __future__ import annotations
-from contextlib import contextmanager
 
 import re
+from contextlib import contextmanager
 from typing import List, Optional, Tuple
 
 import fastavro

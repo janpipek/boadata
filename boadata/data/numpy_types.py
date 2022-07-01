@@ -1,12 +1,11 @@
-from typing import Tuple
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Tuple
 
 import numpy as np
 
 from boadata.core import DataObject
-from boadata.core.data_conversion import (
-    ConstructorConversion,
-    DataConversion,
-)
+from boadata.core.data_conversion import ConstructorConversion, DataConversion
 
 from .mixins import (
     AsArrayMixin,
@@ -16,6 +15,10 @@ from .mixins import (
     NumericalMixin,
     StatisticsMixin,
 )
+
+
+if TYPE_CHECKING:
+    from boadata.data.plotting_types import HistogramData
 
 
 @ConstructorConversion.enable_to("pandas_series", condition=lambda x: x.ndim == 1)
@@ -63,10 +66,7 @@ class NumpyArrayBase(DataObject, CopyableMixin, IteratorMixin):
             self.__class__.__name__, self.shape, self.inner_data.dtype
         )
 
-    def histogram(self, *args, **kwargs) -> "boadata.data.plotting_types.HistogramData":
-        """
-        :rtype: boadata.data.plotting_types.HistogramData
-        """
+    def histogram(self, *args, **kwargs) -> HistogramData:
         data = self.inner_data
         if self.dtype.kind not in "iuf":
             raise RuntimeError("Not supported")

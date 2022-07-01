@@ -3,8 +3,7 @@ from typing import List, Optional
 import typer
 from pandas import DataFrame, RangeIndex
 
-from boadata import __version__
-from boadata.cli import try_load, try_apply_sql
+from boadata.cli import try_apply_sql, try_load
 
 
 run_app = typer.Typer()
@@ -42,7 +41,7 @@ def main(
                 s += ")"
             else:
                 s += " (dtype={0})".format(index.dtype)
-        except:
+        except RuntimeError:
             pass
         print(s)
     if columns:
@@ -51,7 +50,7 @@ def main(
             s = f"  - {name}"
             try:
                 s += " (dtype={0})".format(do[name].dtype)
-            except:
+            except RuntimeError:
                 pass
             print(s)
     if summary:

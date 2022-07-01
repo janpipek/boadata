@@ -1,16 +1,17 @@
 from typing import List, Optional
+
 import typer
 
-from boadata.core import DataObject
-from boadata import __version__
+from boadata import __version__  # noqa: F401
 from boadata.cli import (
-    try_query,
-    try_load,
     try_apply_sql,
+    try_load,
+    try_query,
     try_select_columns,
     try_select_rows,
     try_sort,
 )
+from boadata.core import DataObject
 
 
 run_app = typer.Typer()

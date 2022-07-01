@@ -1,7 +1,7 @@
 boadata
 =======
 
-(B)rowser (O)f (A)rbitrary Data - a Python browser of data. 
+(B)rowser (O)f (A)rbitrary Data - a Python browser of data.
 The goal is to create a simple tool for scientists / data miners
 to browse and plot various data sources in one simple environment.
 
@@ -21,7 +21,7 @@ Executables
 ------------
 Run `command --help` to see full list of options
 
-* `boa` - 
+* `boa` -
 * `boa-describe <uri>` - show basic info about a data object (in command-line)
 * `boa-tree <uri>` - list nodes in a data tree
 * `boa-cat <uri>` - print tabular representation of a dataobject (command-line)
@@ -69,4 +69,3 @@ Supported GUI views
 * Scatter / line plot
 * Text view
 * Summary (from pandas_profiling)
-

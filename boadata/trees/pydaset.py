@@ -1,5 +1,6 @@
 from pydataset import data
-from boadata.core import DataTree, DataNode
+
+from boadata.core import DataNode, DataTree
 
 
 class PydatasetNode(DataNode):

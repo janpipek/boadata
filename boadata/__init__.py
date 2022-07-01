@@ -1,10 +1,12 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
 import warnings
+from typing import TYPE_CHECKING
+
 
 if TYPE_CHECKING:
     from typing import Any, Optional
+
     from boadata.core import DataObject, DataTree
 
 __version__ = "0.4.0"
@@ -18,8 +20,8 @@ def load(uri: str, type: Optional[str] = None, *args, **kwargs) -> DataObject:
 
     :param type: If present, forces this type to be used.
     """
-    from . import core
     from . import data  # Loads all formats
+    from . import core
 
     if type:
         return core.DataObject.registered_types[type].from_uri(uri, *args, **kwargs)
@@ -32,12 +34,12 @@ def wrap(native_object, force: bool = True, **kwargs) -> DataObject:
 
     :param force: If false, wrapping an unsupported object will result that object.
     """
-    from . import core
     from . import data  # Loads all formats
+    from . import core
 
     try:
         return core.DataObject.from_native(native_object, **kwargs)
-    except RuntimeError as ex:
+    except RuntimeError:
         if not force:
             return native_object
         raise
@@ -69,7 +71,7 @@ def tree(uri: str) -> DataTree:
         if cls.accepts_uri(uri):
             try:
                 tree = cls(uri=uri)
-            except:
+            except RuntimeError:
                 pass
     if not tree:
         raise RuntimeError("No tree understood could be created from URI=" + uri)

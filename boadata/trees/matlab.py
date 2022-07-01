@@ -1,8 +1,8 @@
-from boadata.core import DataNode, DataTree
-import h5py
-import logging
 import os
+
 import pydons
+
+from boadata.core import DataNode, DataTree
 
 
 class _MatlabNode(DataNode):

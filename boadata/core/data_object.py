@@ -10,8 +10,9 @@ import numpy as np
 
 from boadata.core.data_conversion import ConversionUnknown, DataConversion
 
+
 if TYPE_CHECKING:
-    from typing import Any, ClassVar, List, Optional, Tuple, Type, Union, Callable
+    from typing import Any, Callable, ClassVar, List, Optional, Tuple, Type, Union
 
 
 class UnknownDataObjectError(Exception):
@@ -122,7 +123,7 @@ class _DataObjectConversions:
         if isinstance(new_type_name, type):
             new_type, new_type_name = new_type_name, new_type_name.type_name
         else:
-            if not new_type_name in DataObject.registered_types:
+            if new_type_name not in DataObject.registered_types:
                 return False
             new_type = DataObject.registered_types[new_type_name]
         if isinstance(self, new_type):
@@ -219,8 +220,8 @@ class _DataObjectInterface:
         if hasattr(self.inner_data, "size"):
             return int(self.inner_data.size)
         else:
-            from operator import mul
             from functools import reduce
+            from operator import mul
 
             reduce(mul, self.shape, 1)
 
@@ -332,7 +333,7 @@ class DataObject(_DataObjectRegistry, _DataObjectConversions, _DataObjectInterfa
                     else:
                         try:
                             return DataObject.from_native(result)
-                        except:
+                        except RuntimeError:
                             return result
 
                 return proxied_method
@@ -368,7 +369,7 @@ class DataObject(_DataObjectRegistry, _DataObjectConversions, _DataObjectInterfa
         :param sql: if True, the condition is evaluated as sql WHERE clause
         """
         if sql:
-            if not "sql" in dir(self):
+            if "sql" not in dir(self):
                 raise RuntimeError(
                     "Object {0} does not support SQL.".format(self.__class__.__name__)
                 )
@@ -398,6 +399,6 @@ class DataObject(_DataObjectRegistry, _DataObjectConversions, _DataObjectInterfa
         result = method(*args, **kwargs)
         try:
             result = DataObject.from_native(result)
-        except:
+        except RuntimeError:
             pass
         return result

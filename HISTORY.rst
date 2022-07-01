@@ -39,7 +39,7 @@
 
 0.3.7 (2017-07-21)
 ------------------
-* resample + interpolate 
+* resample + interpolate
 * Opera field map support
 
 0.3.6 (2017-01-05)

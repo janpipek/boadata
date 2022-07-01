@@ -1,5 +1,6 @@
-from ..core import DataNode, DataObject, DataProperties, DataTree
 import os
+
+from boadata.core import DataNode, DataTree
 
 
 class TableNode(DataNode):

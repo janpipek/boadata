@@ -10,7 +10,6 @@ from boadata.core.data_conversion import (
     ChainConversion,
     DataConversion,
     IdentityConversion,
-    MethodConversion,
 )
 
 from .pandas_types import PandasDataFrameBase
@@ -160,7 +159,7 @@ class VectorFieldMap(AbstractFieldMap, XarrayDatasetBase):
             a_copy = self.copy()
             a_copy.invert_axis(ax, inplace=True)
             return a_copy
-        if not ax in (0, 1, 2):
+        if ax not in (0, 1, 2):
             raise RuntimeError("Cannot invert non-existent axis")
         else:
             self.inner_data[self.axes[ax]] = self.inner_data[self.axes[ax]] * (-1)
@@ -251,7 +250,7 @@ class VectorFieldMap(AbstractFieldMap, XarrayDatasetBase):
         else:
             return VectorFieldMap(inner_data=inner_data, source=self)
 
-    def swap_axes(self, ax1, ax2, inplace=True):
+    def swap_axes(self, ax1, ax2, inplace: bool = True):
         """Swap two axes (and vector components).
 
         swap(0, 1) means: "What was x, is now y (and vice versa)".
@@ -264,7 +263,7 @@ class VectorFieldMap(AbstractFieldMap, XarrayDatasetBase):
         if {ax1, ax2}.difference({0, 1, 2}):
             raise RuntimeError("Wrong axis id")
         elif ax1 == ax2:
-            inner_data = self.inner_data
+            return
         else:
             df_columns = self.axes + self.columns
 
@@ -339,7 +338,7 @@ class ComsolFieldTextFile(PandasDataFrameBase):
                 for line in in_lines.splitlines():
                     if line.startswith("% Version") and "COMSOL" in line:
                         return True
-        except:
+        except IOError:
             return False
 
     @classmethod
@@ -419,7 +418,7 @@ class OperaFieldTextFile(PandasDataFrameBase):
                         if int(j) != i:
                             break
                         columns.append(rest)
-            except:
+            except RuntimeError:
                 pass
             return 0, None
 

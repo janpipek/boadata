@@ -1,16 +1,17 @@
 from typing import List, Optional
+
 import typer
 
-from boadata import __version__
 from boadata.cli import (
-    try_load,
+    show_expanded,
+    show_table,
     try_apply_sql,
+    try_load,
     try_query,
     try_select_columns,
     try_select_rows,
     try_sort,
 )
-from boadata.cli import show_expanded, show_table
 
 
 run_app = typer.Typer()

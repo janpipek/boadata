@@ -1,6 +1,6 @@
-from boadata.core import DataObject
-
 from numpy import size
+
+from boadata.core import DataObject
 
 from .numpy_types import NumpyArrayBase
 from .plotting_types import XYPlotDataSeriesBase
@@ -80,10 +80,10 @@ class MatlabFigXYData(XYPlotDataSeriesBase):
     def from_uri(cls, uri: str, **kwargs) -> "MatlabFigXYData":
         try:
             return cls._from_oldmatlab(uri, **kwargs)
-        except:
+        except RuntimeError:
             try:
                 return cls._from_matlab73(uri, **kwargs)
-            except:
+            except RuntimeError:
                 raise RuntimeError("Cannot interpret MATLAB figure {0}".format(uri))
 
 

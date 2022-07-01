@@ -1,7 +1,8 @@
-from boadata.core import DataNode, DataTree
-import pandas as pd
 import os
-import xlrd  # This is used by pandas to import excel
+
+import pandas as pd
+
+from boadata.core import DataNode, DataTree
 
 
 class ExcelSheetNode(DataNode):

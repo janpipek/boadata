@@ -1,6 +1,7 @@
-from boadata import wrap
 import numpy as np
 import pandas as pd
+
+from boadata import wrap
 
 
 class TestStatisticsMixin:
@@ -32,4 +33,5 @@ class TestStatisticsMixin:
 
 if __name__ == "__main__":
     import pytest
+
     pytest.main(__file__)

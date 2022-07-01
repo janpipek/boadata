@@ -1,6 +1,6 @@
-from boadata.core import DataObject
-
 import numpy as np
+
+from boadata.core import DataObject
 
 
 @DataObject.proxy_methods("__getitem__")

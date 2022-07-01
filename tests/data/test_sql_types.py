@@ -11,8 +11,7 @@ class TestAcceptsUri:
 
         invalid_urls = [
             "unknown://schema::tablename",
-            "no::schema_no_file"
-            "sqlite:////absolute/path/to/myfile.db::",
+            "no::schema_no_file" "sqlite:////absolute/path/to/myfile.db::",
             "sqlite:////absolute/path/to/myfile.db",
         ]
 
@@ -24,10 +23,12 @@ class TestAcceptsUri:
 
     def test_sqlite_file_uris(self):
         import tempfile
+
         with tempfile.NamedTemporaryFile(suffix=".db") as named:
             assert DatabaseTable.accepts_uri(named.name)
 
 
 if __name__ == "__main__":
     import pytest
+
     pytest.main(__file__)

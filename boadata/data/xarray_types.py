@@ -1,8 +1,14 @@
-from typing import List, Tuple, Optional
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, List, Optional, Tuple
 
 import xarray as xr
 
 from boadata.core import DataObject
+
+
+if TYPE_CHECKING:
+    from boadata.data.pandas_types import PandasDataFrame
 
 from .mixins import (
     CopyableMixin,
@@ -11,6 +17,7 @@ from .mixins import (
     SetItemMixin,
     StatisticsMixin,
 )
+
 
 # TODO: Limit arithmetic operations where the coordinates don't match
 
@@ -41,7 +48,7 @@ class XarrayDatasetBase(_XarrayBase, SetItemMixin):
             try:
                 result = self.evaluate(expression, wrap=False)
                 self.inner_data = self.inner_data.merge({key: (self.axes, result)})
-            except:
+            except RuntimeError:
                 raise RuntimeError("Error when evaluating {0}".format(expression))
         else:
             raise RuntimeError("Cannot add column {0} from {1}".format(key, expression))
@@ -114,8 +121,8 @@ class XarrayDataArray(XarrayDataArrayBase):
 
     @classmethod
     def __from_pandas_data_frame__(
-        cls, origin: "boadata.data.PandasDataFrame", value_column: Optional[str] = None
-    ) -> "XarrayDataArray":
+        cls, origin: PandasDataFrame, value_column: Optional[str] = None
+    ) -> XarrayDataArray:
         if not value_column:
             value_column = origin.columns[-1]
         axis_columns = [column for column in origin.columns if column != value_column]

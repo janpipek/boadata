@@ -1,9 +1,7 @@
-import numbers
-
 import numpy as np
 import pandas as pd
-
 import physt.histogram1d
+
 from boadata import unwrap
 from boadata.core import DataObject
 

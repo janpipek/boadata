@@ -1,13 +1,16 @@
 from __future__ import annotations
-from copyreg import constructor
 
 import logging
 from typing import TYPE_CHECKING, Iterable
 
 import blinker
 
+from boadata.core.data_object import UnknownDataObjectError
+
+
 if TYPE_CHECKING:
     from typing import Iterator, List, Optional, Tuple
+
     from boadata.core.data_object import DataObject
 
 
@@ -38,9 +41,6 @@ class DataNode:
     child_removed = blinker.Signal("child_removed")
     changed = blinker.Signal("changed")
 
-    def has_object(self) -> bool:
-        return bool(self._get_object_constructor())
-
     @property
     def data_object(self) -> Optional[DataObject]:
         """The data object
@@ -52,22 +52,19 @@ class DataNode:
             return None
 
         # Force registration
-        import boadata.data
+        import boadata.data  # noqa: F401
 
         try:
             return DataObject.from_uri(self.uri)
-        except:
+        except UnknownDataObjectError:
             return None
 
     @property
     def uri(self) -> Optional[str]:
         return self._uri
 
-    @property
-    def children(self) -> List[DataNode]:
-        return []
-
     def iter_children(self) -> Iterator[DataNode]:
+        # TODO: Make this default?
         yield from self.children
 
     def walk(
@@ -139,8 +136,8 @@ class DataNode:
     def child_names(self) -> List[str]:
         return [child.title for child in self.children]
 
-    def add_child(self, child: "DataNode"):
-        if not child in self._children:
+    def add_child(self, child: DataNode) -> None:
+        if child not in self._children:
             child.parent = self
             self.changed.connect(self._on_changed, sender=child)
             self._children.append(child)
@@ -149,7 +146,7 @@ class DataNode:
                 self._on_changed()
             logging.debug("Child %s added to node %s." % (child.title, self.title))
 
-    def remove_child(self, child: "DataNode"):
+    def remove_child(self, child: DataNode) -> None:
         if child in self._children:
             self._children.remove(child)
             if self.children_loaded:
@@ -157,7 +154,7 @@ class DataNode:
                 self._on_changed()
             logging.debug("Child %s removed node %s." % (child.title, self.title))
 
-    def load_children(self):
+    def load_children(self) -> None:
         """Initially load children.
 
         This method is called when children are requested from a fresh node.
@@ -167,7 +164,7 @@ class DataNode:
         """
         pass
 
-    def reload_children(self):
+    def reload_children(self) -> None:
         """Force children reloading."""
         self._children = []
         self.children_loaded = False
@@ -177,7 +174,7 @@ class DataNode:
         """Called after any change of this node or its children."""
         self.changed.send(self)
 
-    def _repr_html_(self):
+    def _repr_html_(self) -> str:
         """Simple HTML representation to be used e.g. in IPython."""
         # TODO: Reimplement in terms of walk
         s = self.title

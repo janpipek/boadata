@@ -2,8 +2,9 @@ from typing import Optional
 
 import feather
 
-from boadata.core import DataObject, DataConversion
-from boadata.core.data_conversion import IdentityConversion, ChainConversion
+from boadata.core import DataObject
+from boadata.core.data_conversion import ChainConversion, IdentityConversion
+
 from .pandas_types import PandasDataFrameBase
 
 

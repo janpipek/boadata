@@ -1,5 +1,6 @@
 import re
 from typing import Optional
+
 from google.cloud import storage
 
 from boadata.core.data_node import DataNode
@@ -39,7 +40,7 @@ class BlobNode(DataTree):
 
     @classmethod
     def accepts_uri(cls, uri: str) -> bool:
-        return re.match("^gs://[a-zA-Z0-9\-\.]+/[a-zA-Z0-9\-\./]+/$", uri)
+        return re.match("^gs://[a-zA-Z0-9\\-\\.]+/[a-zA-Z0-9\\-\\./]+/$", uri)
 
     def load_children(self):
         client = storage.Client()
@@ -64,7 +65,7 @@ class BucketNode(DataTree):
 
     @classmethod
     def accepts_uri(cls, uri):
-        return re.match("^gs://[a-zA-Z0-9\-\.]+$", uri)
+        return re.match("^gs://[a-zA-Z0-9\\-\\.]+$", uri)
 
     def load_children(self):
         client = storage.Client()

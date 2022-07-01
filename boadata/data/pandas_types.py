@@ -1,12 +1,11 @@
 import types
-from typing import List, Optional, Iterable
+from typing import Iterable, List, Optional
 
 import numpy as np
 import pandas as pd
-import sqlalchemy as sa
 
 from boadata.core import DataObject
-from boadata.core.data_conversion import DataConversion, MethodConversion
+from boadata.core.data_conversion import MethodConversion
 
 from .. import wrap
 from .mixins import (
@@ -91,6 +90,7 @@ class PandasDataFrameBase(_PandasBase):
         Uses SQLite in-memory storage to create temporary table.
         """
         from sqlalchemy import create_engine
+
         from boadata import wrap
 
         if not table_name:
@@ -99,7 +99,7 @@ class PandasDataFrameBase(_PandasBase):
             raise RuntimeError(
                 "Cannot run SQL queries on unnamed dataframe. Specify table_name argument..."
             )
-        engine = sa.create_engine("sqlite:///:memory:")
+        engine = create_engine("sqlite:///:memory:")
         self.inner_data.to_sql(table_name, engine)
         # TODO: some clean up???
         return wrap(pd.read_sql_query(sql, engine), source=self)
@@ -129,7 +129,7 @@ class PandasDataFrameBase(_PandasBase):
             if not y:
                 try:
                     ydata = self.evaluate(x)
-                except:
+                except RuntimeError:
                     ydata = self[x]
                 xdata = range(ydata.shape[0])  # TODO: proper index???
                 xname = "x"
@@ -137,11 +137,11 @@ class PandasDataFrameBase(_PandasBase):
             else:
                 try:
                     xdata = self.evaluate(x)
-                except:
+                except RuntimeError:
                     xdata = self[x]
                 try:
                     ydata = self.evaluate(y)
-                except:
+                except RuntimeError:
                     ydata = self[y]
                 xname = x
                 yname = y
@@ -166,7 +166,7 @@ class PandasDataFrameBase(_PandasBase):
         return klass.from_uri(uri=uri, source=self)
 
     def __to_feather__(self, uri: str):
-        if not "feather" in DataObject.registered_types:
+        if "feather" not in DataObject.registered_types:
             raise RuntimeError("Cannot convert to feather.")
         import feather
 
@@ -264,7 +264,7 @@ class PandasDataFrameBase(_PandasBase):
         if not isinstance(other, PandasDataFrameBase):
             try:
                 other = other.convert("pandas_data_frame")
-            except:
+            except RuntimeError:
                 raise TypeError("Only dataframes may be appended to dataframes.")
         if self.columns:
             if other.columns:

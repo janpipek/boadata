@@ -1,15 +1,16 @@
 """Command-line interface utility functions."""
 from __future__ import annotations
 
-from itertools import islice
 import signal
 import sys
+from itertools import islice
 from typing import TYPE_CHECKING
 
 from tabulate import tabulate
 
 from boadata import load
 from boadata.core.data_tree import DataTree
+
 
 if TYPE_CHECKING:
     from typing import List, Optional
@@ -58,7 +59,12 @@ def try_select_rows(
     do: DataObject, lines: Optional[str], sample: Optional[int]
 ) -> DataObject:
     if lines is not None:
-        indexer = slice(*(int(l) if l else None for l in lines.split(":")))
+        indexer = slice(
+            *(
+                int(lines_frag) if lines_frag else None
+                for lines_frag in lines.split(":")
+            )
+        )
         do = do.select_rows(indexer)
     if sample is not None:
         do = do.sample_rows(sample)

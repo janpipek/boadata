@@ -1,5 +1,6 @@
-from boadata.core import DataObject
 import codecs
+
+from boadata.core import DataObject
 
 
 @DataObject.register_type()

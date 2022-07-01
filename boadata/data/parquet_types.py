@@ -5,6 +5,7 @@ import pandas as pd
 
 from boadata.core import DataObject
 from boadata.core.data_conversion import ChainConversion, IdentityConversion
+
 from .pandas_types import PandasDataFrameBase
 
 

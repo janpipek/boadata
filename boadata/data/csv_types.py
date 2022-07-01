@@ -6,16 +6,18 @@ import os
 import re
 from typing import TYPE_CHECKING
 
-from clevercsv.wrappers import read_dataframe
 import pandas as pd
+from clevercsv.wrappers import read_dataframe
 
 from boadata.core import DataObject
 from boadata.core.data_conversion import ChainConversion, IdentityConversion
 
 from .pandas_types import PandasDataFrameBase
 
+
 if TYPE_CHECKING:
     from typing import Optional
+
     from boadata.data.text_types import TextFile
 
 
@@ -43,14 +45,14 @@ class CSVFile(PandasDataFrameBase):
             return pd.DataFrame(lines[1:], columns=lines[0]).infer_objects(
                 # convert_numeric=True
             )
-        except:
+        except RuntimeError:
             return pd.DataFrame(lines).infer_objects()  # convert_numeric=True)
 
     @classmethod
     def from_uri(
         cls, uri: str, index_col=False, source: Optional[DataObject] = None, **kwargs
     ) -> CSVFile:
-        if not "sep" in kwargs and re.search("\\.tsv(\\.gz)?", uri.lower()):
+        if "sep" not in kwargs and re.search("\\.tsv(\\.gz)?", uri.lower()):
             kwargs["sep"] = "\\t"
 
         def _clever_csv_read():
@@ -71,7 +73,7 @@ class CSVFile(PandasDataFrameBase):
                 result = cls(inner_data=data, uri=uri, source=source, **kwargs)
                 logging.debug(f"Used {name} method to parse the CSV file '{uri}'.")
                 break
-            except:
+            except RuntimeError:
                 pass
         if result:
             if not result.title:
