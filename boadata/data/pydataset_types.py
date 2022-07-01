@@ -27,7 +27,6 @@ try:
             data = pydataset.data(dataset_name)
             return PyDataSet(inner_data=data, uri=uri)
 
-
 except:
     pass
 

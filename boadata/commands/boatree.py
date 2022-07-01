@@ -15,13 +15,15 @@ def main(
     uri: str,
     show_full_title: bool = typer.Option(False, "--show-full-title", "-t"),
     show_info: bool = typer.Option(False, "--show-info", "-i"),
-    limit: Optional[int] = typer.Option(None, "--limit", "-l"), 
-    max_depth: Optional[int] = typer.Option(None, "--level", "-L")
+    limit: Optional[int] = typer.Option(None, "--limit", "-l"),
+    max_depth: Optional[int] = typer.Option(None, "--level", "-L"),
 ):
+    import boadata.data
+
     # Flags taken from the `exa` tool
     try:
         the_tree = tree(uri)
-    except KeyError:
+    except RuntimeError:
         typer.secho(f"URI not understood: {uri}", color="red")
         sys.exit(-1)
     else:

@@ -21,7 +21,8 @@ class TableNode(DataNode):
     node_type = "SQL Table"
 
 
-@DataTree.register_tree
+# TODO: Fix
+# @DataTree.register_tree
 class DatabaseTree(DataTree):
     def __init__(self, uri, parent=None):
         if os.path.isfile(uri):
@@ -33,11 +34,11 @@ class DatabaseTree(DataTree):
 
     @property
     def db(self):
-        if not self._db:
-            self._db = odo.resource(self.uri)
-        return self._db
+        pass
 
     def load_children(self):
+        return
+
         for name in self.db.table_names():
             child = TableNode(name, self)
             self.add_child(child)

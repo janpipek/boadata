@@ -1,3 +1,4 @@
+from pathlib import Path
 from ..core import DataNode, DataTree
 import os
 import mimetypes
@@ -5,21 +6,17 @@ import logging
 
 
 class PathNode(DataNode):
-    def __init__(self, path, parent=None):
-        super(PathNode, self).__init__(parent)
-        self.path = path
-    
+    @property
+    def path(self) -> Path:
+        return Path(self.uri)
+
     @property
     def title(self):
-        return str(os.path.basename(self.path))
+        return self.path.name
 
     @property
     def mime_type(self):
         return mimetypes.guess_type(self.path)
-
-    @property
-    def uri(self):
-        return self.path
 
 
 class FileNode(PathNode):
@@ -29,15 +26,15 @@ class FileNode(PathNode):
 class DirectoryNode(PathNode):
     node_type = "Directory"
 
-    def load_children(self):
-        items = os.listdir(self.path)
-        items = [os.path.join(self.path, item) for item in items]
+    def load_children(self) -> None:
+        items = os.listdir(str(self.path))
+        items = [os.path.join(str(self.path), item) for item in items]
         files = sorted(item for item in items if os.path.isfile(item))
         dirs = sorted(item for item in items if os.path.isdir(item))
         for d in dirs:
-            self.add_child(DirectoryNode(d, self))
+            self.add_child(DirectoryNode(self, d))
         for f in files:
-            self.add_child(FileNode(f, self))
+            self.add_child(FileNode(self, f))
 
 
 @DataTree.register_tree

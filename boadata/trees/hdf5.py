@@ -31,7 +31,7 @@ class Hdf5Node(DataNode):
         for key, value in self.h5_object.items():
             child = create_hdf_node(value)
             if child:
-                self.add_child(child)     
+                self.add_child(child)
 
     @property
     def title(self):

@@ -36,18 +36,20 @@ class _PandasBase(
         # Pandas objects do not have names.
         return None
 
-    def select_rows(self, indexer) -> '_PandasBase':
+    def select_rows(self, indexer) -> "_PandasBase":
         inner_data = self.inner_data.iloc[indexer]
         return DataObject.from_native(inner_data, source=self)
 
-    def sample_rows(self, number: int) -> '_PandasBase':
+    def sample_rows(self, number: int) -> "_PandasBase":
         inner_data = self.inner_data.sample(number)
         return DataObject.from_native(inner_data)
 
     def concat(self, *others: Iterable["_PandasBase"], **kwargs) -> "_PandasBase":
         inner_data = pd.concat(
-            [self.inner_data, *(o.inner_data for o in others)], **kwargs)
+            [self.inner_data, *(o.inner_data for o in others)], **kwargs
+        )
         return DataObject.from_native(inner_data)
+
 
 @DataObject.proxy_methods("head")
 class PandasDataFrameBase(_PandasBase):

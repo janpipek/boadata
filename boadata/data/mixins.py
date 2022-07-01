@@ -2,6 +2,7 @@ from boadata.core import DataObject
 
 import numpy as np
 
+
 @DataObject.proxy_methods("__getitem__")
 class GetItemMixin:
     """Enable proxing of GetItem."""
@@ -20,9 +21,7 @@ class SetItemMixin:
 
 @DataObject.proxy_methods("sum", "std", "max", "mean", "min")
 class StatisticsMixin:
-    """
-
-    """
+    """ """
 
     def quantile(self, n, wrap=True):
         import boadata
@@ -46,24 +45,24 @@ class StatisticsMixin:
 
 
 @DataObject.proxy_methods(
-        "__add__",
-        "__radd__",
-        "__sub__",
-        "__rsub__",
-        "__mul__",
-        "__rmul__",
-        "__matmul__",
-        "__rmatmul__",
-        "__truediv__",
-        "__rtruediv__",
-        "__floordiv__",
-        "__rfloordiv__",
-        "__mod__",
-        "__rmod__",
-        "__divmod__",
-        "__rdivmod__",
-        "__pow__",
-        "__rpow__",
+    "__add__",
+    "__radd__",
+    "__sub__",
+    "__rsub__",
+    "__mul__",
+    "__rmul__",
+    "__matmul__",
+    "__rmatmul__",
+    "__truediv__",
+    "__rtruediv__",
+    "__floordiv__",
+    "__rfloordiv__",
+    "__mod__",
+    "__rmod__",
+    "__divmod__",
+    "__rdivmod__",
+    "__pow__",
+    "__rpow__",
 )
 class NumericalMixin:
     pass

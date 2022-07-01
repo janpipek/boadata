@@ -41,7 +41,9 @@ class DataTree(DataNode):
                     # TODO: Check mime types
                     pass
             if not tree:
-                raise RuntimeError("No tree understood could be created from URI=" + uri)
+                raise RuntimeError(
+                    "No tree understood could be created from URI=" + uri
+                )
             return tree
         else:
             return cls(uri)

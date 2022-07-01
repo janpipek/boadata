@@ -14,9 +14,11 @@ run_app = typer.Typer()
 def main(
     uri: str,
     type: Optional[str] = typer.Option(None, help="The type of the object."),
-    sql: Optional[str] = typer.Option(None, help="SQL to run on the object."),    
+    sql: Optional[str] = typer.Option(None, help="SQL to run on the object."),
     summary: bool = typer.Option(False, help="Include summary using pandas describe."),
-    parameter: Optional[List[str]] = typer.Option(None, help="Additional parameters for loader, specified as key=value"),
+    parameter: Optional[List[str]] = typer.Option(
+        None, help="Additional parameters for loader, specified as key=value"
+    ),
 ):
     """Show information about a particular data object."""
 

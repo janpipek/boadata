@@ -3,10 +3,18 @@ import typer
 
 from boadata.core import DataObject
 from boadata import __version__
-from boadata.cli import try_query, try_load, try_apply_sql, try_select_columns, try_select_rows, try_sort
+from boadata.cli import (
+    try_query,
+    try_load,
+    try_apply_sql,
+    try_select_columns,
+    try_select_rows,
+    try_sort,
+)
 
 
 run_app = typer.Typer()
+
 
 @run_app.command()
 def main(
@@ -15,19 +23,25 @@ def main(
     in_type: Optional[str] = typer.Option(None, help="The type of the input object."),
     out_type: Optional[str] = typer.Option(None, help="The type of the output object."),
     columns: Optional[List[str]] = typer.Option(None, help="List of columns to show"),
-    filter: Optional[str] = typer.Option(None, help="Query to run (as in pandas query)"),
+    filter: Optional[str] = typer.Option(
+        None, help="Query to run (as in pandas query)"
+    ),
     sql: Optional[str] = typer.Option(None, help="SQL to run on the object."),
-    sortby: Optional[str] = typer.Option(None, help="Sort by column(s)."),    
+    sortby: Optional[str] = typer.Option(None, help="Sort by column(s)."),
     lines: Optional[str] = typer.Option(None, help="Lines (as range)"),
-    sample: Optional[int] = typer.Option(None, help="Sample a number of lines randomly"),
-    parameter: Optional[List[str]] = typer.Option(None, help="Additional parameters for loader, specified as key=value"),
+    sample: Optional[int] = typer.Option(
+        None, help="Sample a number of lines randomly"
+    ),
+    parameter: Optional[List[str]] = typer.Option(
+        None, help="Additional parameters for loader, specified as key=value"
+    ),
 ):
     """Convert a data object to another type."""
     do = try_load(from_uri[0], type=in_type, parameters=parameter)
     if len(from_uri) > 1:
         others = (try_load(from_uri[i]) for i in range(1, len(from_uri)))
-        do = do.concat(*others)       
-    
+        do = do.concat(*others)
+
     do = try_apply_sql(do, sql=sql)
     do = try_query(do, query=filter)
     do = try_select_columns(do, columns=columns)

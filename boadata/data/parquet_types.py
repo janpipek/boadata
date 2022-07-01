@@ -19,7 +19,9 @@ class ParquetFile(PandasDataFrameBase):
         return uri[-8:] == ".parquet" or uri[-11:] == ".parquet.gz"
 
     @classmethod
-    def from_uri(cls, uri: str, *, source: Optional[DataObject] = None) -> "ParquetFile":
+    def from_uri(
+        cls, uri: str, *, source: Optional[DataObject] = None
+    ) -> "ParquetFile":
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             data = pd.read_parquet(uri)

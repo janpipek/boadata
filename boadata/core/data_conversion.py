@@ -27,7 +27,13 @@ class DataConversion:
 
     """
 
-    def __init__(self, type_name1: Union[str, Type[DataObject]], type_name2: Union[str, Type[DataObject]], method=None, condition=None):
+    def __init__(
+        self,
+        type_name1: Union[str, Type[DataObject]],
+        type_name2: Union[str, Type[DataObject]],
+        method=None,
+        condition=None,
+    ):
         self._type1 = None
         self._type2 = None
 
@@ -67,6 +73,7 @@ class DataConversion:
         if self.condition and not self.condition(origin):
             return False
         return True
+
     #
     # def get_required_arguments(self, data_object):
     #     """
@@ -80,6 +87,7 @@ class DataConversion:
     @property
     def type1(self) -> DataObject:
         from .data_object import DataObject
+
         if not self._type1:
             self._type1 = DataObject.registered_types[self.type_name1]
         return self._type1
@@ -87,6 +95,7 @@ class DataConversion:
     @property
     def type2(self) -> DataObject:
         from .data_object import DataObject
+
         if not self._type2:
             self._type2 = DataObject.registered_types[self.type_name2]
         return self._type2
@@ -102,9 +111,12 @@ class DataConversion:
     @staticmethod
     def register(type1, type2, condition=None):
         def wrap(method):
-            conversion = DataConversion(type1, type2, method=method, condition=condition)
+            conversion = DataConversion(
+                type1, type2, method=method, condition=condition
+            )
             conversion._register()
             return method
+
         return wrap
 
     @staticmethod
@@ -112,12 +124,13 @@ class DataConversion:
         def wrap(method):
             method.condition = cond
             return method
+
         return wrap
 
     @staticmethod
     def discover(cls: Type[DataObject]) -> None:
         """Automatically find and register conversions in an object.
-        
+
         These might be defined in both directions as methods:
         - __to_another_type__
         - __from_another_type__
@@ -131,7 +144,9 @@ class DataConversion:
                 else:
                     condition = None
                 if cls.type_name != other_type:
-                    DataConversion.register(cls.type_name, other_type, condition=condition)(attr)
+                    DataConversion.register(
+                        cls.type_name, other_type, condition=condition
+                    )(attr)
             if key.startswith("__from_") and key.endswith("__"):
                 other_type = key[7:-2]
                 attr = getattr(cls, key)
@@ -140,17 +155,22 @@ class DataConversion:
                 else:
                     condition = None
                 if cls.type_name != other_type:
-                    DataConversion.register(other_type, cls.type_name, condition=condition)(attr)
+                    DataConversion.register(
+                        other_type, cls.type_name, condition=condition
+                    )(attr)
 
     @classmethod
     def enable_to(cls, type2, condition=None, **kwargs):
         def wrap(type1):
             if hasattr(type1, "_registered"):
-                raise RuntimeError("Cannot decorate already registered types with conversions.")
+                raise RuntimeError(
+                    "Cannot decorate already registered types with conversions."
+                )
             kwargs["condition"] = condition
             conversion = cls(type1, type2, **kwargs)
             conversion._register()
             return type1
+
         return wrap
 
     @classmethod
@@ -160,13 +180,17 @@ class DataConversion:
             conversion = cls(type1, type2, **kwargs)
             conversion._register()
             return type2
+
         return wrap
 
 
 class ChainConversion(DataConversion):
     """Conversion that has an intermediate data type."""
-    def __init__(self, type_name1, type_name2, through, condition = None, pass_kwargs=[]):
-        super(ChainConversion, self).__init__(type_name1=type_name1, type_name2=type_name2, condition=condition)
+
+    def __init__(self, type_name1, type_name2, through, condition=None, pass_kwargs=[]):
+        super(ChainConversion, self).__init__(
+            type_name1=type_name1, type_name2=type_name2, condition=condition
+        )
         self.through = through
         self.pass_kwargs = pass_kwargs
 
@@ -182,12 +206,14 @@ class ChainConversion(DataConversion):
 
 class IdentityConversion(DataConversion):
     """Conversion that does not change internal data type."""
+
     def _convert(self, origin, **kwargs):
         return self.type2(inner_data=origin.inner_data, source=origin)
 
 
 class ConstructorConversion(DataConversion):
     """Conversion that uses constructor for conversion of inner data."""
+
     def _convert(self, origin, **kwargs):
         new_inner_data = self.type2.real_type(origin.inner_data)
         return self.type2(inner_data=new_inner_data, source=origin)
@@ -195,8 +221,11 @@ class ConstructorConversion(DataConversion):
 
 class MethodConversion(DataConversion):
     """Conversion that uses a method of the origin class."""
-    def __init__(self, type_name1, type_name2, method_name, condition = None):
-        super(MethodConversion, self).__init__(type_name1=type_name1, type_name2=type_name2, condition=condition)
+
+    def __init__(self, type_name1, type_name2, method_name, condition=None):
+        super(MethodConversion, self).__init__(
+            type_name1=type_name1, type_name2=type_name2, condition=condition
+        )
         self.method_name = method_name
 
     def _convert(self, origin, **kwargs):

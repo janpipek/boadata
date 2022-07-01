@@ -45,7 +45,11 @@ class Matlab73Tree(_MatlabNode, DataTree):
 
     @classmethod
     def accepts_uri(cls, uri):
-        return uri and os.path.isfile(uri) and (uri.endswith(".fig") or uri.endswith(".mat"))
+        return (
+            uri
+            and os.path.isfile(uri)
+            and (uri.endswith(".fig") or uri.endswith(".mat"))
+        )
 
     @property
     def title(self):
@@ -61,6 +65,7 @@ class OldMatlabNode(DataNode):
     @property
     def data_object(self):
         from boadata.data.matlab_types import OldMatlabData
+
         return OldMatlabData(inner_data=self.data, uri=self.uri)
 
     @property
@@ -72,16 +77,22 @@ class OldMatlabNode(DataNode):
 class OldMatlabTree(DataTree):
     @classmethod
     def accepts_uri(cls, uri):
-        return uri and os.path.isfile(uri) and (uri.endswith(".mat") or uri.endswith(".fig"))
+        return (
+            uri
+            and os.path.isfile(uri)
+            and (uri.endswith(".mat") or uri.endswith(".fig"))
+        )
 
     def __init__(self, path, parent=None):
         from scipy.io import loadmat
+
         super(OldMatlabTree, self).__init__(parent=parent, uri=path)
         self.inner_dict = loadmat(path)
 
     def load_children(self):
         for key in self.inner_dict.keys():
             self.add_child(OldMatlabNode(self, key))
+
 
 # TODO: Consider this which I found in one kaggle notebook
 # def mat_to_pandas(path):

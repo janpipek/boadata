@@ -18,7 +18,9 @@ class FeatherFile(PandasDataFrameBase):
         return uri[-8:] == ".feather"
 
     @classmethod
-    def from_uri(cls, uri: str, source: Optional[DataObject] = None, **kwargs) -> "FeatherFile":
+    def from_uri(
+        cls, uri: str, source: Optional[DataObject] = None, **kwargs
+    ) -> "FeatherFile":
         data = feather.read_dataframe(uri)
         result = cls(inner_data=data, uri=uri, source=source, **kwargs)
         return result

@@ -19,6 +19,7 @@ class ExcelSheetNode(DataNode):
     @property
     def data_object(self):
         from boadata.data.excel_types import ExcelSheet
+
         data = self.xls.parse(self.sheet_name)
         return ExcelSheet(inner_data=data, uri=self.uri)
 
@@ -28,7 +29,7 @@ class ExcelFile(DataTree):
     def __init__(self, path, parent=None):
         super(ExcelFile, self).__init__(parent)
         self.path = path
-        self.xls = None # Load it lazily
+        self.xls = None  # Load it lazily
 
     node_type = "Excel"
 

@@ -27,7 +27,7 @@ class NumpyArrayBase(DataObject, CopyableMixin, IteratorMixin):
     def shape(self) -> Tuple[int, ...]:
         return self.inner_data.shape
 
-    def dropna(self, flatten: bool = False) -> 'NumpyArrayBase':
+    def dropna(self, flatten: bool = False) -> "NumpyArrayBase":
         if self.ndim > 1 and not flatten:
             raise RuntimeError(
                 "dropna not allowed for multidimensional arrays. Override by flatten=True"
@@ -45,7 +45,7 @@ class NumpyArrayBase(DataObject, CopyableMixin, IteratorMixin):
         csv_type = DataObject.registered_types["csv"]
         return csv_type.from_uri(uri, source=self)
 
-    def __to_numpy_array__(self) -> 'NumpyArray':
+    def __to_numpy_array__(self) -> "NumpyArray":
         return NumpyArray(inner_data=self.inner_data, source=self)
 
     @DataConversion.condition(lambda x: x.ndim == 2)

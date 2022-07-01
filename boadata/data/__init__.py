@@ -52,7 +52,7 @@ except ImportError:
     pass
 
 
-try: 
+try:
     from .parquet_types import ParquetFile
 except ImportError:
     pass

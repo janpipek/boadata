@@ -59,8 +59,7 @@ class AbstractFieldMap:
     "csv", through="pandas_data_frame", condition=lambda c: len(c.columns) == 4
 )
 class ScalarFieldMap(AbstractFieldMap, XarrayDataArrayBase):
-    """A scalar variable that is defined for each point in a 3D mesh.
-    """
+    """A scalar variable that is defined for each point in a 3D mesh."""
 
     type_name = "scalar_field_map"
 
@@ -84,8 +83,7 @@ class ScalarFieldMap(AbstractFieldMap, XarrayDataArrayBase):
     "csv", through="pandas_data_frame", condition=lambda c: len(c.columns) == 6
 )
 class VectorFieldMap(AbstractFieldMap, XarrayDatasetBase):
-    """A vector variable that is defined for each point in a 3D mesh.
-    """
+    """A vector variable that is defined for each point in a 3D mesh."""
 
     type_name = "vector_field_map"
 
@@ -217,7 +215,7 @@ class VectorFieldMap(AbstractFieldMap, XarrayDatasetBase):
 
     def resample(self, dim1, dim2, dim3, method="linear", inplace=False):
         """Change the grid points using linear (or other) interpolation.
-        
+
         :param dim1: new number of points in x
         :param dim2: new number of points in y
         :param dim3: new number of points in z

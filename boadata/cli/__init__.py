@@ -17,7 +17,9 @@ if TYPE_CHECKING:
     from boadata.core import DataObject
 
 
-def try_load(uri: str, type: Optional[str] = None, parameters: List[str] = None) -> DataObject:
+def try_load(
+    uri: str, type: Optional[str] = None, parameters: List[str] = None
+) -> DataObject:
     """Use parameters from command-line to load the data object.
 
     :param uri: URI of the object
@@ -52,7 +54,9 @@ def try_select_columns(do: DataObject, columns: Optional[List[str]]) -> DataObje
     return do
 
 
-def try_select_rows(do: DataObject, lines: Optional[str], sample: Optional[int]) -> DataObject:
+def try_select_rows(
+    do: DataObject, lines: Optional[str], sample: Optional[int]
+) -> DataObject:
     if lines is not None:
         indexer = slice(*(int(l) if l else None for l in lines.split(":")))
         do = do.select_rows(indexer)
@@ -69,18 +73,27 @@ def try_sort(do: DataObject, sortby: Optional[str]) -> DataObject:
 
 
 def enable_ctrl_c():
-	"""Enable Ctrl-C in the console."""
-	signal.signal(signal.SIGINT, signal.SIG_DFL)
+    """Enable Ctrl-C in the console."""
+    signal.signal(signal.SIGINT, signal.SIG_DFL)
 
 
 def show_table(do: DataObject):
-    print(tabulate(do.inner_data, do.columns, tablefmt="orgtbl", showindex=False, missingval="?"))
+    print(
+        tabulate(
+            do.inner_data,
+            do.columns,
+            tablefmt="orgtbl",
+            showindex=False,
+            missingval="?",
+        )
+    )
 
 
 def show_expanded(do: DataObject):
     try:
         # TODO: Rewrite in terms of typer
         import colorama
+
         highlight = colorama.Fore.LIGHTGREEN_EX
         normal = colorama.Fore.LIGHTBLUE_EX
         reset = colorama.Fore.RESET
@@ -92,11 +105,21 @@ def show_expanded(do: DataObject):
     for i in range(do.shape[0]):
         for column in do.columns:
             value = do.inner_data.iloc[i][column]
-            line = (normal + str(column) + reset + ": " + highlight + str(value) + reset)
+            line = normal + str(column) + reset + ": " + highlight + str(value) + reset
             print(line)
         print("--------------------------------- " + str(i))
 
-def dump_tree(tree: DataTree, *, max_level: Optional[int] = None, limit: int = -1, show_info: bool = False, show_full_title: bool = False, indent: str = "  ", stream=sys.stdout):
+
+def dump_tree(
+    tree: DataTree,
+    *,
+    max_level: Optional[int] = None,
+    limit: int = -1,
+    show_info: bool = False,
+    show_full_title: bool = False,
+    indent: str = "  ",
+    stream=sys.stdout,
+):
     iter = tree.walk(
         current_level=0,
         include_self=True,
@@ -107,7 +130,7 @@ def dump_tree(tree: DataTree, *, max_level: Optional[int] = None, limit: int = -
 
     for current_level, current_subtree, node in iter:
         stream.write(current_level * indent)
-        
+
         if show_full_title:
             stream.write(node.full_title)
         else:
@@ -117,6 +140,12 @@ def dump_tree(tree: DataTree, *, max_level: Optional[int] = None, limit: int = -
             stream.write("> ")
 
         if show_info and (data_object := node.data_object):
-            stream.write(f" = {data_object.type_name}(" + " x ".join(str(i) for i in data_object.shape) + ")")
+            try:
+                stream.write(
+                    f" = {data_object.type_name}("
+                    + " x ".join(str(i) for i in data_object.shape)
+                    + ")"
+                )
+            except RuntimeError:
+                stream.write(f" = {data_object.type_name}(ERROR)")
         stream.write("\n")
-

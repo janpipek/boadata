@@ -42,26 +42,33 @@ class _DataObjectRegistry:
         (see DataConversion.discover)
         """
         if isinstance(default, type):
-            raise RuntimeError("Invalid use of decorator. Please, use DataObject.register_type() ")
+            raise RuntimeError(
+                "Invalid use of decorator. Please, use DataObject.register_type() "
+            )
+
         def wrap(boadata_type: type) -> type:
             DataObject.registered_types[boadata_type.type_name] = boadata_type
             DataConversion.discover(boadata_type)
             if default:
-                DataObject.registered_default_types[boadata_type.real_type] = boadata_type
+                DataObject.registered_default_types[
+                    boadata_type.real_type
+                ] = boadata_type
             boadata_type._registered = True
             return boadata_type
+
         return wrap
 
 
 class _DataObjectConversions:
     """DataObject methods related to conversions."""
+
     @classmethod
     def accepts_uri(cls, uri: str) -> bool:
         return False
 
     @classmethod
     def from_uri(cls, uri: str, **kwargs) -> DataObject:
-        """"Create an object of this class from an URI.
+        """ "Create an object of this class from an URI.
 
         :param uri: URI in the odo sense
 
@@ -99,7 +106,11 @@ class _DataObjectConversions:
                 return native_object
             boadata_type = DataObject.registered_default_types.get(type(native_object))
             if not boadata_type:
-                raise UnknownDataObjectError("Cannot interpret native object of the type {0}.".format(type(native_object)))
+                raise UnknownDataObjectError(
+                    "Cannot interpret native object of the type {0}.".format(
+                        type(native_object)
+                    )
+                )
             return boadata_type.from_native(native_object, **kwargs)
         else:
             if isinstance(native_object, DataObject):
@@ -107,8 +118,7 @@ class _DataObjectConversions:
             return cls(inner_data=native_object, **kwargs)
 
     def is_convertible_to(self, new_type_name: Union[str, type]) -> bool:
-        """
-        """
+        """ """
         if isinstance(new_type_name, type):
             new_type, new_type_name = new_type_name, new_type_name.type_name
         else:
@@ -119,7 +129,9 @@ class _DataObjectConversions:
             return True
         if not (self.type_name, new_type_name) in DataConversion.registered_conversions:
             return False
-        conversion = DataConversion.registered_conversions[(self.type_name, new_type_name)]
+        conversion = DataConversion.registered_conversions[
+            (self.type_name, new_type_name)
+        ]
         return conversion.applies(self)
 
     @classmethod
@@ -128,7 +140,11 @@ class _DataObjectConversions:
 
     @property
     def allowed_conversions(self) -> List[Tuple[str, str]]:
-        return [ key for (key, conversion) in DataConversion.registered_conversions.items() if key[0] == self.type_name and conversion.applies(self)]
+        return [
+            key
+            for (key, conversion) in DataConversion.registered_conversions.items()
+            if key[0] == self.type_name and conversion.applies(self)
+        ]
 
     def convert(self, new_type_name: str, **kwargs) -> DataObject:
         """Convert to another boadata-supported type.
@@ -137,17 +153,35 @@ class _DataObjectConversions:
         Default implementation is based on odo.
         """
         if not new_type_name:
-            available = [key[1] for key in DataConversion.registered_conversions.keys() if key[0] == self.__class__.type_name]
-            raise TypeError("convert() missing 1 required positional argument: 'new_type_name', available argument values: {0}".format(", ".join(available)))
+            available = [
+                key[1]
+                for key in DataConversion.registered_conversions.keys()
+                if key[0] == self.__class__.type_name
+            ]
+            raise TypeError(
+                "convert() missing 1 required positional argument: 'new_type_name', available argument values: {0}".format(
+                    ", ".join(available)
+                )
+            )
         # TODO: check argument?
 
         new_type = DataObject.registered_types[new_type_name]
         if isinstance(self, new_type):
             return self
-        conversion = DataConversion.registered_conversions.get((self.__class__.type_name, new_type_name))
+        conversion = DataConversion.registered_conversions.get(
+            (self.__class__.type_name, new_type_name)
+        )
         if not conversion:
-            available = [key[1] for key in DataConversion.registered_conversions.keys() if key[0] == self.__class__.type_name]
-            raise ConversionUnknown("Unknown conversion from {0} to {1}. Available: {2}".format(self.__class__.type_name, new_type_name, ", ".join(available)))
+            available = [
+                key[1]
+                for key in DataConversion.registered_conversions.keys()
+                if key[0] == self.__class__.type_name
+            ]
+            raise ConversionUnknown(
+                "Unknown conversion from {0} to {1}. Available: {2}".format(
+                    self.__class__.type_name, new_type_name, ", ".join(available)
+                )
+            )
         return conversion.convert(self, new_type, **kwargs)
 
 
@@ -158,6 +192,7 @@ class _DataObjectInterface:
     - add_column(key, expression, **kwargs) - based on evaluate
     -
     """
+
     @property
     def shape(self) -> Tuple[int, ...]:
         """Shape of the data.
@@ -186,6 +221,7 @@ class _DataObjectInterface:
         else:
             from operator import mul
             from functools import reduce
+
             reduce(mul, self.shape, 1)
 
     @property
@@ -215,24 +251,33 @@ class _DataObjectInterface:
 
 
 class DataObject(_DataObjectRegistry, _DataObjectConversions, _DataObjectInterface):
-    '''A basic object that contains data representable by boadata.
+    """A basic object that contains data representable by boadata.
 
     :type registered_types: OrderedDict[str, type]
     :param source: From where we obtained the object (kept as weak reference)
 
     It is necessary to keep all arguments keyword (enforceable in Python 3).
-    '''
-    def __init__(self, inner_data: Any = None, uri: Optional[str] = None, source: Optional[DataObject] = None, **kwargs):
+    """
+
+    def __init__(
+        self,
+        inner_data: Any = None,
+        uri: Optional[str] = None,
+        source: Optional[DataObject] = None,
+        **kwargs,
+    ):
         if self.real_type and not isinstance(inner_data, self.real_type):
-            raise InvalidDataObjectError("Invalid type of inner data: `{0}` instead of expected `{1}`".format(
-                inner_data.__class__.__name__, self.real_type.__name__
-            ))
+            raise InvalidDataObjectError(
+                "Invalid type of inner data: `{0}` instead of expected `{1}`".format(
+                    inner_data.__class__.__name__, self.real_type.__name__
+                )
+            )
         self.inner_data = inner_data
         self.uri = uri
         if source:
             self.source = weakref.ref(source)
 
-    changed = blinker.Signal("changed")    # For dynamic data objects
+    changed = blinker.Signal("changed")  # For dynamic data objects
 
     real_type: ClassVar[Type] = None
 
@@ -243,10 +288,16 @@ class DataObject(_DataObjectRegistry, _DataObjectConversions, _DataObjectInterfa
         return repr(self)
 
     def __repr__(self):
-        return "{0}(\"{1}\")".format(self.__class__.__name__, self.uri)
+        return '{0}("{1}")'.format(self.__class__.__name__, self.uri)
 
     @staticmethod
-    def proxy_methods(*methods: str, wrap: bool = True, unwrap_args: bool = True, same_class: bool = True, through: Optional[type] = None):
+    def proxy_methods(
+        *methods: str,
+        wrap: bool = True,
+        unwrap_args: bool = True,
+        same_class: bool = True,
+        through: Optional[type] = None,
+    ):
         """Decorator to apply on DataObject descendants.
 
         :param wrap: Whether to wrap result
@@ -257,6 +308,7 @@ class DataObject(_DataObjectRegistry, _DataObjectConversions, _DataObjectInterfa
         It is not possible to proxy slots, but it is possible to inherit proxied slots :-)
         """
         import boadata
+
         def wrapper(boadata_type):
             method_names = methods
 
@@ -264,7 +316,9 @@ class DataObject(_DataObjectRegistry, _DataObjectConversions, _DataObjectInterfa
                 def proxied_method(self, *args, **kwargs):
                     if unwrap_args:
                         args = [boadata.unwrap(arg) for arg in args]
-                        kwargs = {key: boadata.unwrap(value) for key, value in kwargs.items()}
+                        kwargs = {
+                            key: boadata.unwrap(value) for key, value in kwargs.items()
+                        }
 
                     if through:
                         native_method = getattr(self.convert(through), method_name)
@@ -280,10 +334,13 @@ class DataObject(_DataObjectRegistry, _DataObjectConversions, _DataObjectInterfa
                             return DataObject.from_native(result)
                         except:
                             return result
+
                 return proxied_method
+
             for method_name in method_names:
                 setattr(boadata_type, method_name, make_method(method_name))
             return boadata_type
+
         return wrapper
 
     def evaluate(self, expression: str, wrap: bool = True) -> Any:
@@ -295,19 +352,16 @@ class DataObject(_DataObjectRegistry, _DataObjectConversions, _DataObjectInterfa
         Based on numexpr library
         """
         local_dict = {
-            col : self[col].inner_data for col in self.columns if isinstance(col, str)
+            col: self[col].inner_data for col in self.columns if isinstance(col, str)
         }
-        global_dict = {
-            "nan" : np.nan,
-            "inf" : np.inf
-        }
+        global_dict = {"nan": np.nan, "inf": np.inf}
         result = ne.evaluate(expression, local_dict=local_dict, global_dict=global_dict)
         if wrap:
             return DataObject.from_native(result, source=self)
         else:
             return result
 
-    def where(self, condition: str, sql: bool = False) -> 'DataObject':
+    def where(self, condition: str, sql: bool = False) -> "DataObject":
         """Choose a subset of a dataset.
 
         :param condition: a valid condition returning boolean
@@ -315,18 +369,23 @@ class DataObject(_DataObjectRegistry, _DataObjectConversions, _DataObjectInterfa
         """
         if sql:
             if not "sql" in dir(self):
-                raise RuntimeError("Object {0} does not support SQL.".format(self.__class__.__name__))
+                raise RuntimeError(
+                    "Object {0} does not support SQL.".format(self.__class__.__name__)
+                )
             query = "SELECT * FROM data WHERE {0}".format(condition)
             return self.sql(query, table_name="data")
-        else:    
+        else:
             # TODO: Allow to be lambda
             import numpy as np
+
             if not self.size:
                 mask = []
             else:
                 mask = self.evaluate(condition, wrap=False)
                 if mask.dtype != np.dtype(bool):
-                    raise UnsupportedDataOperationError("The result of condition has to be a boolean array")
+                    raise UnsupportedDataOperationError(
+                        "The result of condition has to be a boolean array"
+                    )
             return DataObject.from_native(self.inner_data[mask], source=self)
 
     def apply_native(self, method_name: str, *args, **kwargs):
@@ -342,4 +401,3 @@ class DataObject(_DataObjectRegistry, _DataObjectConversions, _DataObjectInterfa
         except:
             pass
         return result
-

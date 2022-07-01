@@ -1,6 +1,7 @@
-'''Classes for data abstraction used in boadata.'''
+"""Classes for data abstraction used in boadata."""
 
 import warnings
+
 warnings.filterwarnings("ignore", "pandas.tslib is deprecated")
 
 from .data_properties import DataProperties

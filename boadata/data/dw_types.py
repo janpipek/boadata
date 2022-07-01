@@ -28,7 +28,9 @@ class DataDotWorldTable(PandasDataFrameBase):
         return cls(inner_data=df, uri=uri, **kwargs)
 
     @classmethod
-    def __from_pandas_data_frame__(cls, df: PandasDataFrameBase, user: str, dataset: str, table: str) -> "DataDotWorldTable":
+    def __from_pandas_data_frame__(
+        cls, df: PandasDataFrameBase, user: str, dataset: str, table: str
+    ) -> "DataDotWorldTable":
         with dw.open_remote_file(
             "{0}/{1}".format(user, dataset), "{0}.csv".format(table)
         ) as w:

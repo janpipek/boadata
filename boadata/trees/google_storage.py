@@ -10,7 +10,13 @@ from boadata.core.data_tree import DataTree
 class BlobNode(DataTree):
     node_type = "GoogleBlob"
 
-    def __init__(self, parent: Optional[DataNode] = None, *, blob: Optional[storage.Blob] = None, uri: Optional[str] = None):
+    def __init__(
+        self,
+        parent: Optional[DataNode] = None,
+        *,
+        blob: Optional[storage.Blob] = None,
+        uri: Optional[str] = None,
+    ):
         if blob:
             uri = f"gs://{blob.bucket}/{blob.name}"
         super().__init__(parent=parent, uri=uri)
@@ -38,9 +44,11 @@ class BlobNode(DataTree):
     def load_children(self):
         client = storage.Client()
         bucket = client.get_bucket(self.bucket_name)
-        for blob in client.list_blobs(bucket, max_results=1000, prefix=self.object_path):
-            self.add_child(BlobNode(parent=self, blob=blob))        
-        
+        for blob in client.list_blobs(
+            bucket, max_results=1000, prefix=self.object_path
+        ):
+            self.add_child(BlobNode(parent=self, blob=blob))
+
 
 @DataTree.register_tree
 class BucketNode(DataTree):
@@ -73,7 +81,7 @@ class CloudStorage(DataTree):
         client = storage.Client()
         for bucket in client.list_buckets():
             self.add_child(BucketNode(self, uri=f"gs://{bucket.name}"))
-        
+
     @classmethod
     def accepts_uri(cls, uri):
         return uri == "gs://"

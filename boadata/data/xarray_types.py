@@ -113,7 +113,9 @@ class XarrayDataArray(XarrayDataArrayBase):
             return cls(inner_data=native_object, **kwargs)
 
     @classmethod
-    def __from_pandas_data_frame__(cls, origin: "boadata.data.PandasDataFrame", value_column: Optional[str] = None) -> "XarrayDataArray":
+    def __from_pandas_data_frame__(
+        cls, origin: "boadata.data.PandasDataFrame", value_column: Optional[str] = None
+    ) -> "XarrayDataArray":
         if not value_column:
             value_column = origin.columns[-1]
         axis_columns = [column for column in origin.columns if column != value_column]

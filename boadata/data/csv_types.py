@@ -4,7 +4,7 @@ import csv
 import logging
 import os
 import re
-from typing import  TYPE_CHECKING
+from typing import TYPE_CHECKING
 
 from clevercsv.wrappers import read_dataframe
 import pandas as pd
@@ -44,10 +44,12 @@ class CSVFile(PandasDataFrameBase):
                 # convert_numeric=True
             )
         except:
-            return pd.DataFrame(lines).infer_objects() # convert_numeric=True)
+            return pd.DataFrame(lines).infer_objects()  # convert_numeric=True)
 
     @classmethod
-    def from_uri(cls, uri: str, index_col=False, source: Optional[DataObject] = None, **kwargs) -> CSVFile:
+    def from_uri(
+        cls, uri: str, index_col=False, source: Optional[DataObject] = None, **kwargs
+    ) -> CSVFile:
         if not "sep" in kwargs and re.search("\\.tsv(\\.gz)?", uri.lower()):
             kwargs["sep"] = "\\t"
 
@@ -57,7 +59,9 @@ class CSVFile(PandasDataFrameBase):
         methods = {
             "clevercsv": _clever_csv_read,
             "pandas_c": lambda: pd.read_csv(uri, index_col=index_col, **kwargs),
-            "pandas_python": lambda: pd.read_csv(uri, index_col=index_col, engine="python", sep=None, **kwargs),
+            "pandas_python": lambda: pd.read_csv(
+                uri, index_col=index_col, engine="python", sep=None, **kwargs
+            ),
             "stdlib_csv": lambda: cls._fallback_read(uri, **kwargs),
         }
         result = None
@@ -73,6 +77,4 @@ class CSVFile(PandasDataFrameBase):
             if not result.title:
                 result.title = os.path.splitext(os.path.basename(uri))[0]
             return result
-        raise RuntimeError(
-            f"No CSV reading method understands the file: {uri}"
-        )
+        raise RuntimeError(f"No CSV reading method understands the file: {uri}")

@@ -13,9 +13,14 @@ def _get_data(what):
     if what not in ["own", "contributing", "liked"]:
         raise RuntimeError("Not understood")
     import requests
+
     data = {}
-    headers = {'authorization': "Bearer {0}".format(_get_token())}
-    response = requests.get("https://api.data.world/v0/user/datasets/{0}".format(what), data=data, headers=headers)
+    headers = {"authorization": "Bearer {0}".format(_get_token())}
+    response = requests.get(
+        "https://api.data.world/v0/user/datasets/{0}".format(what),
+        data=data,
+        headers=headers,
+    )
     res = response.json()
     return res["records"]
 
@@ -35,6 +40,7 @@ class DataDotWorldTableNode(DataNode):
     @property
     def data_object(self):
         from boadata.data.dw_types import DataDotWorldTable
+
         return DataDotWorldTable.from_uri(self.uri)
 
 
@@ -85,7 +91,9 @@ class DataDotWorldUserSub(DataNode):
             owner = dataset["owner"]
             id = dataset["id"]
             uri = "dw://{0}/{1}".format(owner, id)
-            self.add_child(DataDotWorldDataSetNode(uri=uri, include_owner = (self.source != "own")))
+            self.add_child(
+                DataDotWorldDataSetNode(uri=uri, include_owner=(self.source != "own"))
+            )
 
 
 @DataTree.register_tree
@@ -106,8 +114,6 @@ class DataDotWorldOwnTree(DataTree):
         self.add_child(DataDotWorldUserSub(self, "contributing"))
         self.add_child(DataDotWorldUserSub(self, "liked"))
 
-
     @classmethod
     def accepts_uri(cls, uri):
         return re.match(DataDotWorldOwnTree._re, uri or "") is not None
-
