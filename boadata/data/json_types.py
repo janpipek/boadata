@@ -31,7 +31,7 @@ class JsonFileDataset(PandasDataFrameBase):
     def _read_normalized(uri: str, **kwargs) -> pd.DataFrame:
         with open(uri, "r") as infile:
             objects = json.load(infile)
-        normalized_objects = pd.io.json.json_normalize(objects)
+        normalized_objects = pd.json_normalize(objects)
         return pd.DataFrame(normalized_objects, **kwargs)
 
     @classmethod

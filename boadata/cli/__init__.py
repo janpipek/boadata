@@ -1,5 +1,7 @@
 """Command-line interface utility functions."""
 from __future__ import annotations
+
+from itertools import islice
 import signal
 import sys
 from typing import TYPE_CHECKING
@@ -7,6 +9,7 @@ from typing import TYPE_CHECKING
 from tabulate import tabulate
 
 from boadata import load
+from boadata.core.data_tree import DataTree
 
 if TYPE_CHECKING:
     from typing import List, Optional
@@ -92,3 +95,28 @@ def show_expanded(do: DataObject):
             line = (normal + str(column) + reset + ": " + highlight + str(value) + reset)
             print(line)
         print("--------------------------------- " + str(i))
+
+def dump_tree(tree: DataTree, *, max_level: Optional[int] = None, limit: int = -1, show_info: bool = False, show_full_title: bool = False, indent: str = "  ", stream=sys.stdout):
+    iter = tree.walk(
+        current_level=0,
+        include_self=True,
+        max_level=max_level,
+    )
+    if limit is not None:
+        iter = islice(iter, limit)
+
+    for current_level, current_subtree, node in iter:
+        stream.write(current_level * indent)
+        
+        if show_full_title:
+            stream.write(node.full_title)
+        else:
+            stream.write(node.title)
+
+        if current_subtree:
+            stream.write("> ")
+
+        if show_info and (data_object := node.data_object):
+            stream.write(f" = {data_object.type_name}(" + " x ".join(str(i) for i in data_object.shape) + ")")
+        stream.write("\n")
+

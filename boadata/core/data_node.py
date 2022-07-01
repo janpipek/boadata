@@ -1,8 +1,9 @@
 from __future__ import annotations
+from ast import walk
 
 import logging
 import sys
-from typing import Iterator, List, Optional, TYPE_CHECKING
+from typing import Iterator, List, Optional, TYPE_CHECKING, Tuple
 
 import blinker
 
@@ -75,6 +76,27 @@ class DataNode:
     def children(self) -> List['DataNode']:
         return []
 
+    def iter_children(self) -> Iterator[DataNode]:
+        yield from self.children
+
+    def walk(self, *, current_level: int = 0, current_subtree: bool = False, include_self: bool = True, include_children: bool = True, include_subtree: bool = True, max_level: Optional[int] = None) -> Iterator[Tuple[int, bool, DataNode]]:
+        if max_level is not None and current_level > max_level:
+            return
+        if include_self:
+            yield current_level, current_subtree, self
+        if ((max_level is None) or (current_level < max_level)):
+            if include_children:
+                for child in self.iter_children():
+                    yield from child.walk(current_level=current_level + 1, max_level=max_level)
+            if include_subtree:
+                if self.has_subtree():
+                    yield from self.subtree().walk(
+                        current_level=current_level + 1,
+                        current_subtree=True,
+                        include_self=False,
+                        max_level=max_level
+                    )            
+
     @property
     def title(self):
         return str(self)
@@ -86,15 +108,7 @@ class DataNode:
         else:
             return self.title
 
-    @property
-    def descendants(self):
-        """Recursive iterator of all descendants."""
-        for child in self.children:
-            yield child
-            for descendant in child.descendants:
-                yield descendant
-
-    def subtree(self):
+    def subtree(self) -> DataNode:
         from boadata import tree
         return tree(self.uri)
 
@@ -159,31 +173,9 @@ class DataNode:
         '''Called after any change of this node or its children.'''
         self.changed.send(self)
 
-    def dump(self, stream=sys.stdout, indent=u"  ", subtree=False, in_depth=0, children_only=False,
-             data_object_info=False, full_title=False):
-        '''Write a textual representation of the tree.'''
-        if not children_only:
-            stream.write(in_depth * indent)
-            if full_title:
-                stream.write(self.full_title)
-            else:
-                stream.write(self.title)
-            # stream.write(str(self.has_object()))
-            if data_object_info and self.has_object():
-                # stream.write("!")
-                stream.write(" = " + self.data_object.type_name + "(" + " x ".join(str(i) for i in self.data_object.shape) + ")")
-        if self.has_subtree() and subtree:
-            stream.write(":")
-            self.subtree().dump(stream, indent, subtree, in_depth, children_only=True,
-                                data_object_info=data_object_info, full_title=full_title)
-        else:
-            stream.write("\n")
-        for child in self.children:    
-            child.dump(stream, indent, subtree, in_depth+1, data_object_info=data_object_info,
-                       full_title=full_title)
-
     def _repr_html_(self):
         '''Simple HTML representation to be used e.g. in IPython.'''
+        # TODO: Reimplement in terms of walk
         s = self.title
         if self.children:
             s += "<ul>"
