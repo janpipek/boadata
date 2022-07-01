@@ -22,7 +22,8 @@ options = dict(
         'h5py' : ['h5py'],
         'pydataset' : ['pydataset'],
         'feather': ['feather'],
-        'excel': ['openpyxl', 'xlrd']
+        'excel': ['openpyxl', 'xlrd'],
+        'google-cloud': ['google-cloud-storage']
     },
     entry_points = {
         'console_scripts' : [

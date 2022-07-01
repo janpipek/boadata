@@ -28,3 +28,9 @@ try:
     from . import dw
 except:
     pass
+
+
+try:
+    from . import google_storage
+except ImportError:
+    pass
