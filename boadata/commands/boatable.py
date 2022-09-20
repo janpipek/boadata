@@ -63,7 +63,7 @@ def main(
         )
         do = do.head(limit)
 
-    TableApp.run(title=uri, log="textual.log", df=do.inner_data)
+    TableApp.run(title=uri, log="textual.log", do=do, uri=uri)
 
 
 class TableApp(App):
@@ -73,9 +73,16 @@ class TableApp(App):
 
     do: DataObject
 
-    def __init__(self, *args, df: pd.DataFrame, **kwargs):
+    uri: str
+
+    @property
+    def df(self) -> pd.DataFrame:
+        return self.do.inner_data
+
+    def __init__(self, *args, do: DataObject, uri: str, **kwargs):
         super().__init__(*args, **kwargs)
-        self.df = df
+        self.do = do
+        self.uri = uri
 
     async def on_load(self, event: events.Load) -> None:
         await self.bind("q", "quit", "Quit")
@@ -99,7 +106,7 @@ class TableApp(App):
         await self.view.dock(body)
 
         async def add_content():
-            table = Table(title="Demo")
+            table = Table(title=self.uri)
 
             table.add_column(self.df.index.name or "#")
 
