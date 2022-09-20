@@ -9,6 +9,14 @@ It's a library, as well as a set of tools.
 
 Most focus is placed on table-like pandas-based objects.
 
+Installation
+------------
+
+```bash
+pipx install boadata
+```
+
+
 Concepts
 --------
 * uri - boadata tries to support odo URIs

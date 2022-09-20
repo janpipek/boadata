@@ -67,6 +67,8 @@ def main(
 
 
 class TableApp(App):
+    # Inspired by https://github.com/Textualize/textual/blob/main/examples/big_table.py
+
     body: ScrollView
 
     do: DataObject
@@ -107,8 +109,6 @@ class TableApp(App):
             for row in self.df.itertuples():
                 table.add_row(*[str(r) for r in row])
 
-            # for i in range(100):
-            #    table.add_row(*[f"cell {i},{j}" for j in range(20)])
             await body.update(table)
 
         await self.call_later(add_content)
