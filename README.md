@@ -33,7 +33,6 @@ Status
 
 Requirements
 ------------
-* PyQt4 (to become optional / replaceable with PySide/PyQt5)
 * pandas
 * numpy
 * numexpr
@@ -42,14 +41,13 @@ Requirements
 * blinker (perhaps to be removed)
 * h5py (optional)
 * sqlalchemy (optional)
-* pyqtgraph (to be removed)
 * matplotlib (to become optional)
 * bokeh (to become optional instead of matplotlib)
 * seaborn
 * pandas_profiling (optional - dataframe summaries)
 * datadotworld (optional - for their datasets)
 
-* Python 3.6+
+* Python 3.8+
 
 Supported formats and sources
 -----------------------------

@@ -32,6 +32,7 @@ options = dict(
         "tabulate",
         "physt",
         "typer",
+        "textual",
     ],
     extras_require={
         "avro": ["fastavro"],
@@ -48,6 +49,7 @@ options = dict(
             "boa-describe = boadata.commands.boadescribe:run_app",
             "boa-tree = boadata.commands.boatree:run_app",
             "boa-cat = boadata.commands.boacat:run_app",
+            "boa-table = boadata.commands.boatable:run_app",
         ]
     },
     classifiers=[

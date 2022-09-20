@@ -1,11 +1,12 @@
-0.3.15 (2020-??-??)
--------------------
-* replaced pyqtgraph table widget with Orange3's
+0.4.0 (2022-09-??)
+------------------
+* removed GUI altogether
+* modern CLI using typer, rich and textual
 
 0.3.14 (2020-02-11)
 -------------------
 * added (as default) clevercsv to parse CSVs
-* added automatic suppot for TSVs
+* added automatic support for TSVs
 
 0.3.13 (2020-02-10)
 -------------------
