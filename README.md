@@ -17,15 +17,15 @@ Concepts
 * data conversion - between different object types
 * view - visual representation of a data objects
 
-Executables
-------------
-Run `command --help` to see full list of options
+CLI tools
+---------
+Run `<command> --help` to see full list of options
 
-* `boa` -
-* `boa-describe <uri>` - show basic info about a data object (in command-line)
+* `boa-describe <uri>` - show basic info about a data object
 * `boa-tree <uri>` - list nodes in a data tree
-* `boa-cat <uri>` - print tabular representation of a dataobject (command-line)
+* `boa-cat <uri>` - print tabular representation of a dataobject
 * `boa-convert <from+> <to>` - convert one data source into another
+* `boa-table <uri>` - a tabular view of data based on textual
 
 Status
 ------
@@ -59,11 +59,3 @@ Supported formats and sources
 * seaborn datasets
 * MATLAB .fig files
 * data.world datasets/tables (that can be imported pandas dataframes)
-
-Supported GUI views
--------------------
-* Table
-* Histogram
-* Scatter / line plot
-* Text view
-* Summary (from pandas_profiling)

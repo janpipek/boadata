@@ -5,6 +5,7 @@ import typer
 from rich.table import Table
 from textual import events
 from textual.app import App
+from textual.scrollbar import ScrollTo
 from textual.widgets import ScrollView
 
 from boadata.cli import (
@@ -66,6 +67,8 @@ def main(
 
 
 class TableApp(App):
+    body: ScrollView
+
     do: DataObject
 
     def __init__(self, *args, df: pd.DataFrame, **kwargs):
@@ -74,6 +77,18 @@ class TableApp(App):
 
     async def on_load(self, event: events.Load) -> None:
         await self.bind("q", "quit", "Quit")
+
+    async def on_key(self, event):
+        if event.key in ["up", "pageup"]:
+            await self.body.handle_scroll_up()
+        if event.key in ["down", " ", "pagedown"]:
+            await self.body.handle_scroll_down()
+        if event.key == "right":
+            await self.body.handle_scroll_right()
+        if event.key == "left":
+            await self.body.handle_scroll_left()
+        if event.key == "home":
+            await self.body.handle_scroll_to(ScrollTo(self, x=0, y=0))
 
     async def on_mount(self, event: events.Mount) -> None:
 
