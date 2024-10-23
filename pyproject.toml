@@ -1,0 +1,59 @@
+[project]
+license = { file = "LICENSE" }
+description = "(B)rother (O)f (A)rbitrary Data - Python CLI tools for data."
+name = "boadata"
+version = "0.4.0"
+readme = "README.md"
+requires-python = ">=3.10,<3.13"
+authors = [{ name = "Jan Pipek", email = "jan.pipek@gmail.com" }]
+dependencies = [
+    "numpy>1.21",
+    "pandas>2.0",
+    "scipy>=1.14.1",
+    "blinker",
+    "sqlalchemy",
+    "numexpr",
+    "click",
+    "xarray",
+    "scipy",
+    "matplotlib",
+    "seaborn",
+    "tabulate",
+    "physt",
+    "typer",
+    # "textual",
+]
+classifiers = [
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Development Status :: 3 - Alpha",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+
+[project.optional-dependencies]
+avro = ["fastavro"]
+matlab = ["pydons"]
+h5py = ["h5py"]
+pydataset = ["pydataset"]
+# feather = ["feather"]
+excel = ["openpyxl", "xlrd"]
+google-cloud = ["google-cloud-storage"]
+
+[project.scripts]
+boa-table = "boadata.commands.boatable:run_app"
+boa-convert = "boadata.commands.boaconvert:run_app"
+boa-describe = "boadata.commands.boadescribe:run_app"
+boa-tree = "boadata.commands.boatree:run_app"
+boa-cat = "boadata.commands.boacat:run_app"
+
+[tool.uv]
+package = true
