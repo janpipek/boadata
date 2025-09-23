@@ -1,12 +1,17 @@
 from typing import List, Optional
 
 import pandas as pd
+import polars as pl
 import typer
 from rich.table import Table
 from textual import events
 from textual.app import App
 from textual.scrollbar import ScrollTo
-from textual.widgets import ScrollView
+from textual.scroll_view import ScrollView
+from textual.app import App, ComposeResult
+from textual.widgets import Footer, Header
+from textual_fastdatatable import DataTable
+from textual_fastdatatable.backend import PolarsBackend
 
 from boadata.cli import (
     try_apply_sql,
@@ -63,63 +68,25 @@ def main(
         )
         do = do.head(limit)
 
-    TableApp.run(title=uri, log="textual.log", do=do, uri=uri)
+    TableApp(do=do, uri=uri).run()  # title=uri, log="textual.log", do=do, uri=uri)
 
 
 class TableApp(App):
-    # Inspired by https://github.com/Textualize/textual/blob/main/examples/big_table.py
-
-    body: ScrollView
-
     do: DataObject
-
     uri: str
+    df: pl.DataFrame
 
-    @property
-    def df(self) -> pd.DataFrame:
-        return self.do.inner_data
+    BINDINGS = [("q", "quit", "Quit"),]
 
-    def __init__(self, *args, do: DataObject, uri: str, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, *, do: DataObject, uri: str, **kwargs):
+        super().__init__(**kwargs)
         self.do = do
         self.uri = uri
+        self.df = pl.DataFrame(do.inner_data)
+        self.title = f"{self.uri} ({self.df.shape[0]} rows)"
 
-    async def on_load(self, event: events.Load) -> None:
-        await self.bind("q", "quit", "Quit")
-
-    async def on_key(self, event):
-        if event.key in ["up", "pageup"]:
-            await self.body.handle_scroll_up()
-        if event.key in ["down", " ", "pagedown"]:
-            await self.body.handle_scroll_down()
-        if event.key == "right":
-            await self.body.handle_scroll_right()
-        if event.key == "left":
-            await self.body.handle_scroll_left()
-        if event.key == "home":
-            await self.body.handle_scroll_to(ScrollTo(self, x=0, y=0))
-
-    async def on_mount(self, event: events.Mount) -> None:
-
-        self.body = body = ScrollView(auto_width=True)
-
-        await self.view.dock(body)
-
-        async def add_content():
-            table = Table(title=self.uri)
-
-            table.add_column(self.df.index.name or "#")
-
-            for c in self.df.columns:
-                table.add_column(c)
-
-            for row in self.df.itertuples():
-                table.add_row(*[str(r) for r in row])
-
-            await body.update(table)
-
-        await self.call_later(add_content)
-
-
-if __name__ == "__main__":
-    run_app()
+    def compose(self) -> ComposeResult:
+        backend = PolarsBackend.from_dataframe(self.df)
+        yield Header()
+        yield DataTable(backend=backend, zebra_stripes=True)
+        yield Footer()

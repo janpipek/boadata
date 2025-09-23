@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 
 
 def try_load(
-    uri: str, type: Optional[str] = None, parameters: List[str] = None
+    uri: str, type: Optional[str] = None, parameters: Optional[list[str]] = None
 ) -> DataObject:
     """Use parameters from command-line to load the data object.
 
