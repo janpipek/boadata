@@ -1,7 +1,12 @@
-0.4.0 (2022-09-??)
+0.4.1 (2025-09-23)
+------------------
+* improved boa-table for big tables
+
+0.4.0 (2022-10-??)
 ------------------
 * removed GUI altogether
 * modern CLI using typer, rich and textual
+* use uv for dependency resolution
 
 0.3.14 (2020-02-11)
 -------------------
