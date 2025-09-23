@@ -1,4 +1,5 @@
 """Command-line interface utility functions."""
+
 from __future__ import annotations
 
 import signal
@@ -10,7 +11,6 @@ from tabulate import tabulate
 
 from boadata import load
 from boadata.core.data_tree import DataTree
-
 
 if TYPE_CHECKING:
     from typing import List, Optional

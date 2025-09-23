@@ -59,3 +59,12 @@ boa-cat = "boadata.commands.boacat:run_app"
 
 [tool.uv]
 package = true
+
+[tool.ruff]
+# Be a bit tolerant
+# line-length = 100
+extend-exclude = ["docs"]
+target-version = "py39"
+
+[tool.isort]
+profile = "black"

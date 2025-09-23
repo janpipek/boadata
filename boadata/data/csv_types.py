@@ -14,7 +14,6 @@ from boadata.core.data_conversion import ChainConversion, IdentityConversion
 
 from .pandas_types import PandasDataFrameBase
 
-
 if TYPE_CHECKING:
     from typing import Optional
 

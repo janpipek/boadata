@@ -3,6 +3,7 @@ from __future__ import annotations
 import warnings
 from typing import TYPE_CHECKING
 
+from boadata.core.data_tree import DataTree
 
 if TYPE_CHECKING:
     from typing import Any, Optional
@@ -20,8 +21,9 @@ def load(uri: str, type: Optional[str] = None, *args, **kwargs) -> DataObject:
 
     :param type: If present, forces this type to be used.
     """
-    from . import data  # Loads all formats
-    from . import core
+    # Enforce tree loading
+    from boadata import data  # noqa: F401
+    from boadata import core
 
     if type:
         return core.DataObject.registered_types[type].from_uri(uri, *args, **kwargs)
@@ -34,8 +36,8 @@ def wrap(native_object, force: bool = True, **kwargs) -> DataObject:
 
     :param force: If false, wrapping an unsupported object will result that object.
     """
-    from . import data  # Loads all formats
-    from . import core
+    from boadata import data  # noqa: F401
+    from boadata import core
 
     try:
         return core.DataObject.from_native(native_object, **kwargs)
@@ -63,8 +65,8 @@ def apply(native_object, function, *args, **kwargs):
 
 def tree(uri: str) -> DataTree:
     """Load a tree from some URI."""
-    from boadata import trees  # Enforce tree loading
-    from boadata.core.data_tree import DataTree
+    # Enforce tree loading
+    from boadata import trees  # noqa: F401
 
     tree = None
     for cls in DataTree.registered_trees:

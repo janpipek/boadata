@@ -1,3 +1,4 @@
+# ruff: noqa: F401
 """Module containing all data objects understood by boadata."""
 
 from .csv_types import CSVFile
@@ -15,7 +16,6 @@ from .plotting_types import HistogramData, XYPlotDataSeries  # , XYPlotDataSet
 from .sql_types import DatabaseTable
 from .text_types import TextFile
 from .xarray_types import XarrayDataArray, XarrayDataset
-
 
 try:
     from .dw_types import DataWorldTable

@@ -7,7 +7,6 @@ import blinker
 
 from boadata.core.data_object import UnknownDataObjectError
 
-
 if TYPE_CHECKING:
     from typing import Iterator, List, Optional, Tuple
 

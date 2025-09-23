@@ -1,6 +1,7 @@
 0.4.1 (2025-09-23)
 ------------------
 * improved boa-table for big tables
+* switch to ruff
 
 0.4.0 (2022-10-??)
 ------------------

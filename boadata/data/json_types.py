@@ -4,7 +4,7 @@ from typing import Optional
 
 import pandas as pd
 
-from boadata.core import DataConversion, DataObject
+from boadata.core import DataObject
 from boadata.core.data_conversion import ChainConversion, IdentityConversion
 
 from .pandas_types import PandasDataFrameBase
@@ -40,7 +40,7 @@ class JsonFileDataset(PandasDataFrameBase):
         uri: str,
         index_col: bool = False,
         source: Optional[DataObject] = None,
-        **kwargs
+        **kwargs,
     ) -> "JsonFileDataset":
         methods = [
             lambda: JsonFileDataset._read_normalized(uri, **kwargs),
@@ -54,7 +54,7 @@ class JsonFileDataset(PandasDataFrameBase):
                 data = method()
                 result = cls(inner_data=data, uri=uri, source=source, **kwargs)
                 break
-            except:
+            except:  # noqa: E722
                 pass
 
         if result:

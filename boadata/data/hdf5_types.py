@@ -1,8 +1,10 @@
+# Currently broken - odo does not exist anymore
+
 import h5py
 import numpy as np
 
 from boadata.core import DataObject
-from boadata.core.data_conversion import ChainConversion, DataConversion
+from boadata.core.data_conversion import ChainConversion
 from boadata.data.mixins import GetItemMixin
 
 
@@ -43,18 +45,7 @@ class Hdf5Dataset(DataObject):
 
     @classmethod
     def accepts_uri(cls, uri):
-
-        if not (".h5::" in uri or ".hdf5::" in uri):
-            return False
-        return True
-
-        # TODO: Fix the following
-        try:
-            candidate = odo.odo(uri, cls.real_type)
-            if candidate.attrs.get(b"CLASS") != b"TABLE":
-                return True
-        except:
-            pass
+        # TODO: Fix this
         return False
 
 
@@ -67,18 +58,7 @@ class Hdf5Table(DataObject, GetItemMixin):
 
     @classmethod
     def accepts_uri(cls, uri):
-        return False
-
-        # TODO: Fix not supported
-
-        if not (".h5::" in uri or ".hdf5::" in uri):
-            return False
-        try:
-            candidate = odo.odo(uri, cls.real_type)
-            if candidate.attrs.get(b"CLASS") == b"TABLE":
-                return True
-        except:
-            pass
+        # TODO: Fix this
         return False
 
     @property

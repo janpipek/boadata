@@ -1,6 +1,7 @@
 """Classes useful for analysis of data obtained from Geant4.
 
 Currently, this includes just CSV-like files from command-based scoring."""
+
 import codecs
 
 import pandas as pd
@@ -34,7 +35,7 @@ class Geant4Scoring(XarrayDatasetBase):
         with codecs.open(uri) as f:
             for i, line in enumerate(f):
                 if line.startswith("# mesh name: "):
-                    mesh_name = line.split(":", 2)[-1].strip()
+                    mesh_name = line.split(":", 2)[-1].strip()  # noqa: F841
                 if line.startswith("# primitive scorer name: "):
                     scorer_name = line.split(":", 2)[-1].strip()
                     scorers.append([scorer_name, i + 2, None])

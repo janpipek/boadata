@@ -6,7 +6,6 @@ import xarray as xr
 
 from boadata.core import DataObject
 
-
 if TYPE_CHECKING:
     from boadata.data.pandas_types import PandasDataFrame
 
@@ -17,7 +16,6 @@ from .mixins import (
     SetItemMixin,
     StatisticsMixin,
 )
-
 
 # TODO: Limit arithmetic operations where the coordinates don't match
 
