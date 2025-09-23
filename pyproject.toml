@@ -21,7 +21,9 @@ dependencies = [
     "tabulate",
     "physt",
     "typer",
-    # "textual",
+    "textual",
+    "clevercsv>=0.8.2",
+    "textual-fastdatatable>=0.10.0",
 ]
 classifiers = [
     "Programming Language :: Python :: 3.9",
