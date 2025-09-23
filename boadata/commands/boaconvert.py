@@ -13,7 +13,6 @@ from boadata.cli import (
 )
 from boadata.core import DataObject
 
-
 run_app = typer.Typer()
 
 

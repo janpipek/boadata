@@ -1,5 +1,5 @@
 [project]
-license = { file = "LICENSE" }
+license = "MIT"
 description = "(B)rother (O)f (A)rbitrary Data - Python CLI tools for data."
 name = "boadata"
 version = "0.4.1"
@@ -32,7 +32,6 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Development Status :: 3 - Alpha",
-    "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Intended Audience :: Developers",
     "Intended Audience :: Information Technology",
@@ -57,5 +56,18 @@ boa-describe = "boadata.commands.boadescribe:run_app"
 boa-tree = "boadata.commands.boatree:run_app"
 boa-cat = "boadata.commands.boacat:run_app"
 
+[build-system]
+requires = ["flit_core>=3.4"]
+build-backend = "flit_core.buildapi"
+
 [tool.uv]
 package = true
+
+[tool.ruff]
+# Be a bit tolerant
+# line-length = 100
+extend-exclude = ["docs"]
+target-version = "py39"
+
+[tool.isort]
+profile = "black"

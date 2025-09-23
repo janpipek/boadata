@@ -3,9 +3,8 @@ from typing import Optional
 
 import typer
 
-from boadata import __version__, tree
+from boadata import tree
 from boadata.cli import dump_tree
-
 
 run_app = typer.Typer()
 
@@ -18,7 +17,7 @@ def main(
     limit: Optional[int] = typer.Option(None, "--limit", "-l"),
     max_depth: Optional[int] = typer.Option(None, "--level", "-L"),
 ):
-    import boadata.data
+    import boadata.data  # noqa: F401
 
     # Flags taken from the `exa` tool
     try:

@@ -5,7 +5,6 @@ from pandas import DataFrame, RangeIndex
 
 from boadata.cli import try_apply_sql, try_load
 
-
 run_app = typer.Typer()
 
 

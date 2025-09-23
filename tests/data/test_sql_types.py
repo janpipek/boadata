@@ -11,7 +11,8 @@ class TestAcceptsUri:
 
         invalid_urls = [
             "unknown://schema::tablename",
-            "no::schema_no_file" "sqlite:////absolute/path/to/myfile.db::",
+            "no::schema_no_file",
+            "sqlite:////absolute/path/to/myfile.db::",
             "sqlite:////absolute/path/to/myfile.db",
         ]
 

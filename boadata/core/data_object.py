@@ -10,7 +10,6 @@ import numpy as np
 
 from boadata.core.data_conversion import ConversionUnknown, DataConversion
 
-
 if TYPE_CHECKING:
     from typing import Any, Callable, ClassVar, List, Optional, Tuple, Type, Union
 
@@ -51,9 +50,9 @@ class _DataObjectRegistry:
             DataObject.registered_types[boadata_type.type_name] = boadata_type
             DataConversion.discover(boadata_type)
             if default:
-                DataObject.registered_default_types[
-                    boadata_type.real_type
-                ] = boadata_type
+                DataObject.registered_default_types[boadata_type.real_type] = (
+                    boadata_type
+                )
             boadata_type._registered = True
             return boadata_type
 
@@ -128,7 +127,7 @@ class _DataObjectConversions:
             new_type = DataObject.registered_types[new_type_name]
         if isinstance(self, new_type):
             return True
-        if not (self.type_name, new_type_name) in DataConversion.registered_conversions:
+        if (self.type_name, new_type_name) not in DataConversion.registered_conversions:
             return False
         conversion = DataConversion.registered_conversions[
             (self.type_name, new_type_name)

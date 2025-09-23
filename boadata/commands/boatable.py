@@ -1,13 +1,7 @@
 from typing import List, Optional
 
-import pandas as pd
 import polars as pl
 import typer
-from rich.table import Table
-from textual import events
-from textual.app import App
-from textual.scrollbar import ScrollTo
-from textual.scroll_view import ScrollView
 from textual.app import App, ComposeResult
 from textual.widgets import Footer, Header
 from textual_fastdatatable import DataTable
@@ -22,7 +16,6 @@ from boadata.cli import (
     try_sort,
 )
 from boadata.core import DataObject
-
 
 run_app = typer.Typer()
 
@@ -76,7 +69,9 @@ class TableApp(App):
     uri: str
     df: pl.DataFrame
 
-    BINDINGS = [("q", "quit", "Quit"),]
+    BINDINGS = [
+        ("q", "quit", "Quit"),
+    ]
 
     def __init__(self, *, do: DataObject, uri: str, **kwargs):
         super().__init__(**kwargs)

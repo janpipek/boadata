@@ -16,7 +16,6 @@ from .mixins import (
     StatisticsMixin,
 )
 
-
 if TYPE_CHECKING:
     from boadata.data.plotting_types import HistogramData
 

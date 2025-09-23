@@ -13,7 +13,6 @@ from boadata.cli import (
     try_sort,
 )
 
-
 run_app = typer.Typer()
 
 
