@@ -5,7 +5,7 @@ boadata
 The goal is to create a simple tool for scientists / data miners
 to browse and plot various data sources in one simple environment.
 
-It's a library, as well as a set of tools.
+It's a set of tools, as well as a library.
 
 Installation
 ------------
@@ -14,7 +14,6 @@ Installation
 uv tool install boadata
 ```
 
-
 Concepts
 --------
 * uri - boadata tries to support odo URIs
@@ -22,6 +21,8 @@ Concepts
 * data tree - browseable that can contain nodes (some of the nodes can be data objects)
 * data conversion - between different object types
 * view - visual representation of a data objects
+
+In progress: the data objects will use narwhals mostly.
 
 CLI tools
 ---------
