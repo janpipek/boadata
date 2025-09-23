@@ -1,21 +1,18 @@
 boadata
 =======
 
-(B)rowser (O)f (A)rbitrary Data - a Python browser of data.
+(B)rowser (O)f (A)rbitrary Data - a Python browser of tabular data.
 The goal is to create a simple tool for scientists / data miners
 to browse and plot various data sources in one simple environment.
 
-It's a library, as well as a set of tools.
-
-Most focus is placed on table-like pandas-based objects.
+It's a set of tools, as well as a library.
 
 Installation
 ------------
 
 ```bash
-pipx install boadata
+uv tool install boadata
 ```
-
 
 Concepts
 --------
@@ -24,6 +21,8 @@ Concepts
 * data tree - browseable that can contain nodes (some of the nodes can be data objects)
 * data conversion - between different object types
 * view - visual representation of a data objects
+
+In progress: the data objects will use narwhals mostly.
 
 CLI tools
 ---------
@@ -55,7 +54,7 @@ Requirements
 * pandas_profiling (optional - dataframe summaries)
 * datadotworld (optional - for their datasets)
 
-* Python 3.8+
+* Python 3.11+
 
 Supported formats and sources
 -----------------------------
