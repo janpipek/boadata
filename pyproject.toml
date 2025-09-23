@@ -2,7 +2,7 @@
 license = "MIT"
 description = "(B)rother (O)f (A)rbitrary Data - Python CLI tools for data."
 name = "boadata"
-version = "0.4.1"
+version = "0.4.2"
 readme = "README.md"
 requires-python = ">=3.11,<3.15"
 authors = [{ name = "Jan Pipek", email = "jan.pipek@gmail.com" }]

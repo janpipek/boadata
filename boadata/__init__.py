@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 
     from boadata.core import DataObject, DataTree
 
-__version__ = "0.4.1"
+__version__ = "0.4.2"
 
 # Suppress the unpleasant pandas/seaborn<->matplotlib warning
 warnings.filterwarnings("ignore", module="matplotlib")
