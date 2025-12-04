@@ -62,6 +62,13 @@ build-backend = "flit_core.buildapi"
 
 [tool.uv]
 package = true
+override-dependencies = [
+    "fonttools>=4.55.0",
+    "idna>=3.10",
+    "protobuf>=5.29.0",
+    "requests>=2.32.0",
+    "urllib3>=2.2.0",
+]
 
 [tool.ruff]
 # Be a bit tolerant
